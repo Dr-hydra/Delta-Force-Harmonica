@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { SCORE_FILE_ACCEPT, parseScoreFile } from "./import/parseScoreFile";
 import type { ParseProgress } from "./import/parseScoreFile";
+import { AUDIO_PRESETS, type AudioTranscriptionPreset } from "./audio/presets";
 import { extractHighestMelody } from "./music/monophonic";
+import { extractSmartMelody } from "./music/smartMelody";
 import { findBestTranspose, optimizeHarmonica } from "./harmonica/optimizer";
 import { MAPPING_ASSUMPTIONS } from "./harmonica/mapping";
 import { ScoreWorkspace } from "./components/ScoreWorkspace";
@@ -19,6 +21,9 @@ const demoNotes: NoteEvent[] = [60, 62, 64, 65, 67, 69, 71, 72, 71, 69, 67, 65, 
     durationBeats: 0.78,
     velocity: 0.8
   }));
+
+type MelodyMode = "smart" | "highest" | "polyphonic";
+type AudioStage = "raw" | "clean" | "highest" | "smart";
 
 function formatDuration(ms: number) {
   const total = Math.max(0, Math.round(ms / 1000));
@@ -41,7 +46,10 @@ export default function App() {
   const [song, setSong] = useState<ParsedSong | null>(null);
   const [trackId, setTrackId] = useState("");
   const [transpose, setTranspose] = useState(0);
-  const [melodyOnly, setMelodyOnly] = useState(true);
+  const [melodyMode, setMelodyMode] = useState<MelodyMode>("smart");
+  const [audioPreset, setAudioPreset] = useState<AudioTranscriptionPreset>("balanced");
+  const [audioStage, setAudioStage] = useState<AudioStage>("smart");
+  const [loadedFile, setLoadedFile] = useState<File | null>(null);
   const [usingDemo, setUsingDemo] = useState(false);
   const [busy, setBusy] = useState(false);
   const [parseProgress, setParseProgress] = useState<ParseProgress | null>(null);
@@ -53,27 +61,47 @@ export default function App() {
   }, [theme]);
 
   const selectedTrack = song?.tracks.find((track) => track.id === trackId) ?? song?.tracks[0];
-  const sourceNotes = usingDemo ? demoNotes : selectedTrack?.notes ?? [];
-  const melodyNotes = useMemo(
-    () => melodyOnly ? extractHighestMelody(sourceNotes) : sourceNotes,
-    [sourceNotes, melodyOnly]
-  );
-  const conversion = useMemo(() => optimizeHarmonica(melodyNotes, transpose), [melodyNotes, transpose]);
+  const isAudio = !usingDemo && song?.sourceFormat === "audio";
+  const audioAnalysis = song?.audioAnalysis;
+  const baseNotes = usingDemo ? demoNotes : selectedTrack?.notes ?? [];
 
+  const audioStageNotes = useMemo(() => {
+    if (!isAudio || !audioAnalysis) return [];
+    if (audioStage === "raw") return audioAnalysis.rawNotes;
+    if (audioStage === "clean") return audioAnalysis.cleanedNotes;
+    if (audioStage === "highest") return extractHighestMelody(audioAnalysis.cleanedNotes);
+    return extractSmartMelody(audioAnalysis.cleanedNotes);
+  }, [isAudio, audioAnalysis, audioStage]);
+
+  const melodyNotes = useMemo(() => {
+    if (isAudio) return audioStageNotes;
+    if (melodyMode === "polyphonic") return baseNotes;
+    if (melodyMode === "highest") return extractHighestMelody(baseNotes);
+    return extractSmartMelody(baseNotes);
+  }, [isAudio, audioStageNotes, baseNotes, melodyMode]);
+
+  const conversion = useMemo(() => optimizeHarmonica(melodyNotes, transpose), [melodyNotes, transpose]);
   const playableRate = melodyNotes.length === 0
     ? 0
     : Math.round((conversion.notes.length / melodyNotes.length) * 100);
 
-  async function loadFile(file: File) {
+  async function loadFile(file: File, preset: AudioTranscriptionPreset = audioPreset) {
     setBusy(true);
     setError("");
     setParseProgress(null);
     try {
-      const parsed = await parseScoreFile(file, setParseProgress);
+      const parsed = await parseScoreFile(file, setParseProgress, { audioPreset: preset });
       setSong(parsed);
       setTrackId(parsed.tracks[0].id);
       setTranspose(0);
       setUsingDemo(false);
+      setLoadedFile(file);
+      if (parsed.sourceFormat === "audio") {
+        setAudioPreset(preset);
+        setAudioStage("smart");
+      } else {
+        setMelodyMode("smart");
+      }
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "乐谱解析失败。");
     } finally {
@@ -93,6 +121,8 @@ export default function App() {
     setTrackId("");
     setTranspose(0);
     setUsingDemo(true);
+    setLoadedFile(null);
+    setMelodyMode("smart");
     setParseProgress(null);
     setError("");
   }
@@ -105,8 +135,9 @@ export default function App() {
   const timeSignatures = usingDemo ? DEMO_SIGNATURES : song?.timeSignatures ?? DEMO_SIGNATURES;
   const measureStarts = usingDemo ? DEMO_MEASURE_STARTS : song?.measureStarts ?? [];
   const formatLabel = sourceFormatLabel(song, usingDemo);
-  const isAudio = !usingDemo && song?.sourceFormat === "audio";
   const busyPercent = parseProgress ? Math.round(parseProgress.value * 100) : null;
+  const audioStats = audioAnalysis?.stats;
+  const audioPresetConfig = AUDIO_PRESETS[audioPreset];
 
   return (
     <div className="app-shell">
@@ -123,7 +154,7 @@ export default function App() {
         </nav>
         <div className="rail-bottom">
           <b>α</b>
-          <span>ENGINE 0.4<br />PURE FRONTEND</span>
+          <span>ENGINE 0.5<br />PURE FRONTEND</span>
         </div>
       </aside>
 
@@ -137,7 +168,7 @@ export default function App() {
           <div>
             <span className="eyebrow">DELTA FORCE / HARMONICA COMPILER</span>
             <h1>把乐谱编译成<br /><mark>可演奏</mark>的口琴谱</h1>
-            <p>文件只在浏览器中解析。除 MIDI、MusicXML 与 MXL 外，现在加入轻量音频转谱实验：MP3 / WAV / OGG / FLAC 会由 Basic Pitch 在本机识别成音符，再进入口琴转换流程。</p>
+            <p>文件只在浏览器中解析。音频实验版现在增加三档识别强度、弱音与碎音清洗，以及基于全局连续性的 Smart Melody Path，可直接对照 RAW / CLEAN / MELODY。</p>
           </div>
           <div className="hero-code" aria-hidden="true">
             <b>1</b><b>2</b><b>3</b><b>4</b><b>5</b><b>6</b><b>7</b><b>1̇</b>
@@ -177,15 +208,35 @@ export default function App() {
               )}
               <span>原始文件不会上传 · .mid / .musicxml / .mxl / .mp3 / .wav / .ogg / .flac</span>
             </label>
+
+            <label className="field" style={{ marginTop: 16 }}>
+              <span>AUDIO 识别预设</span>
+              <select
+                value={audioPreset}
+                disabled={busy}
+                onChange={(event) => setAudioPreset(event.target.value as AudioTranscriptionPreset)}
+              >
+                {(Object.entries(AUDIO_PRESETS) as Array<[AudioTranscriptionPreset, (typeof AUDIO_PRESETS)[AudioTranscriptionPreset]]>).map(([id, preset]) => (
+                  <option key={id} value={id}>{preset.label}</option>
+                ))}
+              </select>
+              <small style={{ color: "var(--muted)", lineHeight: 1.55 }}>{audioPresetConfig.description}</small>
+            </label>
+
             <button className="text-action" onClick={loadDemo}>没有乐谱？载入音阶 Demo →</button>
-            <p className="preview-limit">AUDIO β：建议先用清唱、钢琴独奏、吉他独奏或 30～60 秒片段测试。完整混音会同时识别伴奏，当前主旋律算法仍是 baseline。</p>
+            {isAudio && loadedFile && (
+              <button className="text-action" disabled={busy} onClick={() => void loadFile(loadedFile, audioPreset)}>
+                用当前预设重新分析这个音频 →
+              </button>
+            )}
+            <p className="preview-limit">完整混音建议优先试“标准 / 推荐”，音符仍过密时切换“完整混音”。预设会改变 Basic Pitch 解码阈值和后处理强度。</p>
             {error && <p className="error-note">{error}</p>}
           </article>
 
           <article className="panel control-panel">
             <div className="section-heading">
               <div><span className="eyebrow">02 / OPTIMIZE</span><h2>演奏优化</h2></div>
-              <span className="data-note">HUMAN</span>
+              <span className="data-note">SMART PATH</span>
             </div>
 
             <label className="field">
@@ -197,13 +248,32 @@ export default function App() {
               </select>
             </label>
 
-            <label className="switch-row">
-              <span>
-                <b>主旋律提取</b>
-                <small>{isAudio ? "Basic Pitch 负责音频→音符；这里仍使用当前最高音 baseline，便于先单独评估音频识别质量" : "同一时刻多个音时保留最高音，并缩短重叠音符"}</small>
-              </span>
-              <input type="checkbox" checked={melodyOnly} onChange={(event) => setMelodyOnly(event.target.checked)} />
-            </label>
+            {isAudio ? (
+              <label className="field" style={{ marginTop: 18 }}>
+                <span>音频分析阶段</span>
+                <select value={audioStage} onChange={(event) => setAudioStage(event.target.value as AudioStage)}>
+                  <option value="raw">RAW · Basic Pitch 原始候选</option>
+                  <option value="clean">CLEAN · 弱音 / 碎音 / 密集和弦过滤</option>
+                  <option value="highest">SKYLINE · CLEAN 后最高音基线</option>
+                  <option value="smart">MELODY · Smart Melody Path（推荐）</option>
+                </select>
+                <small style={{ color: "var(--muted)", lineHeight: 1.55 }}>
+                  {audioStats
+                    ? `RAW ${audioStats.rawCount} → CLEAN ${audioStats.cleanCount} · 弱音 -${audioStats.removedWeak} · 短音 -${audioStats.removedShort} · 合并 ${audioStats.mergedFragments} · 密集 -${audioStats.removedDensity}`
+                    : "导入音频后可逐级试听，判断问题来自转录、清洗还是旋律提取。"}
+                </small>
+              </label>
+            ) : (
+              <label className="field" style={{ marginTop: 18 }}>
+                <span>主旋律算法</span>
+                <select value={melodyMode} onChange={(event) => setMelodyMode(event.target.value as MelodyMode)}>
+                  <option value="smart">Smart Melody Path · 连续性 DP（推荐）</option>
+                  <option value="highest">Skyline · 最高音 baseline</option>
+                  <option value="polyphonic">保留原始复调</option>
+                </select>
+                <small style={{ color: "var(--muted)", lineHeight: 1.55 }}>Smart 模式会在多个候选声部之间寻找更连续的全局旋律路径，并尽量保留持续长音。</small>
+              </label>
+            )}
 
             <div className="transpose-row">
               <label className="field">
@@ -225,7 +295,7 @@ export default function App() {
         </section>
 
         <section className="metric-grid">
-          <article><span>NOTES</span><strong>{melodyNotes.length || "—"}</strong><small>{isAudio ? "音频识别后主旋律音符" : "主旋律音符"}</small></article>
+          <article><span>NOTES</span><strong>{melodyNotes.length || "—"}</strong><small>{isAudio ? `${audioStage.toUpperCase()} 当前音符` : "当前主旋律音符"}</small></article>
           <article><span>BPM</span><strong>{isAudio ? "—" : bpm || "—"}</strong><small>{isAudio ? "音频 β 暂未估算 BPM" : "首个 Tempo"}</small></article>
           <article><span>LENGTH</span><strong>{duration ? formatDuration(duration) : "—"}</strong><small>乐曲时长</small></article>
           <article className="metric-primary"><span>MOD CHANGES</span><strong>{conversion.notes.length ? conversion.modifierChanges : "—"}</strong><small>半音 / 八度状态切换</small></article>
