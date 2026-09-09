@@ -33,17 +33,22 @@ export function optimizeHarmonica(notes: NoteEvent[], transpose = 0): Conversion
     return { notes: [], unplayable, cost: 0, modifierChanges: 0 };
   }
 
-  const layers: State[][] = playable.map((entry, layerIndex) => {
+  const layers: State[][] = [];
+
+  for (let layerIndex = 0; layerIndex < playable.length; layerIndex += 1) {
+    const entry = playable[layerIndex];
+
     if (layerIndex === 0) {
-      return entry.candidates.map((candidate) => ({
+      layers.push(entry.candidates.map((candidate) => ({
         candidate,
         cost: localCost(candidate),
         previousIndex: -1
-      }));
+      })));
+      continue;
     }
 
     const previousLayer = layers[layerIndex - 1];
-    return entry.candidates.map((candidate) => {
+    const layer = entry.candidates.map((candidate) => {
       let bestCost = Number.POSITIVE_INFINITY;
       let bestIndex = 0;
 
@@ -57,7 +62,9 @@ export function optimizeHarmonica(notes: NoteEvent[], transpose = 0): Conversion
 
       return { candidate, cost: bestCost, previousIndex: bestIndex };
     });
-  });
+
+    layers.push(layer);
+  }
 
   const lastLayer = layers[layers.length - 1];
   let index = lastLayer.reduce((best, state, i, array) => state.cost < array[best].cost ? i : best, 0);
