@@ -9,8 +9,13 @@
 - Vite + React + TypeScript
 - MIDI 在浏览器本地解析，不上传原文件
 - MusicXML / MXL 在浏览器本地解析
+- MP3 / WAV / OGG / FLAC 浏览器本地轻量转谱（Basic Pitch）
+- 音频三档识别预设：独奏 / 标准 / 完整混音
+- 音频弱音、碎音、同音片段与密集和弦清洗
+- RAW / CLEAN / SKYLINE / MELODY 四阶段对照试听
+- Smart Melody Path：基于声部连续性与动态规划的主旋律提取
+- Skyline 最高音 baseline 保留用于算法对照
 - MIDI Track / MusicXML 声部选择
-- 同时音符的主旋律提取（当前策略：最高音优先）
 - `-12 ~ +12` 半音移调与自动适配
 - 基于候选按法 + 动态规划的真人演奏优化
 - 三角洲口琴数字简谱 / 键位转换
@@ -27,8 +32,31 @@
 | MIDI `.mid/.midi` | 已支持 | 读取 Track、Tempo、拍号和 tick 时间 |
 | MusicXML `.musicxml/.xml` | 已支持 | 当前支持 `score-partwise` |
 | MXL `.mxl` | 已支持 | 浏览器内解压并读取 MusicXML 主文件 |
+| MP3 / WAV / OGG / FLAC | Beta | Basic Pitch 本地转录；完整混音建议使用“完整混音”预设 |
 | ABC | 计划中 | 纯文本导入 |
 | 自定义简谱文本 | 计划中 | 面向快速手工录入 |
+
+## 音频实验链路
+
+```text
+Audio
+  ↓
+Basic Pitch
+  ↓
+RAW note candidates
+  ↓
+Weak / short / duplicate / density cleanup
+  ↓
+CLEAN polyphonic notes
+  ↓
+Smart Melody Path
+  ↓
+MELODY
+  ↓
+Harmonica optimizer
+```
+
+当前音频版仍未进行 BPM / beat tracking，谱面小节暂以 120 BPM 作为显示基准；音符的实际毫秒起止时间来自音频转录，不影响试听的相对节奏。
 
 ## 游戏映射假设
 
@@ -61,6 +89,7 @@ npm run build
 
 ```text
 src/
+  audio/       音频转谱、识别预设与候选音符清洗
   harmonica/   游戏映射与演奏优化
   import/      输入格式分发
   midi/        MIDI 解析
@@ -78,7 +107,9 @@ docs/          映射假设与路线图
 
 ## GitHub Pages
 
-仓库包含 `.github/workflows/pages.yml`。Pages 在仓库设置中切换为 **GitHub Actions** 后即可部署静态站点；当前工作流保持手动发布，待功能进入可预览阶段后再改为主分支自动部署。
+`main` 分支提交会通过 `.github/workflows/pages.yml` 自动构建并部署到 GitHub Pages：
+
+https://dr-hydra.github.io/Delta-Force-Harmonica/
 
 ## 说明
 
