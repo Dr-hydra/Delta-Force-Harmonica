@@ -28,23 +28,32 @@ export async function parseMidiFile(file: File): Promise<ParsedSong> {
     throw new Error("这个 MIDI 中没有可读取的音符轨道。");
   }
 
-  const tempos: TempoEvent[] = midi.header.tempos.length > 0
-    ? midi.header.tempos.map((tempo) => ({
-        beat: tempo.ticks / ppq,
-        time: Math.round(tempo.time * 1000),
-        bpm: tempo.bpm
-      }))
-    : [{ beat: 0, time: 0, bpm: 120 }];
+  const rawTempos = midi.header.tempos
+    .map((tempo) => ({ beat: tempo.ticks / ppq, bpm: tempo.bpm }))
+    .sort((a, b) => a.beat - b.beat);
+  if (rawTempos.length === 0 || rawTempos[0].beat > 1e-6) {
+    rawTempos.unshift({ beat: 0, bpm: 120 });
+  }
 
-  const timeSignatures: TimeSignatureEvent[] = midi.header.timeSignatures.length > 0
-    ? midi.header.timeSignatures.map((signature) => ({
-        beat: signature.ticks / ppq,
-        numerator: signature.timeSignature[0],
-        denominator: signature.timeSignature[1]
-      }))
-    : [{ beat: 0, numerator: 4, denominator: 4 }];
+  const tempos: TempoEvent[] = [];
+  let tempoTime = 0;
+  for (let index = 0; index < rawTempos.length; index += 1) {
+    if (index > 0) {
+      const previous = rawTempos[index - 1];
+      tempoTime += (rawTempos[index].beat - previous.beat) * 60000 / previous.bpm;
+    }
+    tempos.push({ beat: rawTempos[index].beat, bpm: rawTempos[index].bpm, time: Math.round(tempoTime) });
+  }
 
-  if (timeSignatures[0].beat > 0) {
+  const timeSignatures: TimeSignatureEvent[] = midi.header.timeSignatures
+    .map((signature) => ({
+      beat: signature.ticks / ppq,
+      numerator: signature.timeSignature[0],
+      denominator: signature.timeSignature[1]
+    }))
+    .sort((a, b) => a.beat - b.beat);
+
+  if (timeSignatures.length === 0 || timeSignatures[0].beat > 1e-6) {
     timeSignatures.unshift({ beat: 0, numerator: 4, denominator: 4 });
   }
 

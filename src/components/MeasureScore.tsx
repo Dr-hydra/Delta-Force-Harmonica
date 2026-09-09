@@ -120,9 +120,9 @@ export function MeasureScore({
                   );
                 })}
               </div>
-              <footer>
+              <div className="measure-beats">
                 {Array.from({ length: measure.numerator }, (_, index) => <span key={index}>{index + 1}</span>)}
-              </footer>
+              </div>
             </article>
           );
         })}

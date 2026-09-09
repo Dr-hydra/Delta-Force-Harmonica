@@ -30,8 +30,8 @@
 .rest-block { position: absolute; top: 45px; height: 24px; min-width: 14px; display: flex; align-items: center; justify-content: center; gap: 4px; color: var(--muted); border-top: 1px dashed color-mix(in srgb, var(--muted), transparent 35%); z-index: 1; overflow: hidden; pointer-events: none; }
 .rest-block b { font: 900 14px Consolas, monospace; }
 .rest-block small { font: 8px Consolas, monospace; }
-.measure-card > footer { grid-column: 2; margin: 0 16px 10px; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; color: var(--muted); font: 8px Consolas, monospace; }
-.measure-card > footer span { border-left: 1px solid var(--line); padding: 4px 0 0 5px; }
+.measure-beats { grid-column: 2; margin: 0 16px 10px; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; color: var(--muted); font: 8px Consolas, monospace; }
+.measure-beats span { border-left: 1px solid var(--line); padding: 4px 0 0 5px; }
 .score-view-tabs { display: flex; gap: 0; border: 1px solid var(--line); }
 .score-view-tabs button { min-height: 34px; padding: 0 12px; border: 0; border-right: 1px solid var(--line); background: var(--panel); color: var(--muted); cursor: pointer; font: 800 10px Consolas, monospace; }
 .score-view-tabs button:last-child { border-right: 0; }
