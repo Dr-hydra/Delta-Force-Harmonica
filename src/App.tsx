@@ -1,19 +1,37 @@
 import { useEffect, useMemo, useState } from "react";
-import { parseMidiFile } from "./midi/parseMidi";
+import { SCORE_FILE_ACCEPT, parseScoreFile } from "./import/parseScoreFile";
 import { extractHighestMelody } from "./music/monophonic";
 import { findBestTranspose, optimizeHarmonica } from "./harmonica/optimizer";
 import { MAPPING_ASSUMPTIONS } from "./harmonica/mapping";
 import { ScoreWorkspace } from "./components/ScoreWorkspace";
-import type { NoteEvent, ParsedSong } from "./music/types";
+import type { NoteEvent, ParsedSong, TimeSignatureEvent } from "./music/types";
 
+const DEMO_BPM = 143;
+const DEMO_SIGNATURES: TimeSignatureEvent[] = [{ beat: 0, numerator: 4, denominator: 4 }];
+const DEMO_MEASURE_STARTS = [0, 4, 8, 12];
 const demoNotes: NoteEvent[] = [60, 62, 64, 65, 67, 69, 71, 72, 71, 69, 67, 65, 64, 62, 60]
-  .map((pitch, index) => ({ pitch, start: index * 420, duration: 330, velocity: 0.8 }));
+  .map((pitch, index) => ({
+    pitch,
+    start: index * 420,
+    duration: 330,
+    beat: index,
+    durationBeats: 0.78,
+    velocity: 0.8
+  }));
 
 function formatDuration(ms: number) {
   const total = Math.max(0, Math.round(ms / 1000));
   const minutes = Math.floor(total / 60);
   const seconds = String(total % 60).padStart(2, "0");
   return `${minutes}:${seconds}`;
+}
+
+function sourceFormatLabel(song: ParsedSong | null, usingDemo: boolean) {
+  if (usingDemo) return "DEMO";
+  if (!song) return "LOCAL";
+  if (song.sourceFormat === "midi") return "MIDI";
+  if (song.sourceFormat === "mxl") return "MXL";
+  return "MUSICXML";
 }
 
 export default function App() {
@@ -44,21 +62,16 @@ export default function App() {
     : Math.round((conversion.notes.length / melodyNotes.length) * 100);
 
   async function loadFile(file: File) {
-    if (!/\.midi?$/i.test(file.name)) {
-      setError("当前 MVP 先支持 .mid / .midi。MusicXML、MXL 和 ABC 会在下一阶段加入。");
-      return;
-    }
-
     setBusy(true);
     setError("");
     try {
-      const parsed = await parseMidiFile(file);
+      const parsed = await parseScoreFile(file);
       setSong(parsed);
       setTrackId(parsed.tracks[0].id);
       setTranspose(0);
       setUsingDemo(false);
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "MIDI 解析失败。");
+      setError(reason instanceof Error ? reason.message : "乐谱解析失败。");
     } finally {
       setBusy(false);
     }
@@ -79,10 +92,13 @@ export default function App() {
   }
 
   const title = usingDemo ? "C 大调音阶 Demo" : song?.name ?? "尚未载入乐曲";
-  const bpm = usingDemo ? 143 : song?.bpm ?? 0;
+  const bpm = usingDemo ? DEMO_BPM : song?.bpm ?? 0;
   const duration = usingDemo
     ? demoNotes[demoNotes.length - 1].start + demoNotes[demoNotes.length - 1].duration
     : song?.duration ?? 0;
+  const timeSignatures = usingDemo ? DEMO_SIGNATURES : song?.timeSignatures ?? DEMO_SIGNATURES;
+  const measureStarts = usingDemo ? DEMO_MEASURE_STARTS : song?.measureStarts ?? [];
+  const formatLabel = sourceFormatLabel(song, usingDemo);
 
   return (
     <div className="app-shell">
@@ -99,7 +115,7 @@ export default function App() {
         </nav>
         <div className="rail-bottom">
           <b>α</b>
-          <span>ENGINE 0.2<br />PURE FRONTEND</span>
+          <span>ENGINE 0.3<br />PURE FRONTEND</span>
         </div>
       </aside>
 
@@ -112,8 +128,8 @@ export default function App() {
         <section className="hero panel">
           <div>
             <span className="eyebrow">DELTA FORCE / HARMONICA COMPILER</span>
-            <h1>把 MIDI 编译成<br /><mark>可演奏</mark>的口琴谱</h1>
-            <p>文件只在浏览器中解析。当前版本已经打通 MIDI → 主旋律 → 三角洲键位，并加入音高试听与实时按键预览。</p>
+            <h1>把乐谱编译成<br /><mark>可演奏</mark>的口琴谱</h1>
+            <p>文件只在浏览器中解析。现在支持 MIDI、MusicXML 与 MXL，并按拍号生成小节谱，试听指针会跟随正式谱面。</p>
           </div>
           <div className="hero-code" aria-hidden="true">
             <b>1</b><b>2</b><b>3</b><b>4</b><b>5</b><b>6</b><b>7</b><b>1̇</b>
@@ -125,18 +141,18 @@ export default function App() {
           <article className="panel upload-panel">
             <div className="section-heading">
               <div><span className="eyebrow">01 / SOURCE</span><h2>导入乐曲</h2></div>
-              <span className="data-note">MIDI · LOCAL</span>
+              <span className="data-note">MIDI · XML · MXL</span>
             </div>
             <label className={`drop-zone ${busy ? "busy" : ""}`}>
-              <input type="file" accept=".mid,.midi,audio/midi,audio/x-midi" disabled={busy} onChange={(event) => {
+              <input type="file" accept={SCORE_FILE_ACCEPT} disabled={busy} onChange={(event) => {
                 const file = event.currentTarget.files?.[0];
                 if (file) void loadFile(file);
                 event.currentTarget.value = "";
               }} />
-              <strong>{busy ? "正在解析…" : "拖入 MIDI，或点击选择文件"}</strong>
-              <span>原始文件不会上传 · 支持 .mid / .midi</span>
+              <strong>{busy ? "正在解析…" : "拖入乐谱，或点击选择文件"}</strong>
+              <span>原始文件不会上传 · .mid / .midi / .musicxml / .xml / .mxl</span>
             </label>
-            <button className="text-action" onClick={loadDemo}>没有 MIDI？载入音阶 Demo →</button>
+            <button className="text-action" onClick={loadDemo}>没有乐谱？载入音阶 Demo →</button>
             {error && <p className="error-note">{error}</p>}
           </article>
 
@@ -147,16 +163,16 @@ export default function App() {
             </div>
 
             <label className="field">
-              <span>轨道</span>
+              <span>轨道 / 声部</span>
               <select disabled={!song || usingDemo} value={selectedTrack?.id ?? ""} onChange={(event) => setTrackId(event.target.value)}>
                 {usingDemo && <option>Demo Melody</option>}
-                {!song && !usingDemo && <option>等待 MIDI</option>}
+                {!song && !usingDemo && <option>等待乐谱</option>}
                 {song?.tracks.map((track) => <option value={track.id} key={track.id}>{track.name} · {track.instrument} · {track.notes.length} notes</option>)}
               </select>
             </label>
 
             <label className="switch-row">
-              <span><b>主旋律提取</b><small>同一时刻多个音时保留最高音</small></span>
+              <span><b>主旋律提取</b><small>同一时刻多个音时保留最高音，并缩短重叠音符</small></span>
               <input type="checkbox" checked={melodyOnly} onChange={(event) => setMelodyOnly(event.target.checked)} />
             </label>
 
@@ -172,9 +188,9 @@ export default function App() {
 
         <section className="song-head panel">
           <div>
-            <span className="eyebrow">CURRENT SCORE</span>
+            <span className="eyebrow">CURRENT SCORE <span className="source-format-tag">{formatLabel}</span></span>
             <h2>{title}</h2>
-            <p>{selectedTrack && !usingDemo ? `${selectedTrack.name} / ${selectedTrack.instrument}` : usingDemo ? "INTERNAL DEMONSTRATION" : "导入 MIDI 后开始转换"}</p>
+            <p>{selectedTrack && !usingDemo ? `${selectedTrack.name} / ${selectedTrack.instrument}` : usingDemo ? "INTERNAL DEMONSTRATION" : "导入乐谱后开始转换"}</p>
           </div>
           <div className="song-state"><strong>{playableRate}%</strong><span>PLAYABLE</span></div>
         </section>
@@ -186,7 +202,13 @@ export default function App() {
           <article className="metric-primary"><span>MOD CHANGES</span><strong>{conversion.notes.length ? conversion.modifierChanges : "—"}</strong><small>半音 / 八度状态切换</small></article>
         </section>
 
-        <ScoreWorkspace notes={conversion.notes} unplayableCount={conversion.unplayable.length} />
+        <ScoreWorkspace
+          notes={conversion.notes}
+          unplayableCount={conversion.unplayable.length}
+          timeSignatures={timeSignatures}
+          measureStarts={measureStarts}
+          bpm={bpm || 120}
+        />
 
         <section className="assumption-strip">
           {MAPPING_ASSUMPTIONS.map((item, index) => (

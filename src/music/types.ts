@@ -2,9 +2,25 @@ export interface NoteEvent {
   pitch: number;
   start: number;
   duration: number;
+  beat?: number;
+  durationBeats?: number;
   velocity?: number;
   name?: string;
 }
+
+export interface TempoEvent {
+  beat: number;
+  time: number;
+  bpm: number;
+}
+
+export interface TimeSignatureEvent {
+  beat: number;
+  numerator: number;
+  denominator: number;
+}
+
+export type SourceFormat = "midi" | "musicxml" | "mxl";
 
 export interface SongTrack {
   id: string;
@@ -19,6 +35,10 @@ export interface ParsedSong {
   bpm: number;
   duration: number;
   ppq: number;
+  sourceFormat: SourceFormat;
+  tempos: TempoEvent[];
+  timeSignatures: TimeSignatureEvent[];
+  measureStarts: number[];
   tracks: SongTrack[];
 }
 

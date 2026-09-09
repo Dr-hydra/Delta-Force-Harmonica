@@ -26,6 +26,9 @@ export function extractHighestMelody(notes: NoteEvent[]): NoteEvent[] {
     const previous = picked[picked.length - 1];
     if (previous && previous.start + previous.duration > current.start) {
       previous.duration = Math.max(1, current.start - previous.start);
+      if (previous.beat !== undefined && current.beat !== undefined) {
+        previous.durationBeats = Math.max(1 / 96, current.beat - previous.beat);
+      }
     }
 
     picked.push(current);

@@ -1,9 +1,10 @@
 import { Midi } from "@tonejs/midi";
-import type { ParsedSong, SongTrack } from "../music/types";
+import type { ParsedSong, SongTrack, TempoEvent, TimeSignatureEvent } from "../music/types";
 
 export async function parseMidiFile(file: File): Promise<ParsedSong> {
   const data = await file.arrayBuffer();
   const midi = new Midi(data);
+  const ppq = midi.header.ppq;
 
   const tracks: SongTrack[] = midi.tracks
     .map((track, index) => ({
@@ -15,6 +16,8 @@ export async function parseMidiFile(file: File): Promise<ParsedSong> {
         pitch: note.midi,
         start: Math.round(note.time * 1000),
         duration: Math.max(1, Math.round(note.duration * 1000)),
+        beat: note.ticks / ppq,
+        durationBeats: note.durationTicks / ppq,
         velocity: note.velocity,
         name: note.name
       }))
@@ -25,13 +28,35 @@ export async function parseMidiFile(file: File): Promise<ParsedSong> {
     throw new Error("这个 MIDI 中没有可读取的音符轨道。");
   }
 
-  const firstTempo = midi.header.tempos[0]?.bpm;
+  const tempos: TempoEvent[] = midi.header.tempos.length > 0
+    ? midi.header.tempos.map((tempo) => ({
+        beat: tempo.ticks / ppq,
+        time: Math.round(tempo.time * 1000),
+        bpm: tempo.bpm
+      }))
+    : [{ beat: 0, time: 0, bpm: 120 }];
+
+  const timeSignatures: TimeSignatureEvent[] = midi.header.timeSignatures.length > 0
+    ? midi.header.timeSignatures.map((signature) => ({
+        beat: signature.ticks / ppq,
+        numerator: signature.timeSignature[0],
+        denominator: signature.timeSignature[1]
+      }))
+    : [{ beat: 0, numerator: 4, denominator: 4 }];
+
+  if (timeSignatures[0].beat > 0) {
+    timeSignatures.unshift({ beat: 0, numerator: 4, denominator: 4 });
+  }
 
   return {
     name: file.name.replace(/\.midi?$/i, ""),
-    bpm: Math.round(firstTempo || 120),
+    bpm: Math.round(tempos[0]?.bpm || 120),
     duration: Math.round(midi.duration * 1000),
-    ppq: midi.header.ppq,
+    ppq,
+    sourceFormat: "midi",
+    tempos,
+    timeSignatures,
+    measureStarts: [],
     tracks
   };
 }

@@ -14,14 +14,16 @@
 
 ## M1 — Score workflow
 
-- [ ] 完整谱面分页与小节布局
-- [ ] 节拍 / 拍号 / Tempo Map
-- [ ] MusicXML / MXL 导入
+- [x] 小节布局与分页
+- [x] 节拍 / 拍号基础结构
+- [x] MIDI Tempo Map / tick beat 数据
+- [x] MusicXML / MXL 导入
+- [ ] MusicXML 连音线、反复记号与更完整 Tempo 语义
 - [ ] ABC 导入
 - [ ] 自定义简谱文本导入
 - [ ] 多种和弦降维策略
 - [ ] 原版 / 简单 / 极简三档人工演奏优化
-- [ ] MIDI / 浏览器合成试听
+- [x] MIDI / 浏览器合成试听
 
 ## M2 — Persistence
 
@@ -33,11 +35,18 @@
 
 ## M3 — Practice
 
-- [ ] 滚动练习模式
-- [ ] 当前键位高亮
-- [ ] 变速练习
+- [x] 当前键位高亮
+- [x] 变速试听
+- [ ] 独立滚动练习模式
 - [ ] 循环区间
 - [ ] 难度指标（NPS、半音切换、八度切换、键位跨度）
+
+## Deployment
+
+- [x] CI：类型检查、测试、生产构建
+- [x] GitHub Pages 部署工作流
+- [ ] 仓库 Pages 设置切换为 GitHub Actions
+- [ ] 主分支稳定后开启自动发布
 
 ## Later / Separate review
 

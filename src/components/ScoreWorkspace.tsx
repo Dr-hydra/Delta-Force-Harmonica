@@ -1,8 +1,12 @@
+import { useMemo, useState } from "react";
 import { displayOctave, midiName } from "../harmonica/mapping";
 import { useScorePreview } from "../player/useScorePreview";
-import type { GameNote, HarmonicaKey } from "../music/types";
+import { buildScoreMeasures } from "../score/measures";
+import type { GameNote, HarmonicaKey, TimeSignatureEvent } from "../music/types";
+import { MeasureScore } from "./MeasureScore";
 import { NoteTile } from "./NoteTile";
 import "../preview.css";
+import "../score.css";
 
 const KEY_ORDER: HarmonicaKey[] = ["Z", "X", "C", "V", "B", "N", "M", ","];
 
@@ -22,13 +26,24 @@ function jianpuLabel(note: GameNote) {
 
 export function ScoreWorkspace({
   notes,
-  unplayableCount
+  unplayableCount,
+  timeSignatures,
+  measureStarts,
+  bpm
 }: {
   notes: GameNote[];
   unplayableCount: number;
+  timeSignatures: TimeSignatureEvent[];
+  measureStarts: number[];
+  bpm: number;
 }) {
   const preview = useScorePreview(notes);
   const current = preview.currentNote;
+  const [view, setView] = useState<"measures" | "tiles">("measures");
+  const measures = useMemo(
+    () => buildScoreMeasures(notes, timeSignatures, bpm, measureStarts),
+    [notes, timeSignatures, bpm, measureStarts]
+  );
   const visibleNotes = notes.slice(0, 240);
 
   return (
@@ -112,28 +127,45 @@ export function ScoreWorkspace({
 
       <section className="panel score-panel">
         <div className="section-heading score-heading">
-          <div><span className="eyebrow">04 / SCORE</span><h2>键位乐谱预览</h2></div>
-          <span className="data-note">{notes.length} PLAYABLE / {unplayableCount} OUT OF RANGE</span>
+          <div><span className="eyebrow">04 / SCORE</span><h2>正式谱面</h2></div>
+          <div className="score-view-tabs" aria-label="谱面显示模式">
+            <button className={view === "measures" ? "active" : ""} onClick={() => setView("measures")}>小节谱</button>
+            <button className={view === "tiles" ? "active" : ""} onClick={() => setView("tiles")}>键位流</button>
+          </div>
         </div>
 
         {notes.length > 0 ? (
-          <div className="score-grid">
-            {visibleNotes.map((note, index) => (
-              <NoteTile
-                note={note}
-                active={index === preview.activeIndex}
-                onSelect={() => preview.seek(note.start)}
-                key={`${note.start}-${note.pitch}-${index}`}
-              />
-            ))}
-          </div>
+          view === "measures" ? (
+            <MeasureScore
+              measures={measures}
+              activeIndex={preview.activeIndex}
+              onSelect={(index) => preview.seek(notes[index]?.start ?? 0)}
+            />
+          ) : (
+            <div className="legacy-score">
+              <div className="score-grid">
+                {visibleNotes.map((note, index) => (
+                  <NoteTile
+                    note={note}
+                    active={index === preview.activeIndex}
+                    onSelect={() => preview.seek(note.start)}
+                    key={`${note.start}-${note.pitch}-${index}`}
+                  />
+                ))}
+              </div>
+              {notes.length > 240 && <p className="preview-limit">键位流只展示前 240 个音符；小节谱与试听使用完整转换结果。</p>}
+            </div>
+          )
         ) : (
           <div className="empty-score">
             <strong>NO SCORE LOADED</strong>
-            <span>导入 MIDI，或者先用 Demo 查看当前映射效果。</span>
+            <span>导入 MIDI / MusicXML / MXL，或者先用 Demo 查看当前映射效果。</span>
           </div>
         )}
-        {notes.length > 240 && <p className="preview-limit">当前页面只展示前 240 个音符；试听仍会播放完整转换结果。点击任意可见音符可以跳转到对应时间。</p>}
+
+        {notes.length > 0 && (
+          <p className="preview-limit">{notes.length} PLAYABLE / {unplayableCount} OUT OF RANGE · {measures.length} MEASURES</p>
+        )}
       </section>
     </>
   );

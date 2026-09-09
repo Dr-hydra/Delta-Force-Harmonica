@@ -1,7 +1,7 @@
 {
   "name": "delta-force-harmonica",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.3.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@tonejs/midi": "^2.0.28",
+    "fflate": "^0.8.2",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
