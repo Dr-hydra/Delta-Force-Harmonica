@@ -1,7 +1,7 @@
 {
   "name": "delta-force-harmonica",
   "private": true,
-  "version": "0.4.0",
+  "version": "0.5.0",
   "type": "module",
   "scripts": {
     "postinstall": "node scripts/copy-basic-pitch-model.mjs",
