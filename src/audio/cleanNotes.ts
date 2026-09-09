@@ -100,7 +100,8 @@ export function cleanAudioNotes(
   const inRange = finite.filter((note) => note.pitch >= config.minMidi && note.pitch <= config.maxMidi);
   const longEnough = inRange.filter((note) => note.duration >= config.minDurationMs);
   const amplitudes = longEnough.map((note) => note.velocity ?? 0.65);
-  const amplitudeFloor = Math.max(config.minAmplitude, quantile(amplitudes, config.amplitudeQuantile));
+  const quantileFloor = quantile(amplitudes, config.amplitudeQuantile);
+  const amplitudeFloor = Math.max(config.minAmplitude, quantileFloor - 1e-6);
   const strongEnough = longEnough.filter((note) => (note.velocity ?? 0.65) >= amplitudeFloor);
   const merged = mergeFragments(strongEnough, config.mergeGapMs);
   const densityLimited = limitChordDensity(merged, config.chordWindowMs, config.maxChordNotes);
