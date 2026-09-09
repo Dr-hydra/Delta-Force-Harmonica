@@ -21,6 +21,25 @@ export interface TimeSignatureEvent {
 }
 
 export type SourceFormat = "midi" | "musicxml" | "mxl" | "audio";
+export type AudioPresetId = "solo" | "balanced" | "mix";
+
+export interface AudioCleanStats {
+  rawCount: number;
+  cleanCount: number;
+  removedRange: number;
+  removedShort: number;
+  removedWeak: number;
+  mergedFragments: number;
+  removedDensity: number;
+  amplitudeFloor: number;
+}
+
+export interface AudioAnalysisInfo {
+  preset: AudioPresetId;
+  rawNotes: NoteEvent[];
+  cleanedNotes: NoteEvent[];
+  stats: AudioCleanStats;
+}
 
 export interface SongTrack {
   id: string;
@@ -40,6 +59,7 @@ export interface ParsedSong {
   timeSignatures: TimeSignatureEvent[];
   measureStarts: number[];
   tracks: SongTrack[];
+  audioAnalysis?: AudioAnalysisInfo;
 }
 
 export type HarmonicaKey = "Z" | "X" | "C" | "V" | "B" | "N" | "M" | ",";
