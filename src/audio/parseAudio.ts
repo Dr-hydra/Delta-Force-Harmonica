@@ -1,4 +1,10 @@
 import type { NoteEvent, ParsedSong } from "../music/types";
+import { cleanAudioNotes } from "./cleanNotes";
+import {
+  AUDIO_PRESETS,
+  midiToFrequency,
+  type AudioTranscriptionPreset
+} from "./presets";
 
 const MODEL_SAMPLE_RATE = 22050;
 const FALLBACK_BPM = 120;
@@ -60,12 +66,14 @@ function toNoteEvents(notes: Array<{
 
 export async function parseAudioFile(
   file: File,
-  onProgress?: AudioParseProgressCallback
+  onProgress?: AudioParseProgressCallback,
+  preset: AudioTranscriptionPreset = "balanced"
 ): Promise<ParsedSong> {
   if (file.size > MAX_AUDIO_BYTES) {
     throw new Error("音频实验版暂限制单文件 40 MB，建议先截取较短片段测试。");
   }
 
+  const config = AUDIO_PRESETS[preset];
   report(onProgress, "正在解码音频", 0.03);
   const decoded = await decodeAudio(file);
   if (decoded.duration > MAX_AUDIO_SECONDS) {
@@ -75,7 +83,7 @@ export async function parseAudioFile(
   report(onProgress, "正在转换为 22.05 kHz 单声道", 0.1);
   const prepared = await resampleToMono(decoded);
 
-  report(onProgress, "正在加载轻量音高模型", 0.16);
+  report(onProgress, `正在加载轻量音高模型 · ${config.label}`, 0.16);
   const {
     BasicPitch,
     addPitchBendsToNoteEvents,
@@ -95,20 +103,33 @@ export async function parseAudioFile(
       onsets.push(...onsetChunk);
       contours.push(...contourChunk);
     },
-    (percent) => report(onProgress, "AI 正在识别音符", 0.18 + percent * 0.72)
+    (percent) => report(onProgress, "AI 正在识别音符", 0.18 + percent * 0.7)
   );
 
-  report(onProgress, "正在整理音符事件", 0.93);
+  report(onProgress, "正在解码音符候选", 0.9);
   const detected = noteFramesToTime(
     addPitchBendsToNoteEvents(
       contours,
-      outputToNotesPoly(frames, onsets, 0.25, 0.25, 5)
+      outputToNotesPoly(
+        frames,
+        onsets,
+        config.onsetThreshold,
+        config.frameThreshold,
+        config.minNoteFrames,
+        config.inferOnsets,
+        midiToFrequency(config.maxMidi),
+        midiToFrequency(config.minMidi),
+        true,
+        11
+      )
     )
   );
-  const notes = toNoteEvents(detected);
+  const rawNotes = toNoteEvents(detected);
 
-  if (notes.length === 0) {
-    throw new Error("没有识别到稳定音符。可以换一个更清晰的独奏、清唱或提高音量后再试。");
+  report(onProgress, "正在过滤弱音、碎音与密集和弦", 0.95);
+  const cleaned = cleanAudioNotes(rawNotes, preset);
+  if (cleaned.notes.length === 0) {
+    throw new Error("过滤后没有留下稳定音符。可以改用“独奏 / 清唱”预设，或换一个更清晰的片段再试。");
   }
 
   report(onProgress, "音频转录完成", 1);
@@ -125,10 +146,16 @@ export async function parseAudioFile(
     measureStarts: [],
     tracks: [{
       id: "audio-basic-pitch",
-      name: "Audio Transcription",
+      name: "Audio Clean",
       channel: 0,
-      instrument: "Basic Pitch · mixed audio",
-      notes
-    }]
+      instrument: `Basic Pitch · ${config.label}`,
+      notes: cleaned.notes
+    }],
+    audioAnalysis: {
+      preset,
+      rawNotes,
+      cleanedNotes: cleaned.notes,
+      stats: cleaned.stats
+    }
   };
 }
