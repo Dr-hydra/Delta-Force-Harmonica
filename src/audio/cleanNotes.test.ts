@@ -6,7 +6,7 @@ describe("cleanAudioNotes", () => {
   it("merges nearby fragments of the same pitch", () => {
     const notes: NoteEvent[] = [
       { pitch: 60, start: 0, duration: 120, velocity: 0.9 },
-      { pitch: 60, start: 150, duration: 120, velocity: 0.85 },
+      { pitch: 60, start: 150, duration: 120, velocity: 0.9 },
       { pitch: 67, start: 420, duration: 200, velocity: 0.9 }
     ];
 
