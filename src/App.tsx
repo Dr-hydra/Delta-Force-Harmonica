@@ -3,7 +3,7 @@ import { parseMidiFile } from "./midi/parseMidi";
 import { extractHighestMelody } from "./music/monophonic";
 import { findBestTranspose, optimizeHarmonica } from "./harmonica/optimizer";
 import { MAPPING_ASSUMPTIONS } from "./harmonica/mapping";
-import { NoteTile } from "./components/NoteTile";
+import { ScoreWorkspace } from "./components/ScoreWorkspace";
 import type { NoteEvent, ParsedSong } from "./music/types";
 
 const demoNotes: NoteEvent[] = [60, 62, 64, 65, 67, 69, 71, 72, 71, 69, 67, 65, 64, 62, 60]
@@ -99,7 +99,7 @@ export default function App() {
         </nav>
         <div className="rail-bottom">
           <b>α</b>
-          <span>ENGINE 0.1<br />PURE FRONTEND</span>
+          <span>ENGINE 0.2<br />PURE FRONTEND</span>
         </div>
       </aside>
 
@@ -113,7 +113,7 @@ export default function App() {
           <div>
             <span className="eyebrow">DELTA FORCE / HARMONICA COMPILER</span>
             <h1>把 MIDI 编译成<br /><mark>可演奏</mark>的口琴谱</h1>
-            <p>文件只在浏览器中解析。当前版本先完成 MIDI → 主旋律 → 三角洲键位的核心链路。</p>
+            <p>文件只在浏览器中解析。当前版本已经打通 MIDI → 主旋律 → 三角洲键位，并加入音高试听与实时按键预览。</p>
           </div>
           <div className="hero-code" aria-hidden="true">
             <b>1</b><b>2</b><b>3</b><b>4</b><b>5</b><b>6</b><b>7</b><b>1̇</b>
@@ -186,24 +186,7 @@ export default function App() {
           <article className="metric-primary"><span>MOD CHANGES</span><strong>{conversion.notes.length ? conversion.modifierChanges : "—"}</strong><small>半音 / 八度状态切换</small></article>
         </section>
 
-        <section className="panel score-panel">
-          <div className="section-heading score-heading">
-            <div><span className="eyebrow">03 / SCORE</span><h2>键位乐谱预览</h2></div>
-            <span className="data-note">{conversion.notes.length} PLAYABLE / {conversion.unplayable.length} OUT OF RANGE</span>
-          </div>
-
-          {conversion.notes.length > 0 ? (
-            <div className="score-grid">
-              {conversion.notes.slice(0, 240).map((note, index) => <NoteTile note={note} key={`${note.start}-${note.pitch}-${index}`} />)}
-            </div>
-          ) : (
-            <div className="empty-score">
-              <strong>NO SCORE LOADED</strong>
-              <span>导入 MIDI，或者先用 Demo 查看当前映射效果。</span>
-            </div>
-          )}
-          {conversion.notes.length > 240 && <p className="preview-limit">当前页面只预览前 240 个音符；完整分页谱面将在下一阶段实现。</p>}
-        </section>
+        <ScoreWorkspace notes={conversion.notes} unplayableCount={conversion.unplayable.length} />
 
         <section className="assumption-strip">
           {MAPPING_ASSUMPTIONS.map((item, index) => (
