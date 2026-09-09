@@ -1,9 +1,10 @@
 {
   "name": "delta-force-harmonica",
   "private": true,
-  "version": "0.3.0",
+  "version": "0.4.0",
   "type": "module",
   "scripts": {
+    "postinstall": "node scripts/copy-basic-pitch-model.mjs",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
@@ -11,6 +12,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@spotify/basic-pitch": "^1.0.1",
     "@tonejs/midi": "^2.0.28",
     "fflate": "^0.8.2",
     "react": "^19.1.1",

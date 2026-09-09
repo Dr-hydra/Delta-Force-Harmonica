@@ -1,0 +1,9 @@
+Delta Force Harmonica - Third-Party Notices
+
+Spotify Basic Pitch
+Copyright 2022 Spotify AB
+https://github.com/spotify/basic-pitch-ts
+Licensed under the Apache License, Version 2.0.
+A copy of the license is distributed at ./licenses/spotify-basic-pitch-LICENSE.txt.
+
+Basic Pitch is used only for local, in-browser audio transcription. Audio files are not uploaded by Delta Force Harmonica.

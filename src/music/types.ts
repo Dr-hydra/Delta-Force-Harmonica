@@ -20,7 +20,7 @@ export interface TimeSignatureEvent {
   denominator: number;
 }
 
-export type SourceFormat = "midi" | "musicxml" | "mxl";
+export type SourceFormat = "midi" | "musicxml" | "mxl" | "audio";
 
 export interface SongTrack {
   id: string;
