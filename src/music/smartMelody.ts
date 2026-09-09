@@ -10,6 +10,7 @@ const MAX_GROUP_CANDIDATES = 5;
 const MAX_PREDECESSORS = 140;
 const MAX_LINK_MS = 4500;
 const PHRASE_GAP_MS = 2600;
+const NOTE_INSERTION_COST = 1.6;
 
 function clamp01(value: number): number {
   return Math.max(0, Math.min(1, value));
@@ -111,7 +112,7 @@ function bestPathForSegment(segment: MelodyCandidate[]): NoteEvent[] {
       inspected += 1;
       const transition = transitionScore(segment[i].note, segment[j].note);
       if (!Number.isFinite(transition)) continue;
-      const candidateScore = dp[i] + segment[j].localScore + transition;
+      const candidateScore = dp[i] + segment[j].localScore - NOTE_INSERTION_COST + transition;
       if (candidateScore > dp[j]) {
         dp[j] = candidateScore;
         previous[j] = i;
@@ -164,7 +165,8 @@ function normalizeMonophonic(notes: NoteEvent[]): NoteEvent[] {
 /**
  * Heuristic melody extraction for browser use. It keeps several candidates per
  * onset group and searches for a globally coherent voice-leading path instead
- * of selecting the highest note independently at every chord.
+ * of selecting the highest note independently at every chord. A fixed insertion
+ * cost prevents dense short accompaniment from winning merely by having more notes.
  */
 export function extractSmartMelody(notes: NoteEvent[]): NoteEvent[] {
   if (notes.length <= 1) return notes.map((note) => ({ ...note }));
