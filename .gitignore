@@ -9,3 +9,9 @@ Thumbs.db
 .vscode/
 .idea/
 *.tsbuildinfo
+
+# CloudBase CLI local state and deployment config. cloudbaserc.json carries
+# SCORE_DATA_KEY and environment-specific routing, so keep it local.
+cloudbase/.tcb/
+cloudbase/cloudbaserc.json
+cloudbase/functions/*/node_modules/
