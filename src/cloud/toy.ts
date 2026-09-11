@@ -22,6 +22,7 @@ declare global {
 
 export const OWNER_KEY = "dfh_own";
 export const FAVORITES_KEY = "dfh_fav";
+export const MAX_FAVORITES = 50;
 
 function sdk(): ToySdk {
   if (!window.toy) throw new Error("当前环境未加载 Toy SDK，请在 B站 Toy 页面中使用此功能");
@@ -80,14 +81,14 @@ export async function loadFavoriteIds() {
   try {
     const parsed = JSON.parse(stored[FAVORITES_KEY] || "[]");
     if (!Array.isArray(parsed)) return [];
-    return parsed.map(String).filter((id) => /^[A-Za-z0-9_-]{6,32}$/.test(id)).slice(0, 100);
+    return parsed.map(String).filter((id) => /^[A-Za-z0-9_-]{6,32}$/.test(id)).slice(0, MAX_FAVORITES);
   } catch {
     return [];
   }
 }
 
 export async function saveFavoriteIds(ids: string[]) {
-  const unique = [...new Set(ids.filter((id) => /^[A-Za-z0-9_-]{6,32}$/.test(id)))].slice(0, 100);
+  const unique = [...new Set(ids.filter((id) => /^[A-Za-z0-9_-]{6,32}$/.test(id)))].slice(0, MAX_FAVORITES);
   const value = JSON.stringify(unique);
   if (new TextEncoder().encode(value).byteLength > 1024) throw new Error("收藏列表超过 Toy 云存储单 key 容量");
   await setCloudStorage({ [FAVORITES_KEY]: value });
@@ -97,8 +98,13 @@ export function scoreSharePath(shortId: string) {
   return `index.html?s=${encodeURIComponent(shortId)}`;
 }
 
+/** Absolute fallback link for browser copy. The Toy production slug is intentionally not hard-coded. */
 export function scoreShareUrl(shortId: string) {
-  return `https://www.bilibili.com/toy/delta-force-harmonica/${scoreSharePath(shortId)}`;
+  if (typeof window === "undefined") return scoreSharePath(shortId);
+  const url = new URL(window.location.href);
+  url.searchParams.set("s", shortId);
+  url.hash = "";
+  return url.toString();
 }
 
 export type ShareOutcome = "sheet" | "fallback";
