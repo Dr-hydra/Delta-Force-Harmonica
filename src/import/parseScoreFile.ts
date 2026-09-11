@@ -3,6 +3,7 @@ import { parseAudioFile } from "../audio/parseAudio";
 import type { AudioTranscriptionPreset } from "../audio/presets";
 import { parseMidiFile } from "../midi/parseMidi";
 import { parseMusicXmlFile } from "../musicxml/parseMusicXml";
+import { captureParsedSong } from "../persistence/currentScore";
 
 export interface ParseProgress {
   label: string;
@@ -28,10 +29,14 @@ export async function parseScoreFile(
   onProgress?: ParseProgressCallback,
   options: ParseScoreOptions = {}
 ): Promise<ParsedSong> {
-  if (/\.midi?$/i.test(file.name)) return parseMidiFile(file);
-  if (/\.(musicxml|xml|mxl)$/i.test(file.name)) return parseMusicXmlFile(file);
-  if (/\.(mp3|wav|ogg|flac)$/i.test(file.name) || /^audio\//i.test(file.type)) {
-    return parseAudioFile(file, onProgress, options.audioPreset ?? "balanced");
+  let parsed: ParsedSong;
+  if (/\.midi?$/i.test(file.name)) parsed = await parseMidiFile(file);
+  else if (/\.(musicxml|xml|mxl)$/i.test(file.name)) parsed = await parseMusicXmlFile(file);
+  else if (/\.(mp3|wav|ogg|flac)$/i.test(file.name) || /^audio\//i.test(file.type)) {
+    parsed = await parseAudioFile(file, onProgress, options.audioPreset ?? "balanced");
+  } else {
+    throw new Error("当前支持 MIDI、MusicXML、MXL，以及纯伴奏 / 器乐的 MP3 / WAV / OGG / FLAC 音频转谱。");
   }
-  throw new Error("当前支持 MIDI、MusicXML、MXL，以及纯伴奏 / 器乐的 MP3 / WAV / OGG / FLAC 音频转谱。");
+  captureParsedSong(parsed);
+  return parsed;
 }
