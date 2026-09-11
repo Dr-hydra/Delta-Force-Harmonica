@@ -1,0 +1,155 @@
+.converter-cloud-trigger {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 60;
+  min-width: 126px;
+  padding: 11px 15px;
+  border: 1px solid #172023;
+  background: var(--accent);
+  color: #172023;
+  box-shadow: 4px 4px 0 #172023;
+  cursor: pointer;
+  font: 900 12px/1.1 Consolas, monospace;
+  letter-spacing: .12em;
+  text-align: left;
+}
+
+.converter-cloud-trigger span {
+  display: block;
+  margin-top: 5px;
+  font: 700 10px/1.1 Inter, "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  letter-spacing: 0;
+}
+
+.converter-cloud-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: end;
+  background: rgba(0, 0, 0, .38);
+  backdrop-filter: blur(4px);
+}
+
+.converter-cloud-panel {
+  width: min(560px, calc(100vw - 24px));
+  max-height: min(760px, calc(100vh - 24px));
+  margin: 12px;
+  overflow: auto;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-top: 6px solid var(--accent);
+  background: var(--panel);
+  color: var(--ink);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, .24);
+}
+
+.converter-cloud-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.converter-cloud-head h2 {
+  margin: 5px 0 0;
+  font-size: 27px;
+  letter-spacing: -.04em;
+}
+
+.converter-cloud-close {
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.converter-cloud-note,
+.converter-cloud-status,
+.converter-cloud-message {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.65;
+}
+
+.converter-cloud-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.converter-cloud-fields input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background: var(--panel);
+  color: var(--ink);
+}
+
+.converter-cloud-fields input:focus,
+.converter-cloud-fields select:focus {
+  outline: 2px solid color-mix(in srgb, var(--accent), transparent 55%);
+  outline-offset: 0;
+}
+
+.converter-cloud-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.converter-cloud-link {
+  display: inline-grid;
+  place-items: center;
+  text-decoration: none;
+}
+
+.converter-cloud-status {
+  padding: 10px 12px;
+  border-left: 3px solid var(--line);
+  background: var(--panel-2);
+}
+
+.converter-cloud-message {
+  padding: 10px 12px;
+  border-left: 3px solid var(--accent);
+  background: color-mix(in srgb, var(--accent), transparent 91%);
+  color: var(--ink);
+}
+
+@media (max-width: 900px) {
+  .converter-cloud-trigger {
+    right: 12px;
+    bottom: 74px;
+  }
+}
+
+@media (max-width: 640px) {
+  .converter-cloud-backdrop { place-items: end stretch; }
+  .converter-cloud-panel {
+    width: auto;
+    max-height: 86vh;
+    margin: 0;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 0;
+    padding: 20px 16px calc(20px + env(safe-area-inset-bottom));
+  }
+  .converter-cloud-fields { grid-template-columns: 1fr; }
+  .converter-cloud-actions { display: grid; grid-template-columns: 1fr; }
+  .converter-cloud-trigger {
+    min-width: 112px;
+    right: 10px;
+    bottom: calc(68px + env(safe-area-inset-bottom));
+  }
+}

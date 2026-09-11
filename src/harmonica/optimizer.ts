@@ -1,5 +1,6 @@
 import { candidatesForPitch } from "./mapping";
 import type { ConversionResult, GameNote, HarmonicaCandidate, NoteEvent } from "../music/types";
+import { captureOptimization } from "../persistence/currentScore";
 
 interface State {
   candidate: HarmonicaCandidate;
@@ -18,7 +19,7 @@ function transitionCost(a: HarmonicaCandidate, b: HarmonicaCandidate): number {
   return cost;
 }
 
-export function optimizeHarmonica(notes: NoteEvent[], transpose = 0): ConversionResult {
+function optimizeHarmonicaCore(notes: NoteEvent[], transpose = 0): ConversionResult {
   const playable: Array<{ note: NoteEvent; candidates: HarmonicaCandidate[]; sourceIndex: number }> = [];
   const unplayable: NoteEvent[] = [];
 
@@ -90,11 +91,19 @@ export function optimizeHarmonica(notes: NoteEvent[], transpose = 0): Conversion
   return { notes: gameNotes, unplayable, cost: minCost, modifierChanges };
 }
 
+export function optimizeHarmonica(notes: NoteEvent[], transpose = 0): ConversionResult {
+  const result = optimizeHarmonicaCore(notes, transpose);
+  // Keep the converter's authoritative pre-fingering score available to the
+  // cloud toolbar without coupling App.tsx to Toy/CloudBase modules.
+  captureOptimization(notes, transpose);
+  return result;
+}
+
 export function findBestTranspose(notes: NoteEvent[]): { transpose: number; result: ConversionResult } {
-  let best = { transpose: 0, result: optimizeHarmonica(notes, 0), score: Number.POSITIVE_INFINITY };
+  let best = { transpose: 0, result: optimizeHarmonicaCore(notes, 0), score: Number.POSITIVE_INFINITY };
 
   for (let transpose = -12; transpose <= 12; transpose += 1) {
-    const result = optimizeHarmonica(notes, transpose);
+    const result = optimizeHarmonicaCore(notes, transpose);
     const score = result.unplayable.length * 10000 + result.cost + Math.abs(transpose) * 0.08;
     if (score < best.score) best = { transpose, result, score };
   }
