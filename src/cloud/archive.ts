@@ -97,6 +97,21 @@ export function splitCloudPayload(value: string, size = CLOUD_PART_CHARS) {
   return result;
 }
 
+/**
+ * Atomic replacement temporarily keeps the previous revision while all new
+ * parts are written and verified. Count that peak, not only the final layout,
+ * otherwise a save can pass preflight and then hit Toy's 128-key ceiling.
+ */
+export function estimateCloudPeakKeyCount(
+  currentRecords: CloudScoreMeta[],
+  currentPages: number,
+  nextPages: number,
+  newParts: number
+) {
+  const currentScoreParts = currentRecords.reduce((sum, item) => sum + item.parts, 0);
+  return CLOUD_RESERVED_KEYS + 1 + Math.max(currentPages, nextPages) + currentScoreParts + newParts;
+}
+
 /** Packs variable-length metadata pages while keeping every Toy value comfortably under 1024 bytes. */
 export function packCloudIndexPages(records: CloudScoreMeta[]) {
   const pages: string[] = [];
@@ -221,9 +236,11 @@ export async function saveCloudScore(args: SaveCloudScoreArgs): Promise<CloudSco
 
   const nextRecords = [...records.filter((item) => item.id !== id), meta];
   const nextPages = packCloudIndexPages(nextRecords).length;
-  const scoreKeysAfter = nextRecords.reduce((sum, item) => sum + item.parts, 0);
-  const totalKeys = CLOUD_RESERVED_KEYS + 1 + nextPages + scoreKeysAfter;
-  if (totalKeys > CLOUD_MAX_KEYS) throw new Error("Toy 云存档空间不足，请删除旧乐谱后重试");
+  const peakKeys = estimateCloudPeakKeyCount(records, head.p, nextPages, parts.length);
+  if (peakKeys > CLOUD_MAX_KEYS) {
+    const transient = previous ? "更新时需要同时保留上一版分片；" : "";
+    throw new Error(`Toy 云存档空间不足：${transient}本次写入峰值需要 ${peakKeys} 个 key，上限 ${CLOUD_MAX_KEYS}`);
+  }
 
   const writes: Record<string, string> = {};
   parts.forEach((part, index) => { writes[partKey(id, revision, index)] = part; });
