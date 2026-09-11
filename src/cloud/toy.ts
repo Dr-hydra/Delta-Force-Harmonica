@@ -102,9 +102,33 @@ export function scoreSharePath(shortId: string) {
 export function scoreShareUrl(shortId: string) {
   if (typeof window === "undefined") return scoreSharePath(shortId);
   const url = new URL(window.location.href);
+  url.searchParams.delete("view");
   url.searchParams.set("s", shortId);
   url.hash = "";
   return url.toString();
+}
+
+/** Toy runs in a cross-origin iframe where Clipboard API can be denied by Permission Policy. */
+export async function copyText(text: string) {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    // Fall through to execCommand, which still works during a user gesture in the Toy iframe.
+  }
+  try {
+    const field = document.createElement("textarea");
+    field.value = text;
+    field.setAttribute("readonly", "");
+    field.style.cssText = "position:fixed;top:0;left:0;opacity:0;pointer-events:none";
+    document.body.appendChild(field);
+    field.select();
+    const copied = document.execCommand("copy");
+    field.remove();
+    return copied;
+  } catch {
+    return false;
+  }
 }
 
 export type ShareOutcome = "sheet" | "fallback";
