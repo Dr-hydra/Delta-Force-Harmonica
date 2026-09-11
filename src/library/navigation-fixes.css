@@ -1,0 +1,34 @@
+.library-shell {
+  min-height: 100vh;
+  padding-left: 220px;
+}
+
+.app-shell .side-rail nav > button.nav-available {
+  color: #aeb7ba;
+}
+.app-shell .side-rail nav > button.nav-available:hover {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent), transparent 94%);
+}
+.app-shell .side-rail nav > button.nav-available em {
+  color: var(--accent);
+}
+
+@media (max-width: 760px) {
+  .library-shell {
+    padding-left: 0;
+    padding-bottom: 64px;
+  }
+
+  .library-rail nav a {
+    min-height: 64px;
+    padding: 6px;
+    justify-content: center;
+    flex-direction: column;
+    gap: 3px;
+    text-align: center;
+  }
+  .library-rail nav a::before { display: none; }
+  .library-rail nav a i { width: auto; }
+  .library-rail nav a span { font-size: 9px; }
+}
