@@ -1,4 +1,5 @@
 import type { NoteEvent, ParsedSong } from "../music/types";
+import { assignBeats, BEAT_SAMPLE_RATE, describeBeatFailure, detectBeatGrid, measureStarts } from "./beats";
 import { cleanAudioNotes } from "./cleanNotes";
 import {
   AUDIO_PRESETS,
@@ -31,11 +32,11 @@ async function decodeAudio(file: File): Promise<AudioBuffer> {
   }
 }
 
-async function resampleToMono(buffer: AudioBuffer): Promise<AudioBuffer> {
-  if (buffer.sampleRate === MODEL_SAMPLE_RATE && buffer.numberOfChannels === 1) return buffer;
+async function resampleToMono(buffer: AudioBuffer, sampleRate = MODEL_SAMPLE_RATE): Promise<AudioBuffer> {
+  if (buffer.sampleRate === sampleRate && buffer.numberOfChannels === 1) return buffer;
 
-  const frameCount = Math.max(1, Math.ceil(buffer.duration * MODEL_SAMPLE_RATE));
-  const offline = new OfflineAudioContext(1, frameCount, MODEL_SAMPLE_RATE);
+  const frameCount = Math.max(1, Math.ceil(buffer.duration * sampleRate));
+  const offline = new OfflineAudioContext(1, frameCount, sampleRate);
   const source = offline.createBufferSource();
   source.buffer = buffer;
   source.connect(offline.destination);
@@ -132,30 +133,39 @@ export async function parseAudioFile(
     throw new Error("过滤后没有留下稳定音符。可以改用“独奏 / 清唱”预设，或换一个更清晰的片段再试。");
   }
 
+  report(onProgress, "正在估算 BPM 与节拍位置", 0.97);
+  const forBeats = await resampleToMono(decoded, BEAT_SAMPLE_RATE);
+  const detection = detectBeatGrid(forBeats.getChannelData(0));
+  const grid = detection.ok ? detection.grid : null;
+
   report(onProgress, "音频转录完成", 1);
   const title = file.name.replace(/\.[^.]+$/, "") || "Audio transcription";
+  const bpm = grid ? grid.bpm : FALLBACK_BPM;
+  const notes = grid ? assignBeats(cleaned.notes, grid) : cleaned.notes;
 
   return {
     name: title,
-    bpm: FALLBACK_BPM,
+    bpm,
     duration: Math.round(decoded.duration * 1000),
     ppq: 480,
     sourceFormat: "audio",
-    tempos: [{ beat: 0, time: 0, bpm: FALLBACK_BPM }],
+    tempos: [{ beat: 0, time: 0, bpm }],
     timeSignatures: [{ beat: 0, numerator: 4, denominator: 4 }],
-    measureStarts: [],
+    measureStarts: grid ? measureStarts(grid, 4) : [],
     tracks: [{
       id: "audio-basic-pitch",
       name: "Audio Clean",
       channel: 0,
       instrument: `Basic Pitch · ${config.label}`,
-      notes: cleaned.notes
+      notes
     }],
     audioAnalysis: {
       preset,
-      rawNotes,
-      cleanedNotes: cleaned.notes,
-      stats: cleaned.stats
+      rawNotes: grid ? assignBeats(rawNotes, grid) : rawNotes,
+      cleanedNotes: notes,
+      stats: cleaned.stats,
+      beatGrid: grid ?? undefined,
+      beatFailure: detection.ok ? undefined : describeBeatFailure(detection)
     }
   };
 }

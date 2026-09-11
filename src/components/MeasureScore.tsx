@@ -31,10 +31,13 @@ function restSegments(measure: ScoreMeasure) {
 export function MeasureScore({
   measures,
   activeIndex,
+  selectedIndex,
   onSelect
 }: {
   measures: ScoreMeasure[];
   activeIndex: number;
+  /** Note being edited, highlighted separately from the playback cursor. */
+  selectedIndex?: number | null;
   onSelect: (index: number) => void;
 }) {
   const [page, setPage] = useState(0);
@@ -105,7 +108,7 @@ export function MeasureScore({
                   const width = Math.max(2.6, Math.min(100 - left, clippedDuration / measure.lengthBeats * 100));
                   return (
                     <button
-                      className={`measure-note ${item.index === activeIndex ? "active" : ""}`}
+                      className={`measure-note ${item.index === activeIndex ? "active" : ""} ${item.index === selectedIndex ? "editing" : ""}`}
                       style={{ left: `${left}%`, width: `${width}%` }}
                       onClick={() => onSelect(item.index)}
                       title={`${midiName(item.note.pitch)} · ${durationLabel(item.durationBeats)} · ${item.note.key}`}

@@ -9,6 +9,7 @@ function gameNote(beat: number, durationBeats = 1): GameNote {
     duration: durationBeats * 500,
     beat,
     durationBeats,
+    sourceIndex: 0,
     key: "Z",
     degree: 1,
     keyIndex: 0,

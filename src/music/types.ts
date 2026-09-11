@@ -21,7 +21,7 @@ export interface TimeSignatureEvent {
 }
 
 export type SourceFormat = "midi" | "musicxml" | "mxl" | "audio";
-export type AudioPresetId = "solo" | "balanced" | "mix";
+export type AudioPresetId = "solo" | "balanced" | "ensemble";
 
 export interface AudioCleanStats {
   rawCount: number;
@@ -34,11 +34,26 @@ export interface AudioCleanStats {
   amplitudeFloor: number;
 }
 
+export interface AudioBeatGrid {
+  bpm: number;
+  /** Beat times in seconds, extrapolated backwards so the first entry is <= 0. */
+  beats: number[];
+  medianInterval: number;
+  /** Beats the detector actually reported, before backward extrapolation. */
+  detectedCount: number;
+  /** Which entry of the retry ladder succeeded; 0 means the strict defaults did. */
+  attempt: number;
+}
+
 export interface AudioAnalysisInfo {
   preset: AudioPresetId;
   rawNotes: NoteEvent[];
   cleanedNotes: NoteEvent[];
   stats: AudioCleanStats;
+  /** Absent when beat tracking found nothing usable; the score then falls back to 120 BPM. */
+  beatGrid?: AudioBeatGrid;
+  /** Why beat tracking produced no grid, shown when beatGrid is absent. */
+  beatFailure?: string;
 }
 
 export interface SongTrack {
@@ -74,7 +89,10 @@ export interface HarmonicaCandidate {
   pitch: number;
 }
 
-export interface GameNote extends NoteEvent, HarmonicaCandidate {}
+export interface GameNote extends NoteEvent, HarmonicaCandidate {
+  /** Position of this note in the array handed to optimizeHarmonica. */
+  sourceIndex: number;
+}
 
 export interface ConversionResult {
   notes: GameNote[];

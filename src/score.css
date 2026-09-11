@@ -51,3 +51,5 @@
   .measure-card { grid-template-columns: 64px minmax(390px, 1fr); }
   .measure-card > header strong { font-size: 20px; }
 }
+
+.measure-note.editing { outline: 2px solid var(--ink); outline-offset: 1px; z-index: 7; }

@@ -17,11 +17,11 @@ describe("cleanAudioNotes", () => {
     expect(result.stats.mergedFragments).toBe(1);
   });
 
-  it("caps dense full-mix onset groups", () => {
+  it("caps dense ensemble onset groups", () => {
     const notes: NoteEvent[] = [60, 62, 64, 65, 67, 69, 71]
       .map((pitch) => ({ pitch, start: 1000, duration: 240, velocity: 0.9 }));
 
-    const result = cleanAudioNotes(notes, "mix");
+    const result = cleanAudioNotes(notes, "ensemble");
     expect(result.notes.length).toBeLessThanOrEqual(4);
     expect(result.stats.removedDensity).toBeGreaterThan(0);
   });

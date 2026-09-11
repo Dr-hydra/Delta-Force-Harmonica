@@ -19,15 +19,18 @@ function transitionCost(a: HarmonicaCandidate, b: HarmonicaCandidate): number {
 }
 
 export function optimizeHarmonica(notes: NoteEvent[], transpose = 0): ConversionResult {
-  const playable: Array<{ note: NoteEvent; candidates: HarmonicaCandidate[] }> = [];
+  const playable: Array<{ note: NoteEvent; candidates: HarmonicaCandidate[]; sourceIndex: number }> = [];
   const unplayable: NoteEvent[] = [];
 
-  for (const note of notes) {
+  // The source index travels with each note so callers can map a note in the
+  // rendered score back to the entry in the array they passed in; out-of-range
+  // notes are dropped, so positions do not line up otherwise.
+  notes.forEach((note, sourceIndex) => {
     const shifted = { ...note, pitch: note.pitch + transpose };
     const candidates = candidatesForPitch(shifted.pitch);
     if (candidates.length === 0) unplayable.push(shifted);
-    else playable.push({ note: shifted, candidates });
-  }
+    else playable.push({ note: shifted, candidates, sourceIndex });
+  });
 
   if (playable.length === 0) {
     return { notes: [], unplayable, cost: 0, modifierChanges: 0 };
@@ -76,7 +79,7 @@ export function optimizeHarmonica(notes: NoteEvent[], transpose = 0): Conversion
     index = state.previousIndex;
   }
 
-  const gameNotes: GameNote[] = playable.map((entry, i) => ({ ...entry.note, ...chosen[i] }));
+  const gameNotes: GameNote[] = playable.map((entry, i) => ({ ...entry.note, ...chosen[i], sourceIndex: entry.sourceIndex }));
   let modifierChanges = 0;
   for (let i = 1; i < gameNotes.length; i += 1) {
     if (gameNotes[i - 1].sharp !== gameNotes[i].sharp) modifierChanges += 1;

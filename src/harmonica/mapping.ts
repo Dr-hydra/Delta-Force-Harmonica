@@ -24,8 +24,8 @@ export const BASE_KEYS: readonly BaseKey[] = [
 
 export const MAPPING_ASSUMPTIONS = [
   "Z X C V B N M , 对应 1 2 3 4 5 6 7 高音1",
-  "升调 / 降调暂按 ±1 八度处理",
-  "半音按钮暂按升半音（#）处理",
+  "升调 = 鼠标右键，降调 = 鼠标左键，半音 = 鼠标中键",
+  "升调 / 降调暂按 ±1 八度处理，半音暂按升半音（#）处理",
   "暂定八度修饰与半音修饰可同时按住"
 ] as const;
 

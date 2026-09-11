@@ -1,5 +1,5 @@
 import type { NoteEvent } from "../music/types";
-import { AUDIO_PRESETS, type AudioTranscriptionPreset } from "./presets";
+import { AUDIO_PRESETS, type AudioPresetConfig, type AudioTranscriptionPreset } from "./presets";
 
 export interface AudioCleanStats {
   rawCount: number;
@@ -88,11 +88,12 @@ function limitChordDensity(notes: NoteEvent[], windowMs: number, maxNotes: numbe
   return result;
 }
 
+/** Accepts a preset id or an explicit config, so candidate values can be measured. */
 export function cleanAudioNotes(
   input: NoteEvent[],
-  preset: AudioTranscriptionPreset = "balanced"
+  preset: AudioTranscriptionPreset | AudioPresetConfig = "balanced"
 ): AudioCleanResult {
-  const config = AUDIO_PRESETS[preset];
+  const config = typeof preset === "string" ? AUDIO_PRESETS[preset] : preset;
   const finite = input
     .filter((note) => Number.isFinite(note.pitch) && Number.isFinite(note.start) && Number.isFinite(note.duration))
     .sort((a, b) => a.start - b.start || b.pitch - a.pitch);

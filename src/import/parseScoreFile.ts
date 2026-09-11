@@ -33,5 +33,5 @@ export async function parseScoreFile(
   if (/\.(mp3|wav|ogg|flac)$/i.test(file.name) || /^audio\//i.test(file.type)) {
     return parseAudioFile(file, onProgress, options.audioPreset ?? "balanced");
   }
-  throw new Error("当前支持 MIDI、MusicXML、MXL，以及实验性的 MP3 / WAV / OGG / FLAC 音频转谱。");
+  throw new Error("当前支持 MIDI、MusicXML、MXL，以及纯伴奏 / 器乐的 MP3 / WAV / OGG / FLAC 音频转谱。");
 }

@@ -8,3 +8,4 @@ public/basic-pitch/
 Thumbs.db
 .vscode/
 .idea/
+*.tsbuildinfo

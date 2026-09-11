@@ -7,3 +7,11 @@ Licensed under the Apache License, Version 2.0.
 A copy of the license is distributed at ./licenses/spotify-basic-pitch-LICENSE.txt.
 
 Basic Pitch is used only for local, in-browser audio transcription. Audio files are not uploaded by Delta Force Harmonica.
+
+music-tempo
+Copyright (c) 2017 killercrush
+https://github.com/killercrush/music-tempo
+Licensed under the MIT License.
+
+music-tempo implements the Beatroot beat tracking algorithm by Simon Dixon and is
+used to estimate BPM and beat positions for audio input, locally in the browser.

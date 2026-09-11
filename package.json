@@ -15,6 +15,7 @@
     "@spotify/basic-pitch": "^1.0.1",
     "@tonejs/midi": "^2.0.28",
     "fflate": "^0.8.2",
+    "music-tempo": "^1.0.3",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },

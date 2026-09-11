@@ -29,13 +29,17 @@ export function ScoreWorkspace({
   unplayableCount,
   timeSignatures,
   measureStarts,
-  bpm
+  bpm,
+  selectedIndex,
+  onNoteSelect
 }: {
   notes: GameNote[];
   unplayableCount: number;
   timeSignatures: TimeSignatureEvent[];
   measureStarts: number[];
   bpm: number;
+  selectedIndex?: number | null;
+  onNoteSelect?: (index: number) => void;
 }) {
   const preview = useScorePreview(notes);
   const current = preview.currentNote;
@@ -139,7 +143,11 @@ export function ScoreWorkspace({
             <MeasureScore
               measures={measures}
               activeIndex={preview.activeIndex}
-              onSelect={(index) => preview.seek(notes[index]?.start ?? 0)}
+              selectedIndex={selectedIndex}
+              onSelect={(index) => {
+                preview.seek(notes[index]?.start ?? 0);
+                onNoteSelect?.(index);
+              }}
             />
           ) : (
             <div className="legacy-score">
@@ -148,7 +156,10 @@ export function ScoreWorkspace({
                   <NoteTile
                     note={note}
                     active={index === preview.activeIndex}
-                    onSelect={() => preview.seek(note.start)}
+                    onSelect={() => {
+                      preview.seek(note.start);
+                      onNoteSelect?.(index);
+                    }}
                     key={`${note.start}-${note.pitch}-${index}`}
                   />
                 ))}
