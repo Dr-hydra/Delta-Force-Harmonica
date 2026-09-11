@@ -16,6 +16,8 @@ DFH 沿用 Better-Endfield 已实测跑通的 Toy + CloudBase 架构，不引入
 
 曲谱在浏览器内编码成 DFHS1 压缩字节，CloudBase 只搬运和验证已经压缩的 payload。
 
+转换器本身已经接入云端操作面板：当前编辑后的谱面可以直接保存到 Toy 私人云存档，或发布/更新到公开曲谱库。部署前没有 Toy SDK / CloudBase 地址时，相关按钮保持禁用，不影响纯本地转换功能。
+
 ## 为什么仍然使用 JSONP
 
 CloudBase 公共对象域名没有适合 Toy 页面的 CORS 响应。和 Better-Endfield 一样，公开对象写成：
@@ -48,6 +50,19 @@ Catalog 用 16 个 shard，而不是一个无限增大的总文件。每次发�
 第一次打开曲谱库时并发加载有数据的 shard，合并后在本地搜索。几千到数万条 metadata 都不需要
 数据库全文检索。
 
+## Toy 私人云存档
+
+私人谱面同样使用 DFHS1，但存进 Toy CloudStorage。Toy value 上限按 Better-Endfield 的实测约束处理：每片最多 960 个 base64url 字符，索引分页控制在 1024 bytes 以下。
+
+保存采用 revision 切换：
+
+1. 写入新 revision 的全部分片；
+2. 回读逐片校验；
+3. 提交索引，让索引从旧 revision 原子切到新 revision；
+4. 最后删除旧 revision。
+
+容量预检按这个过程中的**峰值 key 数**计算，而不是只看最终布局。更新一首谱时旧、新 revision 会短暂共存，因此接近 Toy 128-key 上限时会提前拒绝，不会写到一半才因 key 数超限失败。
+
 ## 一致性
 
 沿用 Better-Endfield 的两个实测约束：
@@ -56,12 +71,11 @@ Catalog 用 16 个 shard，而不是一个无限增大的总文件。每次发�
 2. 对象存储没有 CAS。每个 shard 与 index 都采用「写入 → 回源再读 → 验证自己的修改仍在」的方式，
    最多重试 3 次，把静默覆盖变成显式冲突。
 
-发布顺序是 `score/<id>.js` → catalog → owner list。这样 catalog 不会先出现一个指向不存在对象的链接；
-如果中途失败，最多留下一个不可发现的孤立 score 对象，后续可以用维护脚本清理。
+公开发布使用可恢复写入：单谱对象、catalog shard、owner 私有索引分别可验证；中途失败会尽量回滚当前投稿，使公开目录与“我的发布”不会因为一次半失败写入长期分叉。
 
 ## DFHS1
 
-`src/persistence/scoreCodec.ts` 是公开谱面的唯一持久化格式。它只保存权威数据：
+`src/persistence/scoreCodec.ts` 是公开谱面和 Toy 私人谱面的唯一持久化格式。它只保存权威数据：
 
 - PPQ
 - transpose
@@ -71,7 +85,7 @@ Catalog 用 16 个 shard，而不是一个无限增大的总文件。每次发�
 - `deltaStartTick + durationTick + MIDI pitch`
 
 `start/duration(ms)`、音名、velocity、口琴键位都不保存，打开时重新派生。整个二进制流用 `fflate`
-的 raw deflate 压缩，再 base64url 放进 JSONP/HTTP JSON。
+的 raw deflate 压缩，再 base64url 放进 JSONP/HTTP JSON/Toy CloudStorage。
 
 服务端会 inflate DFHS 头和音符流，自行得到 BPM、音符数、时长与 payload hash，不采信客户端 body
 里重复提交的统计字段。
