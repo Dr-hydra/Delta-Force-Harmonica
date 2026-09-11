@@ -21,14 +21,17 @@ import { ScoreWorkspace } from "./components/ScoreWorkspace";
 import {
   buildKeySequence,
   GAME_BINDING,
-  key as keyTarget,
-  mouse as mouseTarget,
-  targetId,
-  type InputBinding,
-  type InputTarget
+  type InputBinding
 } from "./export/keySequence";
-import { toLogitechLua } from "./export/logitech";
-import { razerSupportsTarget, toRazerXml } from "./export/razer";
+import {
+  STOP_LOCKS,
+  TRIGGER_DEFAULT,
+  toLogitechLua,
+  toLogitechProbe,
+  type StopLock,
+  type TriggerSource
+} from "./export/logitech";
+import { toRazerXml } from "./export/razer";
 import { toTabText } from "./export/tab";
 import type { NoteEvent, ParsedSong, TimeSignatureEvent } from "./music/types";
 
@@ -59,19 +62,10 @@ function formatDuration(ms: number) {
 }
 
 /** Bindings the game plausibly uses, so the export panel never needs free text. */
-const MODIFIER_CHOICES: Array<{ id: string; label: string; target: InputTarget }> = [
-  { id: "mouse:right", label: "鼠标右键", target: mouseTarget("right") },
-  { id: "mouse:left", label: "鼠标左键", target: mouseTarget("left") },
-  { id: "mouse:middle", label: "鼠标中键", target: mouseTarget("middle") },
-  { id: "key:lshift", label: "左 Shift", target: keyTarget("lshift") },
-  { id: "key:lctrl", label: "左 Ctrl", target: keyTarget("lctrl") },
-  { id: "key:lalt", label: "左 Alt", target: keyTarget("lalt") },
-  { id: "key:space", label: "空格", target: keyTarget("space") }
-];
-
-function choiceTarget(id: string, fallback: InputTarget): InputTarget {
-  return MODIFIER_CHOICES.find((choice) => choice.id === id)?.target ?? fallback;
-}
+// The in-game binding is fixed: eight note keys plus three mouse modifiers. Only
+// the macro trigger stays configurable, because G HUB Lua dispatches events for
+// G-keys and mouse buttons but never for ordinary keyboard keys.
+const binding: InputBinding = GAME_BINDING;
 
 function downloadText(filename: string, content: string, type: string) {
   const url = URL.createObjectURL(new Blob([content], { type }));
@@ -109,10 +103,9 @@ export default function App() {
   const [busy, setBusy] = useState(false);
   const [parseProgress, setParseProgress] = useState<ParseProgress | null>(null);
   const [error, setError] = useState("");
-  const [octaveUpId, setOctaveUpId] = useState(targetId(GAME_BINDING.octaveUp));
-  const [octaveDownId, setOctaveDownId] = useState(targetId(GAME_BINDING.octaveDown));
-  const [semitoneId, setSemitoneId] = useState(targetId(GAME_BINDING.semitone));
-  const [gKey, setGKey] = useState(1);
+  const [triggerSource, setTriggerSource] = useState<TriggerSource>(TRIGGER_DEFAULT.source);
+  const [triggerValue, setTriggerValue] = useState(TRIGGER_DEFAULT.value);
+  const [stopLock, setStopLock] = useState<StopLock>("capslock");
   const [exportError, setExportError] = useState("");
   const [editedNotes, setEditedNotes] = useState<NoteEvent[] | null>(null);
   const [undoStack, setUndoStack] = useState<NoteEvent[][]>([]);
@@ -177,20 +170,9 @@ export default function App() {
     return mono.sourceIndices[sourceIndex] ?? null;
   };
 
-  const binding = useMemo<InputBinding>(() => ({
-    notes: GAME_BINDING.notes,
-    octaveUp: choiceTarget(octaveUpId, GAME_BINDING.octaveUp),
-    octaveDown: choiceTarget(octaveDownId, GAME_BINDING.octaveDown),
-    semitone: choiceTarget(semitoneId, GAME_BINDING.semitone)
-  }), [octaveUpId, octaveDownId, semitoneId]);
-
   const keySequence = useMemo(
     () => buildKeySequence(conversion.notes, { binding }),
     [conversion.notes, binding]
-  );
-  const razerBlockers = useMemo(
-    () => [binding.octaveUp, binding.octaveDown, binding.semitone].filter((target) => !razerSupportsTarget(target)),
-    [binding]
   );
 
   function applyEdit(operation: (notes: NoteEvent[], bpm: number) => EditResult) {
@@ -255,9 +237,19 @@ export default function App() {
     setExportError("");
     downloadText(
       `${safeFileName(title)}-logitech.lua`,
-      toLogitechLua(keySequence, { songName: title, gKey, transpose }),
+      toLogitechLua(keySequence, {
+        songName: title,
+        trigger: { source: triggerSource, value: triggerValue },
+        stopLock,
+        transpose
+      }),
       "text/plain;charset=utf-8"
     );
+  }
+
+  function exportProbe() {
+    setExportError("");
+    downloadText("dfh-logitech-probe.lua", toLogitechProbe(), "text/plain;charset=utf-8");
   }
 
   function exportRazer() {
@@ -339,8 +331,6 @@ export default function App() {
         <nav aria-label="主导航">
           <button className="active"><i>01</i><span>乐谱转换</span></button>
           <button disabled><i>02</i><span>云端乐谱</span><em>SOON</em></button>
-          <button disabled><i>03</i><span>练习模式</span><em>SOON</em></button>
-          <button disabled><i>04</i><span>映射实验</span><em>LAB</em></button>
         </nav>
         <div className="rail-bottom">
           <b>α</b>
@@ -609,7 +599,7 @@ export default function App() {
             </button>
             <button
               className="button"
-              disabled={conversion.notes.length === 0 || razerBlockers.length > 0}
+              disabled={conversion.notes.length === 0}
               onClick={exportRazer}
             >
               宏 · 雷蛇 Synapse 3 .xml（未验证）
@@ -618,36 +608,54 @@ export default function App() {
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 12, marginTop: 18 }}>
             <label className="field">
-              <span>升调</span>
-              <select value={octaveUpId} onChange={(event) => setOctaveUpId(event.target.value)}>
-                {MODIFIER_CHOICES.map((choice) => <option key={choice.id} value={choice.id}>{choice.label}</option>)}
+              <span>开始键来源</span>
+              <select value={triggerSource} onChange={(event) => setTriggerSource(event.target.value as TriggerSource)}>
+                <option value="mouse">鼠标按键</option>
+                <option value="gkey">键盘 G 键</option>
               </select>
             </label>
             <label className="field">
-              <span>降调</span>
-              <select value={octaveDownId} onChange={(event) => setOctaveDownId(event.target.value)}>
-                {MODIFIER_CHOICES.map((choice) => <option key={choice.id} value={choice.id}>{choice.label}</option>)}
-              </select>
+              <span>{triggerSource === "mouse" ? "鼠标键编号" : "G 键编号"}</span>
+              <input
+                type="number"
+                min="1"
+                max={triggerSource === "mouse" ? 20 : 18}
+                value={triggerValue}
+                onChange={(event) => setTriggerValue(Number(event.target.value) || 1)}
+              />
             </label>
             <label className="field">
-              <span>半音</span>
-              <select value={semitoneId} onChange={(event) => setSemitoneId(event.target.value)}>
-                {MODIFIER_CHOICES.map((choice) => <option key={choice.id} value={choice.id}>{choice.label}</option>)}
+              <span>停止键</span>
+              <select value={stopLock} onChange={(event) => setStopLock(event.target.value as StopLock)}>
+                {STOP_LOCKS.map((lock) => <option key={lock.id} value={lock.id}>{lock.label}</option>)}
               </select>
-            </label>
-            <label className="field">
-              <span>罗技 G 键</span>
-              <input type="number" min="1" max="12" value={gKey} onChange={(event) => setGKey(Number(event.target.value) || 1)} />
             </label>
           </div>
 
+          <div className="transpose-row" style={{ marginTop: 12 }}>
+            <button className="button" disabled={conversion.notes.length === 0} onClick={exportProbe}>
+              探测脚本 · G HUB .lua
+            </button>
+          </div>
+
           <p className="preview-limit">
-            音符键 <code>Z X C V B N M ,</code> 是键盘键；升调 / 降调 / 半音是<strong>鼠标右键 / 左键 / 中键</strong>，
-            所以宏里混着按键和鼠标事件。改过游戏内键位的话在上面重选。
+            音符键 <code>Z X C V B N M ,</code> 是键盘键；升调 / 降调 / 半音固定为<strong>鼠标右键 / 左键 / 中键</strong>，
+            所以宏里混着按键和鼠标事件。改过游戏内键位的话，这三处要改代码而不是改设置。
           </p>
           <p className="preview-limit">
-            宏只负责导出，本项目不向游戏注入输入——罗技脚本粘贴到 G HUB 的 SCRIPTING 面板，按 G{gKey} 播放、
-            开启 Scroll Lock 中止。鼠标键用 <code>PressMouseButton</code> 的微软编号（1 左 / 2 中 / 3 右）。
+            宏只负责导出，本项目不向游戏注入输入——罗技脚本粘贴到 G HUB 的 SCRIPTING 面板，按开始键播放、
+            开启停止键中止。宏输出里的鼠标键用 <code>PressMouseButton</code> 的微软编号（1 左 / 2 中 / 3 右），
+            但<strong>开始键的鼠标编号走罗技顺序</strong>（1 左 / 2 右 / 3 中，4 及以上对应 G HUB 按键列表里的 G4、G5……）。
+          </p>
+          <p className="preview-limit">
+            <strong>开始键只能用 G 键或鼠标键</strong>：G HUB 的 Lua 只派发 G 键、M 键、鼠标键和配置切换事件，
+            普通键盘按键（F10、空格等）根本收不到。不确定编号时，导出上面的「探测脚本」贴进 G HUB，按一下目标键，
+            console 会打印它真实的 event 和 arg。
+          </p>
+          <p className="preview-limit">
+            <strong>停止键只能是锁定键</strong>：播放期间 <code>Sleep</code> 占住脚本线程、收不到新事件，只能轮询锁定状态，
+            所以停止键在 Caps / Scroll / Num Lock 之间选。<strong>按一下切换它的开关状态即中止</strong>：
+            脚本只比较「开始播放时记录的状态」有没有变化，所以开始前它是开是关都不影响，脚本也不会去改你的锁定状态。
           </p>
           <p className="preview-limit">
             <strong>雷蛇版未经验证</strong>：Synapse 的宏 XML 没有官方文档，格式是照社区导出的样本还原的，
@@ -659,12 +667,6 @@ export default function App() {
               按键编排阶段又收紧了 {keySequence.truncatedNotes} 个音符的长度（为了留出 18 ms 松键间隔）
               {keySequence.droppedChordNotes > 0 && <>，并丢弃了 {keySequence.droppedChordNotes} 个同时发声的音符</>}
               。谱面已经是单音，这里是最后一道兜底。
-            </p>
-          )}
-          {razerBlockers.length > 0 && (
-            <p className="error-note">
-              雷蛇宏无法编码当前选择的修饰键。方向键、小键盘等扩展键在 Synapse 的 XML 里编码无法确认，
-              请改用鼠标键或 Shift / Ctrl / Alt / 空格。
             </p>
           )}
           {exportError && <p className="error-note">{exportError}</p>}

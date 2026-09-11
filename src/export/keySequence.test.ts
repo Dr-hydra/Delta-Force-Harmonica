@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { buildKeySequence, GAME_BINDING, key, mouse, targetId, toDelays } from "./keySequence";
-import { toLogitechLua } from "./logitech";
+import { toLogitechLua, toLogitechProbe } from "./logitech";
 import { toRazerXml, UnsupportedKeyError } from "./razer";
 import type { GameNote } from "../music/types";
 
@@ -100,12 +100,30 @@ describe("toDelays", () => {
 describe("toLogitechLua", () => {
   it("emits an OnEvent handler and balanced input calls", () => {
     const sequence = buildKeySequence([note({ start: 0, key: "Z" }), note({ start: 600, key: "M" })]);
-    const lua = toLogitechLua(sequence, { songName: "Test", gKey: 3 });
+    const lua = toLogitechLua(sequence, { songName: "Test", trigger: { source: "gkey", value: 3 } });
 
     expect(lua).toContain('if event == "G_PRESSED" and arg == 3 then');
     expect(lua).toContain('PressKey("z")');
     expect(lua).toContain('ReleaseKey("m")');
-    expect(lua).toContain('IsKeyLockOn("scrolllock")');
+    expect(lua).toContain('IsKeyLockOn("capslock")');
+  });
+
+  it("triggers on a mouse button by default, since G HUB never reports plain keys", () => {
+    const lua = toLogitechLua(buildKeySequence([note({ start: 0, key: "Z" })]), { songName: "T" });
+
+    expect(lua).toContain('if event == "MOUSE_BUTTON_PRESSED" and arg == 4 then');
+    expect(lua).not.toContain("G_PRESSED");
+  });
+
+  it("aborts on a stop-lock transition, so a pre-engaged lock is harmless", () => {
+    const lua = toLogitechLua(buildKeySequence([note({ start: 0, key: "Z" })]), {
+      songName: "T",
+      stopLock: "numlock"
+    });
+
+    expect(lua).toContain('lockBaseline = IsKeyLockOn("numlock")');
+    expect(lua).toContain('if IsKeyLockOn("numlock") ~= lockBaseline then');
+    expect(lua).toContain("Num Lock toggled");
   });
 
   it("uses Microsoft mouse numbering: 1 left, 2 middle, 3 right", () => {
@@ -122,6 +140,15 @@ describe("toLogitechLua", () => {
     const lua = toLogitechLua(buildKeySequence([note({ sharp: true })]), { songName: "T" });
     expect(lua).toContain("for _, k in ipairs(KEYS) do ReleaseKey(k) end");
     expect(lua).toContain("for _, b in ipairs(MOUSE) do ReleaseMouseButton(b) end");
+  });
+});
+
+describe("toLogitechProbe", () => {
+  it("logs every dispatched event without binding a trigger", () => {
+    const probe = toLogitechProbe();
+
+    expect(probe).toContain('OutputLogMessage("EVENT %s ARG %s\\n"');
+    expect(probe).not.toContain("play()");
   });
 });
 
