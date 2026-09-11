@@ -27,17 +27,17 @@ function json(statusCode, body) {
 
 function requestBody(event) {
   if (!event.body) return {};
-  const text = event.isBase64Encoded ? Buffer.from(event.body, "base64").toString("utf8") : event.body;
-  try { return JSON.parse(text); }
+  const body = event.isBase64Encoded ? Buffer.from(event.body, "base64").toString("utf8") : event.body;
+  try { return JSON.parse(body); }
   catch { throw new Error("请求体不是有效 JSON"); }
 }
 
 const pathOf = (event) => String(event.path || event.rawPath || "/").replace(/\/+$/, "") || "/";
 const methodOf = (event) => String(event.httpMethod || event.method || "GET").toUpperCase();
 const queryOf = (event) => event.queryStringParameters || event.queryString || {};
-const sha256 = (value) => crypto.createHash("sha256").update(value).digest("hex");
+const sha256 = (value) => crypto.createHash("sha256").update(String(value)).digest("hex");
 const shortId = () => crypto.randomBytes(9).toString("base64url");
-const shardOf = (id) => sha256(String(id))[0];
+const shardOf = (id) => sha256(id)[0];
 const shardKey = (shard) => `catalog/${shard}.json`;
 const ownerKey = (ownerHash) => `own/${ownerHash}.json`;
 
@@ -60,9 +60,11 @@ class Cursor {
   }
 }
 
+/** Parse the authoritative score bytes; catalog statistics never trust the JSON body. */
 function inspectPayload(payload) {
   if (!payload || payload.length > MAX_PAYLOAD_CHARS) throw new Error("曲谱数据为空或过大");
   if (!/^[A-Za-z0-9_-]+$/.test(payload)) throw new Error("曲谱数据不是 base64url");
+
   let packed;
   try { packed = Buffer.from(payload, "base64url"); }
   catch { throw new Error("曲谱数据无法解码"); }
@@ -77,6 +79,7 @@ function inspectPayload(payload) {
   }
   const version = cursor.u8();
   if (version !== DFHS_VERSION) throw new Error(`不支持的 DFHS 版本 ${version}`);
+
   const ppq = cursor.varint();
   if (ppq < 24 || ppq > 9600) throw new Error("曲谱 PPQ 无效");
   cursor.varint(); // zig-zag transpose
@@ -160,6 +163,7 @@ function difficultyOf(value) {
   return Math.min(5, Math.max(0, number));
 }
 
+/** [id,title,composer,uploader,avatar,tags,difficulty,bpm,durationMs,noteCount,updatedAt] */
 function publicRow(row) {
   return [row.i, row.t, row.c, row.u, row.a, row.g, row.d, row.b, row.l, row.n, row.m];
 }
@@ -173,6 +177,17 @@ function publicScore(row) {
 
 const readShard = async (shard) => (await store.readPrivate(shardKey(shard)))?.rows ?? [];
 const readOwner = async (ownerHash) => (await store.readPrivate(ownerKey(ownerHash)))?.rows ?? [];
+
+/** The owner file is the authority for update/delete permission, so it gets the same write verification as catalog shards. */
+async function mutateOwner(ownerHash, apply, verify) {
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    const rows = apply(await readOwner(ownerHash));
+    await store.writePrivate(ownerKey(ownerHash), { rows });
+    const settled = await readOwner(ownerHash);
+    if (verify(settled)) return settled;
+  }
+  throw new Error("个人曲谱索引写入冲突，请稍后重试");
+}
 
 async function mutateIndex(shard, count) {
   for (let attempt = 0; attempt < 3; attempt += 1) {
@@ -199,6 +214,7 @@ async function republishShard(shard, rows) {
   await mutateIndex(shard, sorted.length);
 }
 
+/** Object storage has no CAS. Verify the settled private copy and retry against the latest value. */
 async function mutateShard(shard, apply, verify) {
   for (let attempt = 0; attempt < 3; attempt += 1) {
     const rows = apply(await readShard(shard));
@@ -217,6 +233,7 @@ async function ingest(body) {
   if (ownerToken.length < 32) throw new Error("缺少 owner token");
   const title = text(body.title, 80);
   if (!title) throw new Error("曲谱标题不能为空");
+
   const payload = String(body.payload || "");
   const head = inspectPayload(payload);
   const ownerHash = sha256(ownerToken);
@@ -242,19 +259,35 @@ async function ingest(body) {
   };
   row.s = shardOf(row.i);
 
+  // Publish the record body first. It is intentionally not discoverable until catalog succeeds.
   await store.writeScript(`score/${row.i}`, publicScore(row));
-  await mutateShard(
-    row.s,
+
+  // Owner authority must exist before catalog exposes the row, otherwise a partial upload could be impossible to delete.
+  await mutateOwner(
+    ownerHash,
     (rows) => [...rows.filter((item) => item.i !== row.i), row],
     (rows) => rows.some((item) => item.i === row.i && item.h === row.h)
   );
-  await store.writePrivate(ownerKey(ownerHash), { rows: [...mine, row] });
+
+  try {
+    await mutateShard(
+      row.s,
+      (rows) => [...rows.filter((item) => item.i !== row.i), row],
+      (rows) => rows.some((item) => item.i === row.i && item.h === row.h)
+    );
+  } catch (error) {
+    // Roll back the authority and orphan object when catalog publication failed.
+    await mutateOwner(ownerHash, (rows) => rows.filter((item) => item.i !== row.i), (rows) => !rows.some((item) => item.i === row.i)).catch(() => undefined);
+    await store.removeScript(`score/${row.i}`).catch(() => undefined);
+    throw error;
+  }
+
   return { shortId: row.i };
 }
 
 async function ownedRow(id, ownerToken) {
   if (String(ownerToken || "").length < 32) throw new Error("缺少 owner token");
-  const ownerHash = sha256(String(ownerToken));
+  const ownerHash = sha256(ownerToken);
   const mine = await readOwner(ownerHash);
   const index = mine.findIndex((row) => row.i === id);
   if (index < 0) throw new Error("曲谱不存在或无权修改");
@@ -262,8 +295,9 @@ async function ownedRow(id, ownerToken) {
 }
 
 async function updateScore(id, body) {
-  const { ownerHash, mine, index, row } = await ownedRow(id, body.ownerToken);
+  const { ownerHash, row } = await ownedRow(id, body.ownerToken);
   const next = { ...row };
+
   if (Object.hasOwn(body, "title")) {
     next.t = text(body.title, 80);
     if (!next.t) throw new Error("曲谱标题不能为空");
@@ -283,22 +317,31 @@ async function updateScore(id, body) {
   next.m = Date.now();
 
   await store.writeScript(`score/${id}`, publicScore(next));
-  await mutateShard(
-    next.s,
+  await mutateOwner(
+    ownerHash,
     (rows) => rows.map((item) => item.i === id ? next : item),
     (rows) => rows.some((item) => item.i === id && item.m === next.m && item.h === next.h)
   );
-  await store.writePrivate(ownerKey(ownerHash), { rows: mine.map((item, at) => at === index ? next : item) });
+  // Upsert instead of map-only: a later edit repairs a catalog row missing after an interrupted older deployment.
+  await mutateShard(
+    next.s,
+    (rows) => [...rows.filter((item) => item.i !== id), next],
+    (rows) => rows.some((item) => item.i === id && item.m === next.m && item.h === next.h)
+  );
 }
 
 async function removeScore(id, ownerToken) {
-  const { ownerHash, mine, row } = await ownedRow(id, ownerToken);
+  const { ownerHash, row } = await ownedRow(id, ownerToken);
   await mutateShard(
     row.s,
     (rows) => rows.filter((item) => item.i !== id),
     (rows) => !rows.some((item) => item.i === id)
   );
-  await store.writePrivate(ownerKey(ownerHash), { rows: mine.filter((item) => item.i !== id) });
+  await mutateOwner(
+    ownerHash,
+    (rows) => rows.filter((item) => item.i !== id),
+    (rows) => !rows.some((item) => item.i === id)
+  );
   await store.removeScript(`score/${id}`).catch(() => undefined);
 }
 
@@ -306,27 +349,39 @@ exports.main = async (event) => {
   const method = methodOf(event);
   const path = pathOf(event);
   if (method === "OPTIONS") return json(204, {});
+
   try {
     const scoreMatch = /^\/scores\/([A-Za-z0-9_-]{6,32})$/.exec(path);
+
     if (method === "GET" && path === "/health") {
       const index = (await store.readPrivate("index.json")) || { s: {}, n: 0 };
-      return json(200, { ok: true, storage: store.BUCKET, scores: Number(index.n || 0), shards: Object.keys(index.s || {}).length });
+      return json(200, {
+        ok: true,
+        storage: store.BUCKET,
+        scores: Number(index.n || 0),
+        shards: Object.keys(index.s || {}).length
+      });
     }
+
     if (method === "POST" && path === "/scores") return json(201, await ingest(requestBody(event)));
+
     if (method === "GET" && path === "/me/scores") {
-      const token = String(queryOf(event).ownerToken || "");
-      if (token.length < 32) throw new Error("缺少 owner token");
-      const rows = await readOwner(sha256(token));
+      const ownerToken = String(queryOf(event).ownerToken || "");
+      if (ownerToken.length < 32) throw new Error("缺少 owner token");
+      const rows = await readOwner(sha256(ownerToken));
       return json(200, { scores: rows.map(publicRow), limit: MAX_SCORES });
     }
+
     if (method === "PATCH" && scoreMatch) {
       await updateScore(scoreMatch[1], requestBody(event));
       return json(200, { ok: true });
     }
+
     if (method === "DELETE" && scoreMatch) {
       await removeScore(scoreMatch[1], requestBody(event).ownerToken);
       return json(200, { ok: true });
     }
+
     return json(404, { message: "未知接口" });
   } catch (error) {
     return json(400, { message: error?.message || "请求失败" });
