@@ -4,6 +4,7 @@ import App from "./App";
 import ConverterCloudPanel from "./cloud/ConverterCloudPanel";
 import CloudLibraryPage from "./library/CloudLibraryPage";
 import "./styles.css";
+import "./library/navigation-fixes.css";
 
 const params = new URLSearchParams(window.location.search);
 const cloudView = params.get("view") === "library" || Boolean(params.get("s"));
