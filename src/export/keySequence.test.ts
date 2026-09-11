@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { buildKeySequence, GAME_BINDING, key, mouse, targetId, toDelays } from "./keySequence";
-import { toLogitechLua, toLogitechProbe } from "./logitech";
+import { toLogitechLua } from "./logitech";
 import { toRazerXml, UnsupportedKeyError } from "./razer";
 import type { GameNote } from "../music/types";
 
@@ -140,15 +140,6 @@ describe("toLogitechLua", () => {
     const lua = toLogitechLua(buildKeySequence([note({ sharp: true })]), { songName: "T" });
     expect(lua).toContain("for _, k in ipairs(KEYS) do ReleaseKey(k) end");
     expect(lua).toContain("for _, b in ipairs(MOUSE) do ReleaseMouseButton(b) end");
-  });
-});
-
-describe("toLogitechProbe", () => {
-  it("logs every dispatched event without binding a trigger", () => {
-    const probe = toLogitechProbe();
-
-    expect(probe).toContain('OutputLogMessage("EVENT %s ARG %s\\n"');
-    expect(probe).not.toContain("play()");
   });
 });
 

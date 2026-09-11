@@ -84,6 +84,23 @@ a.library-row:hover { border-color: var(--accent); transform: translateY(-1px); 
 .library-delete { border: 1px solid var(--line); background: transparent; color: var(--muted); padding: 9px 11px; cursor: pointer; }
 .library-delete:hover { border-color: #b34a4a; color: #b34a4a; }
 
+.library-row-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 6px; }
+.library-action { border: 1px solid var(--line); background: transparent; color: var(--muted); padding: 9px 11px; cursor: pointer; }
+.library-action:hover:not(:disabled) { border-color: var(--accent); color: var(--ink); }
+.library-action:disabled { opacity: .45; cursor: default; }
+
+.library-modal-backdrop { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; padding: 24px; background: rgba(9, 15, 18, .62); }
+.library-modal { width: min(560px, 100%); max-height: 86vh; overflow: auto; display: grid; gap: 16px; padding: 24px; }
+.library-modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.library-modal-head h2 { margin: 5px 0 0; }
+.library-modal-close { width: 34px; height: 34px; border: 1px solid var(--line); background: transparent; color: var(--muted); font-size: 18px; line-height: 1; cursor: pointer; }
+.library-modal-close:hover { border-color: var(--accent); color: var(--ink); }
+.library-modal-note { margin: 0; color: var(--muted); line-height: 1.6; }
+.library-form { display: grid; gap: 14px; padding: 20px; border: 1px solid var(--line); background: var(--panel); }
+.library-form input { width: 100%; box-sizing: border-box; min-height: 44px; padding: 0 12px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font: inherit; outline: none; }
+.library-form input:focus { border-color: var(--accent); }
+.library-form-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
 .library-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
 .library-tags span { border: 1px solid var(--line); padding: 3px 7px; font-size: 10px; color: var(--muted); }
 
@@ -110,6 +127,7 @@ a.library-row:hover { border-color: var(--accent); transform: translateY(-1px); 
   .library-detail-actions { justify-content: flex-start; max-width: none; }
   .library-row { grid-template-columns: 1fr; }
   .library-row-stats { justify-content: start; text-align: left; }
+  .library-row-actions { justify-content: flex-start; }
 }
 
 @media (max-width: 640px) {

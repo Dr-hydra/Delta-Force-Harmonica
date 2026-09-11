@@ -60,6 +60,17 @@ export function displayOctave(candidate: HarmonicaCandidate): number {
   return candidate.intrinsicOctave + candidate.octaveModifier;
 }
 
+/**
+ * The modifiers a player has to hold with the key: 升调 / 降调 shift one octave
+ * and 半音 is a sharp, mirroring MAPPING_ASSUMPTIONS. The printed octave dots
+ * only show the resulting pitch, which is ambiguous — the comma key already
+ * sounds high 1 with no modifier — so the keycaps spell the modifier out.
+ */
+export function modifierLabel(candidate: HarmonicaCandidate): string {
+  const octave = candidate.octaveModifier > 0 ? "↑" : candidate.octaveModifier < 0 ? "↓" : "";
+  return `${octave}${candidate.sharp ? "#" : ""}`;
+}
+
 export function midiName(pitch: number): string {
   const names = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
   return `${names[pitch % 12]}${Math.floor(pitch / 12) - 1}`;

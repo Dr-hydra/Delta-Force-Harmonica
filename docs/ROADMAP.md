@@ -65,9 +65,10 @@ MIDI 侧的主旋律提取和轨道分类，成熟实现（[midi-miner](https://
 
 - [ ] IndexedDB 本地乐谱库
 - [ ] 版本化 Song JSON schema
-- [ ] 云存档接口抽象
-- [ ] 云端只保存标准化谱面，不保存原 MIDI
-- [ ] 分享短链与只读公开谱
+- [x] 云存档接口抽象（`src/cloud/archive.ts` 分片写入 Toy CloudStorage）
+- [x] 云端只保存标准化谱面，不保存原 MIDI（DFHS 快照，`src/persistence/scoreCodec.ts`）
+- [x] 分享短链与只读公开谱（CloudBase `score-api` + `?s=<shortId>`）
+- [x] 曲谱库复用转换器的编辑 / 导出 / 保存发布面板（`src/library/ScoreWorkbench.tsx`）
 
 ## M3 — Practice
 

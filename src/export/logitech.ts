@@ -25,11 +25,61 @@ export type StopLock = "capslock" | "scrolllock" | "numlock";
 
 export const TRIGGER_DEFAULT: LogitechTrigger = { source: "mouse", value: 4 };
 
+/** G HUB's assignment list exposes 20 mouse buttons and 18 G keys. */
+export const TRIGGER_MAX: Record<TriggerSource, number> = { mouse: 20, gkey: 18 };
+
 export const STOP_LOCKS: Array<{ id: StopLock; label: string }> = [
   { id: "capslock", label: "Caps Lock" },
   { id: "scrolllock", label: "Scroll Lock" },
   { id: "numlock", label: "Num Lock" }
 ];
+
+const SETTINGS_KEY = "dfh-logitech-settings";
+
+export interface LogitechSettings {
+  trigger: LogitechTrigger;
+  stopLock: StopLock;
+}
+
+export const LOGITECH_SETTINGS_DEFAULT: LogitechSettings = {
+  trigger: TRIGGER_DEFAULT,
+  stopLock: "capslock"
+};
+
+/**
+ * The start key and stop lock describe the user's own mouse and keyboard rather
+ * than one score, so they are persisted: the score library exports a macro that
+ * matches whatever the converter export panel was last configured with.
+ */
+export function loadLogitechSettings(): LogitechSettings {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "") as Partial<LogitechSettings>;
+    const source: TriggerSource = parsed.trigger?.source === "gkey" ? "gkey" : TRIGGER_DEFAULT.source;
+    const value = Number(parsed.trigger?.value);
+    const stopLock = STOP_LOCKS.some((entry) => entry.id === parsed.stopLock)
+      ? (parsed.stopLock as StopLock)
+      : LOGITECH_SETTINGS_DEFAULT.stopLock;
+    return {
+      // A stored value outside the source's range would produce a macro whose
+      // arg can never fire, so clamp it back to something G HUB can dispatch.
+      trigger: {
+        source,
+        value: Number.isInteger(value) ? Math.min(Math.max(1, value), TRIGGER_MAX[source]) : TRIGGER_DEFAULT.value
+      },
+      stopLock
+    };
+  } catch {
+    return { ...LOGITECH_SETTINGS_DEFAULT };
+  }
+}
+
+export function saveLogitechSettings(settings: LogitechSettings) {
+  try {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+  } catch {
+    // Private-mode storage failures must not break exporting.
+  }
+}
 
 const STOP_LOCK_LABELS = Object.fromEntries(
   STOP_LOCKS.map((entry) => [entry.id, entry.label])
@@ -147,23 +197,4 @@ export function toLogitechLua(sequence: KeySequence, options: LogitechOptions): 
   lines.push("");
 
   return lines.join("\n");
-}
-
-/**
- * Emits a stand-in script that logs every event G HUB actually dispatches.
- * G HUB labels mouse buttons "G4", "G5", ... in its UI, but OnEvent reports them
- * as MOUSE_BUTTON_PRESSED with the underlying button number, so probing is the
- * only reliable way to learn which arg a given physical button sends.
- */
-export function toLogitechProbe(): string {
-  return [
-    "-- Delta Force Harmonica -- G HUB event probe",
-    "-- Paste into G HUB: profile -> SCRIPTING -> Script, keep the editor open,",
-    "-- then press the button you want to use. Each line logs event + arg.",
-    "",
-    "function OnEvent(event, arg)",
-    '  OutputLogMessage("EVENT %s ARG %s\\n", tostring(event), tostring(arg))',
-    "end",
-    ""
-  ].join("\n");
 }

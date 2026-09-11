@@ -6,33 +6,11 @@ import { quantizeToGrid } from "./audio/beats";
 import { enforceMonophonic } from "./music/monophonic";
 import { extractSmartMelody } from "./music/smartMelody";
 import { findBestTranspose, optimizeHarmonica } from "./harmonica/optimizer";
-import { MAPPING_ASSUMPTIONS, midiName } from "./harmonica/mapping";
-import {
-  deleteNote,
-  insertNote,
-  moveNote,
-  normalizeNotes,
-  resizeNote,
-  snapAll,
-  transposeNote,
-  type EditResult
-} from "./score/editNotes";
+import { MAPPING_ASSUMPTIONS } from "./harmonica/mapping";
+import EditPanel from "./components/EditPanel";
+import ExportPanel from "./components/ExportPanel";
 import { ScoreWorkspace } from "./components/ScoreWorkspace";
-import {
-  buildKeySequence,
-  GAME_BINDING,
-  type InputBinding
-} from "./export/keySequence";
-import {
-  STOP_LOCKS,
-  TRIGGER_DEFAULT,
-  toLogitechLua,
-  toLogitechProbe,
-  type StopLock,
-  type TriggerSource
-} from "./export/logitech";
-import { toRazerXml } from "./export/razer";
-import { toTabText } from "./export/tab";
+import { useScoreEdits } from "./score/useScoreEdits";
 import type { NoteEvent, ParsedSong, TimeSignatureEvent } from "./music/types";
 
 const DEMO_BPM = 143;
@@ -61,25 +39,6 @@ function formatDuration(ms: number) {
   return `${minutes}:${seconds}`;
 }
 
-/** Bindings the game plausibly uses, so the export panel never needs free text. */
-// The in-game binding is fixed: eight note keys plus three mouse modifiers. Only
-// the macro trigger stays configurable, because G HUB Lua dispatches events for
-// G-keys and mouse buttons but never for ordinary keyboard keys.
-const binding: InputBinding = GAME_BINDING;
-
-function downloadText(filename: string, content: string, type: string) {
-  const url = URL.createObjectURL(new Blob([content], { type }));
-  const anchor = document.createElement("a");
-  anchor.href = url;
-  anchor.download = filename;
-  anchor.click();
-  URL.revokeObjectURL(url);
-}
-
-function safeFileName(name: string) {
-  return (name.replace(/[\\/:*?"<>|]+/g, "_").trim() || "dfh-score").slice(0, 80);
-}
-
 function sourceFormatLabel(song: ParsedSong | null, usingDemo: boolean) {
   if (usingDemo) return "DEMO";
   if (!song) return "LOCAL";
@@ -103,15 +62,6 @@ export default function App() {
   const [busy, setBusy] = useState(false);
   const [parseProgress, setParseProgress] = useState<ParseProgress | null>(null);
   const [error, setError] = useState("");
-  const [triggerSource, setTriggerSource] = useState<TriggerSource>(TRIGGER_DEFAULT.source);
-  const [triggerValue, setTriggerValue] = useState(TRIGGER_DEFAULT.value);
-  const [stopLock, setStopLock] = useState<StopLock>("capslock");
-  const [exportError, setExportError] = useState("");
-  const [editedNotes, setEditedNotes] = useState<NoteEvent[] | null>(null);
-  const [undoStack, setUndoStack] = useState<NoteEvent[][]>([]);
-  const [redoStack, setRedoStack] = useState<NoteEvent[][]>([]);
-  const [selectedNote, setSelectedNote] = useState<number | null>(null);
-  const [editStep, setEditStep] = useState(0.5);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -122,6 +72,7 @@ export default function App() {
   const isAudio = !usingDemo && song?.sourceFormat === "audio";
   const audioAnalysis = song?.audioAnalysis;
   const baseNotes = usingDemo ? demoNotes : selectedTrack?.notes ?? [];
+  const bpm = usingDemo ? DEMO_BPM : song?.bpm ?? 0;
 
   const beatGrid = audioAnalysis?.beatGrid;
 
@@ -150,8 +101,9 @@ export default function App() {
 
   // Once anything is edited the edited copy wins; until then the score stays a
   // pure function of the import settings, so changing a preset still takes effect.
-  const melodyNotes = editedNotes ?? derivedMono.notes;
-  const editing = editedNotes !== null;
+  const edits = useScoreEdits(derivedMono.notes, bpm || 120);
+  const melodyNotes = edits.notes;
+  const editing = edits.editing;
 
   // Second pass, a no-op for imported material: it only catches overlaps the
   // user just created by hand, so score, preview and macro never disagree.
@@ -170,108 +122,13 @@ export default function App() {
     return mono.sourceIndices[sourceIndex] ?? null;
   };
 
-  const keySequence = useMemo(
-    () => buildKeySequence(conversion.notes, { binding }),
-    [conversion.notes, binding]
-  );
-
-  function applyEdit(operation: (notes: NoteEvent[], bpm: number) => EditResult) {
-    const current = editedNotes ?? normalizeNotes(melodyNotes, bpm || 120);
-    const result = operation(current, bpm || 120);
-    if (result.notes === current && result.selected === selectedNote) return;
-    setUndoStack((stack) => [...stack.slice(-49), current]);
-    setRedoStack([]);
-    setEditedNotes(result.notes);
-    setSelectedNote(result.selected);
-  }
-
-  function undoEdit() {
-    const previous = undoStack.at(-1);
-    if (!previous) return;
-    setUndoStack((stack) => stack.slice(0, -1));
-    setRedoStack((stack) => [...stack, editedNotes ?? normalizeNotes(melodyNotes, bpm || 120)]);
-    setEditedNotes(previous);
-    setSelectedNote((index) => (index !== null ? Math.min(index, previous.length - 1) : null));
-  }
-
-  function redoEdit() {
-    const next = redoStack.at(-1);
-    if (!next) return;
-    setRedoStack((stack) => stack.slice(0, -1));
-    setUndoStack((stack) => [...stack, editedNotes ?? normalizeNotes(melodyNotes, bpm || 120)]);
-    setEditedNotes(next);
-    setSelectedNote((index) => (index !== null ? Math.min(index, next.length - 1) : null));
-  }
-
-  function resetEdits() {
-    setEditedNotes(null);
-    setUndoStack([]);
-    setRedoStack([]);
-    setSelectedNote(null);
-  }
-
-  function startBlankScore() {
-    setUndoStack((stack) => [...stack, editedNotes ?? normalizeNotes(melodyNotes, bpm || 120)]);
-    setRedoStack([]);
-    setEditedNotes([]);
-    setSelectedNote(null);
-  }
-
-  function exportTab() {
-    setExportError("");
-    downloadText(
-      `${safeFileName(title)}.txt`,
-      toTabText(conversion.notes, {
-        songName: title,
-        bpm: bpm || 120,
-        timeSignatures,
-        measureStarts,
-        transpose,
-        unplayableCount: conversion.unplayable.length
-      }),
-      "text/plain;charset=utf-8"
-    );
-  }
-
-  function exportLogitech() {
-    setExportError("");
-    downloadText(
-      `${safeFileName(title)}-logitech.lua`,
-      toLogitechLua(keySequence, {
-        songName: title,
-        trigger: { source: triggerSource, value: triggerValue },
-        stopLock,
-        transpose
-      }),
-      "text/plain;charset=utf-8"
-    );
-  }
-
-  function exportProbe() {
-    setExportError("");
-    downloadText("dfh-logitech-probe.lua", toLogitechProbe(), "text/plain;charset=utf-8");
-  }
-
-  function exportRazer() {
-    setExportError("");
-    try {
-      downloadText(
-        `${safeFileName(title)}-razer.xml`,
-        toRazerXml(keySequence, { songName: title }),
-        "application/xml;charset=utf-8"
-      );
-    } catch (reason) {
-      setExportError(reason instanceof Error ? reason.message : "雷蛇宏导出失败。");
-    }
-  }
-
   async function loadFile(file: File, preset: AudioTranscriptionPreset = audioPreset) {
     setBusy(true);
     setError("");
     setParseProgress(null);
     try {
       const parsed = await parseScoreFile(file, setParseProgress, { audioPreset: preset });
-      resetEdits();
+      edits.reset();
       setSong(parsed);
       setTrackId(parsed.tracks[0].id);
       setTranspose(0);
@@ -298,7 +155,7 @@ export default function App() {
   }
 
   function loadDemo() {
-    resetEdits();
+    edits.reset();
     setSong(null);
     setTrackId("");
     setTranspose(0);
@@ -310,7 +167,6 @@ export default function App() {
   }
 
   const title = usingDemo ? "C 大调音阶 Demo" : song?.name ?? "尚未载入乐曲";
-  const bpm = usingDemo ? DEMO_BPM : song?.bpm ?? 0;
   const duration = usingDemo
     ? demoNotes[demoNotes.length - 1].start + demoNotes[demoNotes.length - 1].duration
     : song?.duration ?? 0;
@@ -526,154 +382,39 @@ export default function App() {
           timeSignatures={timeSignatures}
           measureStarts={measureStarts}
           bpm={bpm || 120}
-          selectedIndex={conversion.notes.findIndex((_, index) => editIndexOf(index) === selectedNote)}
-          onNoteSelect={(index) => setSelectedNote(editIndexOf(index))}
+          selectedIndex={conversion.notes.findIndex((_, index) => editIndexOf(index) === edits.selectedNote)}
+          onNoteSelect={(index) => edits.setSelectedNote(editIndexOf(index))}
         />
 
-        <section className="panel control-panel" style={{ marginTop: 18 }}>
-          <div className="section-heading">
-            <div><span className="eyebrow">04 / EDIT</span><h2>微调与手工编辑</h2></div>
-            <span className="data-note">
-              {editing ? `已编辑 · ${melodyNotes.length} 音符` : "未编辑"}
-            </span>
-          </div>
-
-          <p className="preview-limit">
-            在上面的小节谱里点一个音符即可选中（黑框标记），下面的操作作用于选中的音符。也可以从空白谱开始自己搭建。
-            编辑出的重叠会被单音收敛截断，谱面上显示的时值可能短于这里的数值。
-          </p>
-
-          <div className="transpose-row" style={{ alignItems: "flex-end", flexWrap: "wrap" }}>
-            <label className="field" style={{ minWidth: 150 }}>
-              <span>编辑步长</span>
-              <select value={editStep} onChange={(event) => setEditStep(Number(event.target.value))}>
-                <option value={1}>1 拍</option>
-                <option value={0.5}>1/2 拍</option>
-                <option value={0.25}>1/4 拍</option>
-              </select>
-            </label>
-            <button className="button secondary" disabled={undoStack.length === 0} onClick={undoEdit}>↶ 撤销</button>
-            <button className="button secondary" disabled={redoStack.length === 0} onClick={redoEdit}>↷ 重做</button>
-            <button className="button secondary" disabled={!editing} onClick={resetEdits}>放弃编辑</button>
-            <button className="button" onClick={startBlankScore}>从空白谱开始</button>
-          </div>
-
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(132px, 1fr))", gap: 8, marginTop: 16 }}>
-            <button className="button" disabled={selectedNote === null} onClick={() => applyEdit((n, b) => transposeNote(n, selectedNote!, 1, b))}>音高 +1</button>
-            <button className="button" disabled={selectedNote === null} onClick={() => applyEdit((n, b) => transposeNote(n, selectedNote!, -1, b))}>音高 −1</button>
-            <button className="button" disabled={selectedNote === null} onClick={() => applyEdit((n, b) => transposeNote(n, selectedNote!, 12, b))}>+1 八度</button>
-            <button className="button" disabled={selectedNote === null} onClick={() => applyEdit((n, b) => transposeNote(n, selectedNote!, -12, b))}>−1 八度</button>
-            <button className="button" disabled={selectedNote === null} onClick={() => applyEdit((n, b) => moveNote(n, selectedNote!, -editStep, b))}>← 提前</button>
-            <button className="button" disabled={selectedNote === null} onClick={() => applyEdit((n, b) => moveNote(n, selectedNote!, editStep, b))}>推后 →</button>
-            <button className="button" disabled={selectedNote === null} onClick={() => applyEdit((n, b) => resizeNote(n, selectedNote!, editStep, b))}>时值 +</button>
-            <button className="button" disabled={selectedNote === null} onClick={() => applyEdit((n, b) => resizeNote(n, selectedNote!, -editStep, b))}>时值 −</button>
-            <button className="button" onClick={() => applyEdit((n, b) => insertNote(n, selectedNote, editStep, b))}>插入音符</button>
-            <button className="button" disabled={selectedNote === null} onClick={() => applyEdit((n, b) => deleteNote(n, selectedNote!, b))}>删除音符</button>
-            <button className="button" disabled={melodyNotes.length === 0} onClick={() => applyEdit((n, b) => ({ notes: snapAll(n, editStep, b), selected: selectedNote }))}>全部对齐到步长</button>
-          </div>
-
-          <p className="preview-limit">
-            {selectedNote !== null && melodyNotes[selectedNote]
-              ? `选中第 ${selectedNote + 1} / ${melodyNotes.length} 个音符 · ${midiName(melodyNotes[selectedNote].pitch)} · 第 ${((melodyNotes[selectedNote].beat ?? 0) + 1).toFixed(2)} 拍 · 时值 ${(melodyNotes[selectedNote].durationBeats ?? 0).toFixed(2)} 拍`
-              : "未选中音符。插入音符会在选中音之后添加，没有选中时从第 1 拍开始。"}
-          </p>
-          {editing && (
-            <p className="preview-limit">
+        <EditPanel
+          notes={melodyNotes}
+          editing={editing}
+          selectedNote={edits.selectedNote}
+          canUndo={edits.canUndo}
+          canRedo={edits.canRedo}
+          editStep={edits.editStep}
+          resetHint={
+            <>
               谱面已手工编辑，<strong>导入设置（预设、分析阶段、谱面密度、量化）的改动不会再生效</strong>，需要先「放弃编辑」。移调滑块仍然作用于编辑后的谱面。
-            </p>
-          )}
-        </section>
+            </>
+          }
+          onEditStepChange={edits.setEditStep}
+          onApply={edits.applyEdit}
+          onUndo={edits.undo}
+          onRedo={edits.redo}
+          onReset={edits.reset}
+          onStartBlank={edits.startBlank}
+        />
 
-        <section className="panel control-panel" style={{ marginTop: 18 }}>
-          <div className="section-heading">
-            <div><span className="eyebrow">05 / EXPORT</span><h2>导出</h2></div>
-            <span className="data-note">{conversion.notes.length ? `${keySequence.actions.length} KEY EVENTS` : "NO SCORE"}</span>
-          </div>
-
-          <div className="transpose-row" style={{ alignItems: "flex-end" }}>
-            <button className="button primary" disabled={conversion.notes.length === 0} onClick={exportTab}>
-              人可演奏版 · 文本谱 .txt
-            </button>
-            <button className="button" disabled={conversion.notes.length === 0} onClick={exportLogitech}>
-              宏 · 罗技 G HUB .lua
-            </button>
-            <button
-              className="button"
-              disabled={conversion.notes.length === 0}
-              onClick={exportRazer}
-            >
-              宏 · 雷蛇 Synapse 3 .xml（未验证）
-            </button>
-          </div>
-
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 12, marginTop: 18 }}>
-            <label className="field">
-              <span>开始键来源</span>
-              <select value={triggerSource} onChange={(event) => setTriggerSource(event.target.value as TriggerSource)}>
-                <option value="mouse">鼠标按键</option>
-                <option value="gkey">键盘 G 键</option>
-              </select>
-            </label>
-            <label className="field">
-              <span>{triggerSource === "mouse" ? "鼠标键编号" : "G 键编号"}</span>
-              <input
-                type="number"
-                min="1"
-                max={triggerSource === "mouse" ? 20 : 18}
-                value={triggerValue}
-                onChange={(event) => setTriggerValue(Number(event.target.value) || 1)}
-              />
-            </label>
-            <label className="field">
-              <span>停止键</span>
-              <select value={stopLock} onChange={(event) => setStopLock(event.target.value as StopLock)}>
-                {STOP_LOCKS.map((lock) => <option key={lock.id} value={lock.id}>{lock.label}</option>)}
-              </select>
-            </label>
-          </div>
-
-          <div className="transpose-row" style={{ marginTop: 12 }}>
-            <button className="button" disabled={conversion.notes.length === 0} onClick={exportProbe}>
-              探测脚本 · G HUB .lua
-            </button>
-          </div>
-
-          <p className="preview-limit">
-            音符键 <code>Z X C V B N M ,</code> 是键盘键；升调 / 降调 / 半音固定为<strong>鼠标右键 / 左键 / 中键</strong>，
-            所以宏里混着按键和鼠标事件。改过游戏内键位的话，这三处要改代码而不是改设置。
-          </p>
-          <p className="preview-limit">
-            宏只负责导出，本项目不向游戏注入输入——罗技脚本粘贴到 G HUB 的 SCRIPTING 面板，按开始键播放、
-            开启停止键中止。宏输出里的鼠标键用 <code>PressMouseButton</code> 的微软编号（1 左 / 2 中 / 3 右），
-            但<strong>开始键的鼠标编号走罗技顺序</strong>（1 左 / 2 右 / 3 中，4 及以上对应 G HUB 按键列表里的 G4、G5……）。
-          </p>
-          <p className="preview-limit">
-            <strong>开始键只能用 G 键或鼠标键</strong>：G HUB 的 Lua 只派发 G 键、M 键、鼠标键和配置切换事件，
-            普通键盘按键（F10、空格等）根本收不到。不确定编号时，导出上面的「探测脚本」贴进 G HUB，按一下目标键，
-            console 会打印它真实的 event 和 arg。
-          </p>
-          <p className="preview-limit">
-            <strong>停止键只能是锁定键</strong>：播放期间 <code>Sleep</code> 占住脚本线程、收不到新事件，只能轮询锁定状态，
-            所以停止键在 Caps / Scroll / Num Lock 之间选。<strong>按一下切换它的开关状态即中止</strong>：
-            脚本只比较「开始播放时记录的状态」有没有变化，所以开始前它是开是关都不影响，脚本也不会去改你的锁定状态。
-          </p>
-          <p className="preview-limit">
-            <strong>雷蛇版未经验证</strong>：Synapse 的宏 XML 没有官方文档，格式是照社区导出的样本还原的，
-            其中鼠标键编号只确认了左键 = 1，右键和中键的取值是推测。项目里没有雷蛇设备可以实测，
-            导入 Synapse 3 后请在宏列表里核对每个事件显示的是不是右键 / 中键。Synapse 4 与 3 的格式不兼容。
-          </p>
-          {keySequence.droppedChordNotes + keySequence.truncatedNotes > 0 && (
-            <p className="preview-limit">
-              按键编排阶段又收紧了 {keySequence.truncatedNotes} 个音符的长度（为了留出 18 ms 松键间隔）
-              {keySequence.droppedChordNotes > 0 && <>，并丢弃了 {keySequence.droppedChordNotes} 个同时发声的音符</>}
-              。谱面已经是单音，这里是最后一道兜底。
-            </p>
-          )}
-          {exportError && <p className="error-note">{exportError}</p>}
-          <p className="preview-limit">
-            自动化输入可能被反作弊判定，使用宏前请自行确认游戏规则与账号风险。
-          </p>
-        </section>
+        <ExportPanel
+          title={title}
+          notes={conversion.notes}
+          unplayableCount={conversion.unplayable.length}
+          bpm={bpm || 120}
+          timeSignatures={timeSignatures}
+          measureStarts={measureStarts}
+          transpose={transpose}
+        />
 
         <section className="assumption-strip">
           {MAPPING_ASSUMPTIONS.map((item, index) => (

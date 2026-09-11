@@ -95,6 +95,8 @@ select { width: 100%; min-height: 44px; padding: 0 12px; border: 1px solid var(-
 .switch-row small { color: var(--muted); font-size: 11px; }
 .switch-row input { width: 20px; height: 20px; accent-color: var(--accent); }
 .transpose-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 16px; margin-top: 18px; }
+.export-stack { display: grid; gap: 8px; margin-top: 6px; }
+.export-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-top: 18px; }
 input[type="range"] { width: 100%; accent-color: var(--accent); }
 .button { min-height: 44px; padding: 0 18px; border: 1px solid var(--ink); background: var(--panel); cursor: pointer; font-size: 12px; font-weight: 850; }
 .button.primary { background: var(--accent); color: #172023; box-shadow: 4px 4px 0 #172023; }
@@ -127,7 +129,8 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 .octave-dots { position: absolute; left: 50%; transform: translateX(-50%); font: 900 14px/1 Consolas, monospace; letter-spacing: 1px; }
 .octave-dots.top { top: -8px; }
 .octave-dots.bottom { bottom: -8px; }
-kbd { min-width: 30px; min-height: 26px; padding: 5px 8px; display: grid; place-items: center; border: 1px solid var(--ink); background: var(--panel-2); color: var(--ink); box-shadow: 2px 2px 0 var(--ink); font: 800 11px Consolas, monospace; }
+kbd { min-width: 30px; min-height: 26px; padding: 5px 8px; display: inline-flex; align-items: center; justify-content: center; gap: 1px; border: 1px solid var(--ink); background: var(--panel-2); color: var(--ink); box-shadow: 2px 2px 0 var(--ink); font: 800 11px Consolas, monospace; }
+kbd em { font: 900 8px/1 Consolas, monospace; font-style: normal; align-self: flex-start; }
 .note-meta { color: var(--muted); font: 8px Consolas, monospace; }
 .empty-score { min-height: 260px; display: grid; place-items: center; align-content: center; gap: 8px; background: repeating-linear-gradient(-45deg, var(--panel), var(--panel) 12px, var(--panel-2) 12px, var(--panel-2) 13px); text-align: center; }
 .empty-score strong { font: 900 20px Consolas, monospace; letter-spacing: .08em; }

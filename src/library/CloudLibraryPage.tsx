@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { ScoreWorkspace } from "../components/ScoreWorkspace";
-import { optimizeHarmonica } from "../harmonica/optimizer";
 import type { ScoreSnapshot } from "../persistence/scoreCodec";
 import { cloudArchiveQuota, deleteCloudScore, listCloudScores, loadCloudScore, saveCloudScore, type CloudScoreMeta } from "../cloud/archive";
-import { copyText, hasToyAbility, loadFavoriteIds, saveFavoriteIds, scoreShareUrl, shareScore } from "../cloud/toy";
+import { ensureOwnerToken, hasToyAbility, loadFavoriteIds, saveFavoriteIds } from "../cloud/toy";
 import { deletePublicScore, getCatalog, getPublicScore, libraryConfigured, libraryPublishConfigured, myPublicScores, searchCatalog } from "./api";
+import { PublicScoreMetaForm, PublishArchiveDialog, RenameCloudScoreDialog, ShareScoreButton } from "./ScoreActions";
+import ScoreWorkbench from "./ScoreWorkbench";
 import type { LibraryEntry, PublicScore } from "./types";
 import "./library.css";
 
@@ -36,22 +36,6 @@ function difficultyLabel(value: number) {
   return `${"★".repeat(Math.min(5, value))}${"☆".repeat(Math.max(0, 5 - value))}`;
 }
 
-function Preview({ snapshot }: { snapshot: ScoreSnapshot }) {
-  const conversion = useMemo(
-    () => optimizeHarmonica(snapshot.notes, snapshot.transpose),
-    [snapshot]
-  );
-  return (
-    <ScoreWorkspace
-      notes={conversion.notes}
-      unplayableCount={conversion.unplayable.length}
-      timeSignatures={snapshot.timeSignatures}
-      measureStarts={snapshot.measureStarts}
-      bpm={snapshot.tempos[0]?.bpm ?? 120}
-    />
-  );
-}
-
 function PublicDetail({ id, favorites, onFavorites }: {
   id: string;
   favorites: string[];
@@ -61,16 +45,36 @@ function PublicDetail({ id, favorites, onFavorites }: {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
+  const [mine, setMine] = useState(false);
+  const [editing, setEditing] = useState(false);
 
   useEffect(() => {
     let active = true;
     setScore(null);
     setError("");
+    setEditing(false);
     void getPublicScore(id)
       .then((value) => { if (active) setScore(value); })
       .catch((reason) => { if (active) setError(reason instanceof Error ? reason.message : "曲谱加载失败"); });
     return () => { active = false; };
   }, [id]);
+
+  // 修改 is only offered for scores this Toy identity published; the write API
+  // re-checks the owner token anyway, so this check is presentation only.
+  useEffect(() => {
+    if (!libraryPublishConfigured || !hasToyAbility("getCloudStorage")) return;
+    let active = true;
+    void ensureOwnerToken()
+      .then((token) => myPublicScores(token))
+      .then((rows) => { if (active) setMine(rows.some((row) => row.id === id)); })
+      .catch(() => undefined);
+    return () => { active = false; };
+  }, [id]);
+
+  async function reload() {
+    try { setScore(await getPublicScore(id)); }
+    catch (reason) { setError(reason instanceof Error ? reason.message : "曲谱加载失败"); }
+  }
 
   async function toggleFavorite() {
     const next = favorites.includes(id) ? favorites.filter((item) => item !== id) : [...favorites, id];
@@ -82,22 +86,6 @@ function PublicDetail({ id, favorites, onFavorites }: {
       setMessage(next.includes(id) ? "已收藏到 Toy 云存储" : "已取消收藏");
     } catch (reason) {
       setMessage(reason instanceof Error ? reason.message : "收藏失败");
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  async function share() {
-    setBusy(true);
-    setMessage("");
-    try {
-      const result = await shareScore(id);
-      if (result === "fallback") {
-        const copied = await copyText(scoreShareUrl(id));
-        setMessage(copied ? "分享链接已复制" : `分享链接：${scoreShareUrl(id)}`);
-      }
-    } catch (reason) {
-      setMessage(reason instanceof Error ? reason.message : "分享失败");
     } finally {
       setBusy(false);
     }
@@ -133,7 +121,12 @@ function PublicDetail({ id, favorites, onFavorites }: {
           </div>
         </div>
         <div className="library-detail-actions">
-          <button className="button primary" disabled={busy} onClick={() => void share()}>分享</button>
+          <ShareScoreButton id={id} onMessage={setMessage} disabled={busy} className="button secondary" />
+          {mine && (
+            <button className="button secondary" disabled={busy} onClick={() => setEditing((value) => !value)}>
+              {editing ? "收起修改" : "修改信息"}
+            </button>
+          )}
           <button className="button secondary" disabled={busy || !hasToyAbility("setCloudStorage")} onClick={() => void toggleFavorite()}>
             {favorites.includes(id) ? "取消收藏" : "收藏"}
           </button>
@@ -141,13 +134,27 @@ function PublicDetail({ id, favorites, onFavorites }: {
           <a className="button secondary" href={libraryUrl()}>返回曲谱库</a>
         </div>
       </section>
+      {editing && (
+        <PublicScoreMetaForm
+          entry={score}
+          onMessage={setMessage}
+          onCancel={() => setEditing(false)}
+          onSaved={() => { setEditing(false); void reload(); }}
+        />
+      )}
       {message && <p className="library-message">{message}</p>}
       <section className="library-metrics">
         <span><b>{score.noteCount}</b> NOTES</span>
         <span><b>{score.bpm}</b> BPM</span>
         <span><b>{durationLabel(score.durationMs)}</b> LENGTH</span>
       </section>
-      <Preview snapshot={score.snapshot} />
+      <ScoreWorkbench
+        key={score.id}
+        title={score.title}
+        snapshot={score.snapshot}
+        publicId={mine ? score.id : undefined}
+        onSaved={() => setMessage("已保存到我的 Toy 云存档，可在「我的云存档」里继续修改")}
+      />
     </>
   );
 }
@@ -157,6 +164,7 @@ function PublicCatalog({ favorites }: { favorites: string[] }) {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(libraryConfigured);
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     if (!libraryConfigured) return;
@@ -185,24 +193,28 @@ function PublicCatalog({ favorites }: { favorites: string[] }) {
         <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜索曲名 / 原作者 / 投稿者 / 标签" aria-label="搜索公开曲谱" />
       </section>
       {error && <p className="error-note">{error}</p>}
+      {message && <p className="library-message">{message}</p>}
       {loading ? (
         <div className="library-empty"><strong>LOADING INDEX</strong><span>正在读取静态 catalog shards…</span></div>
       ) : (
         <section className="library-list">
           {filtered.map((entry) => (
-            <a className="panel library-row" href={scoreUrl(entry.id)} key={entry.id}>
-              <div className="library-row-main">
+            <article className="panel library-row" key={entry.id}>
+              <a className="library-row-main" href={scoreUrl(entry.id)}>
                 <span className="eyebrow">{favorites.includes(entry.id) ? "★ FAVORITE" : `SCORE / ${entry.id}`}</span>
                 <h3>{entry.title}</h3>
                 <p>{entry.composer || "未标注原作者"} · {entry.uploader}</p>
                 <div className="library-tags">{entry.tags.slice(0, 5).map((tag) => <span key={tag}>{tag}</span>)}</div>
-              </div>
+              </a>
               <div className="library-row-stats">
                 <b>{entry.noteCount}</b><small>NOTES</small>
                 <b>{entry.bpm}</b><small>BPM</small>
                 <b>{durationLabel(entry.durationMs)}</b><small>LENGTH</small>
               </div>
-            </a>
+              <div className="library-row-actions">
+                <ShareScoreButton id={entry.id} onMessage={setMessage} />
+              </div>
+            </article>
           ))}
           {!filtered.length && <div className="library-empty"><strong>NO MATCH</strong><span>{entries.length ? "没有匹配当前关键词的曲谱。" : "曲谱库暂时为空。"}</span></div>}
         </section>
@@ -216,8 +228,12 @@ function PrivateArchive() {
   const [selected, setSelected] = useState<{ meta: CloudScoreMeta; snapshot: ScoreSnapshot } | null>(null);
   const [quota, setQuota] = useState<{ usedKeys: number; maxKeys: number; records: number } | null>(null);
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [renaming, setRenaming] = useState<{ meta: CloudScoreMeta; snapshot: ScoreSnapshot } | null>(null);
+  const [sharing, setSharing] = useState<{ title: string; snapshot: ScoreSnapshot } | null>(null);
   const available = hasToyAbility("getCloudStorage");
+  const canPublish = libraryPublishConfigured && hasToyAbility("getUserProfile");
 
   async function refresh() {
     if (!available) return;
@@ -235,6 +251,20 @@ function PrivateArchive() {
   }
 
   useEffect(() => { void refresh(); }, [available]);
+
+  /** List rows carry metadata only, so actions that need notes load the record first. */
+  async function withSnapshot(meta: CloudScoreMeta, run: (snapshot: ScoreSnapshot) => void) {
+    setLoading(true);
+    setError("");
+    try {
+      const record = await loadCloudScore(meta.id);
+      run(record.snapshot);
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "云端乐谱读取失败");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   async function open(meta: CloudScoreMeta) {
     setLoading(true);
@@ -257,6 +287,15 @@ function PrivateArchive() {
     }
   }
 
+  /** Renaming re-saves the same notes under a new revision, then renames the index entry. */
+  async function rename(nextTitle: string) {
+    if (!renaming) return;
+    const meta = await saveCloudScore({ id: renaming.meta.id, title: nextTitle, snapshot: renaming.snapshot });
+    if (selected?.meta.id === meta.id) setSelected({ meta, snapshot: renaming.snapshot });
+    setMessage(`已改名为「${meta.title}」`);
+    await refresh();
+  }
+
   if (!available) return <div className="library-empty"><strong>TOY CLOUD STORAGE</strong><span>请在支持 CloudStorage 的 B站 Toy 环境中查看个人云存档。</span></div>;
 
   if (selected) {
@@ -265,11 +304,39 @@ function PrivateArchive() {
         <section className="panel library-detail-head">
           <div><span className="eyebrow">PRIVATE CLOUD SCORE</span><h1>{selected.meta.title}</h1><p>{selected.meta.noteCount} notes · {durationLabel(selected.meta.durationMs)}</p></div>
           <div className="library-detail-actions">
+            {canPublish && (
+              <button className="button secondary" disabled={loading} onClick={() => setSharing({ title: selected.meta.title, snapshot: selected.snapshot })}>分享</button>
+            )}
+            <button className="button secondary" disabled={loading} onClick={() => setRenaming({ meta: selected.meta, snapshot: selected.snapshot })}>修改</button>
             <button className="button secondary" onClick={() => setSelected(null)}>返回云存档</button>
             <button className="button secondary" disabled={loading} onClick={() => void remove(selected.meta)}>删除</button>
           </div>
         </section>
-        <Preview snapshot={selected.snapshot} />
+        {message && <p className="library-message">{message}</p>}
+        <ScoreWorkbench
+          key={selected.meta.id}
+          title={selected.meta.title}
+          snapshot={selected.snapshot}
+          archiveId={selected.meta.id}
+          onSaved={() => { setMessage("云存档已更新"); void refresh(); }}
+        />
+        {renaming && (
+          <RenameCloudScoreDialog
+            title={renaming.meta.title}
+            onSave={rename}
+            onClose={() => setRenaming(null)}
+            onMessage={setMessage}
+          />
+        )}
+        {sharing && (
+          <PublishArchiveDialog
+            title={sharing.title}
+            snapshot={sharing.snapshot}
+            onMessage={setMessage}
+            onPublished={(shortId) => { setSharing(null); setMessage(`已发布到公开曲谱库 · ${shortId}，可在「我的发布」里分享`); }}
+            onClose={() => setSharing(null)}
+          />
+        )}
       </>
     );
   }
@@ -281,6 +348,7 @@ function PrivateArchive() {
         {quota && <div className="library-quota"><b>{quota.usedKeys} / {quota.maxKeys}</b><span>KEYS · {quota.records} SCORES</span></div>}
       </section>
       {error && <p className="error-note">{error}</p>}
+      {message && <p className="library-message">{message}</p>}
       <section className="library-list">
         {records.map((meta) => (
           <article className="panel library-row" key={meta.id}>
@@ -288,10 +356,18 @@ function PrivateArchive() {
               <span className="eyebrow">CLOUD / {meta.id}</span><h3>{meta.title}</h3><p>{new Date(meta.updatedAt).toLocaleString()}</p>
             </button>
             <div className="library-row-stats"><b>{meta.noteCount}</b><small>NOTES</small><b>{meta.parts}</b><small>PARTS</small><b>{Math.ceil(meta.bytes / 1024)}K</b><small>PACKED</small></div>
-            <button className="library-delete" onClick={() => void remove(meta)} disabled={loading}>删除</button>
+            <div className="library-row-actions">
+              {canPublish ? (
+                <button className="library-action" disabled={loading} onClick={() => void withSnapshot(meta, (snapshot) => setSharing({ title: meta.title, snapshot }))}>分享</button>
+              ) : (
+                <button className="library-action" disabled title="需要 Toy 登录和已部署的公开曲谱接口">分享</button>
+              )}
+              <button className="library-action" disabled={loading} onClick={() => void withSnapshot(meta, (snapshot) => setRenaming({ meta, snapshot }))}>修改</button>
+              <button className="library-delete" onClick={() => void remove(meta)} disabled={loading}>删除</button>
+            </div>
           </article>
         ))}
-        {!records.length && !loading && <div className="library-empty"><strong>NO CLOUD SCORES</strong><span>打开一份公开谱后可先保存到个人 Toy 云存档；转换器里的直接保存入口会在 UI 接线阶段接上。</span></div>}
+        {!records.length && !loading && <div className="library-empty"><strong>NO CLOUD SCORES</strong><span>在转换器里点 CLOUD 保存当前谱面，或打开一份公开谱后保存到云存档。</span></div>}
       </section>
     </>
   );
@@ -300,6 +376,8 @@ function PrivateArchive() {
 function MyPublished() {
   const [entries, setEntries] = useState<LibraryEntry[]>([]);
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+  const [editing, setEditing] = useState<LibraryEntry | null>(null);
   const [loading, setLoading] = useState(false);
 
   async function load() {
@@ -307,7 +385,6 @@ function MyPublished() {
     setLoading(true);
     setError("");
     try {
-      const { ensureOwnerToken } = await import("../cloud/toy");
       const token = await ensureOwnerToken();
       setEntries(await myPublicScores(token));
     } catch (reason) {
@@ -323,7 +400,6 @@ function MyPublished() {
     if (!confirm(`从公开曲谱库删除「${entry.title}」？`)) return;
     setLoading(true);
     try {
-      const { ensureOwnerToken } = await import("../cloud/toy");
       await deletePublicScore(entry.id, await ensureOwnerToken());
       await load();
     } catch (reason) {
@@ -338,12 +414,25 @@ function MyPublished() {
   return (
     <>
       {error && <p className="error-note">{error}</p>}
+      {message && <p className="library-message">{message}</p>}
+      {editing && (
+        <PublicScoreMetaForm
+          entry={editing}
+          onMessage={setMessage}
+          onCancel={() => setEditing(null)}
+          onSaved={() => { setEditing(null); void load(); }}
+        />
+      )}
       <section className="library-list">
         {entries.map((entry) => (
           <article className="panel library-row" key={entry.id}>
             <a className="library-row-main" href={scoreUrl(entry.id)}><span className="eyebrow">PUBLISHED / {entry.id}</span><h3>{entry.title}</h3><p>{entry.composer || "未标注原作者"}</p></a>
             <div className="library-row-stats"><b>{entry.noteCount}</b><small>NOTES</small><b>{entry.bpm}</b><small>BPM</small></div>
-            <button className="library-delete" disabled={loading} onClick={() => void remove(entry)}>下架</button>
+            <div className="library-row-actions">
+              <ShareScoreButton id={entry.id} onMessage={setMessage} disabled={loading} />
+              <button className="library-action" disabled={loading} onClick={() => setEditing(entry)}>修改</button>
+              <button className="library-delete" disabled={loading} onClick={() => void remove(entry)}>下架</button>
+            </div>
           </article>
         ))}
         {!entries.length && !loading && <div className="library-empty"><strong>NO PUBLISHED SCORES</strong><span>还没有使用当前 Toy 身份发布公开曲谱。</span></div>}

@@ -145,6 +145,14 @@ export async function shareScore(shortId: string): Promise<ShareOutcome> {
   return "fallback";
 }
 
+/** Share sheet first, copied link second. Returns the message the caller shows. */
+export async function sharePublicScore(shortId: string): Promise<string> {
+  const outcome = await shareScore(shortId);
+  if (outcome === "sheet") return "已打开 Toy 分享面板";
+  const url = scoreShareUrl(shortId);
+  return (await copyText(url)) ? "分享链接已复制" : `分享链接：${url}`;
+}
+
 export async function scoreQrCode(shortId: string, size = 320) {
   if (!hasToyAbility("getQrCode")) throw new Error("当前环境不支持 Toy 二维码");
   return sdk().getQrCode({ path: scoreSharePath(shortId), size });

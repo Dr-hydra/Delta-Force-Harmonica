@@ -1,4 +1,4 @@
-import { displayOctave, midiName } from "../harmonica/mapping";
+import { displayOctave, midiName, modifierLabel } from "../harmonica/mapping";
 import type { GameNote } from "../music/types";
 
 export function NoteTile({
@@ -12,6 +12,7 @@ export function NoteTile({
 }) {
   const octave = displayOctave(note);
   const dots = Math.abs(octave);
+  const modifiers = modifierLabel(note);
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLElement>) {
     if (!onSelect || (event.key !== "Enter" && event.key !== " ")) return;
@@ -37,7 +38,7 @@ export function NoteTile({
         </span>
         {octave < 0 && <span className="octave-dots bottom">{"•".repeat(dots)}</span>}
       </div>
-      <kbd>{note.key}</kbd>
+      <kbd>{note.key}{modifiers && <em>{modifiers}</em>}</kbd>
       <span className="note-meta">{midiName(note.pitch)}</span>
     </article>
   );

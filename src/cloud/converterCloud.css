@@ -32,6 +32,9 @@
   backdrop-filter: blur(4px);
 }
 
+/* The panel stays mounted so its state survives closing it. */
+.converter-cloud-backdrop[hidden] { display: none; }
+
 .converter-cloud-panel {
   width: min(560px, calc(100vw - 24px));
   max-height: min(760px, calc(100vh - 24px));

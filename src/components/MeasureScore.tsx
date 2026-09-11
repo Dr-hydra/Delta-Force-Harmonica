@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { displayOctave, midiName } from "../harmonica/mapping";
+import { displayOctave, midiName, modifierLabel } from "../harmonica/mapping";
 import type { ScoreMeasure } from "../score/measures";
 import { durationLabel } from "../score/measures";
 
@@ -63,7 +63,7 @@ export function MeasureScore({
       <div className="measure-toolbar">
         <div>
           <strong>小节谱</strong>
-          <span>按拍号排版 · 空白区间自动显示休止 · 播放时自动翻页</span>
+          <span>按拍号排版 · 空白区间自动显示休止 · 播放时自动翻页 · 键位上的 ↑ / ↓ 为升调 / 降调（鼠标右键 / 左键），# 为半音（中键）</span>
         </div>
         <div className="measure-pagination">
           <button className="button secondary" disabled={page <= 0} onClick={() => setPage((value) => Math.max(0, value - 1))}>← 上一页</button>
@@ -103,6 +103,7 @@ export function MeasureScore({
 
                 {measure.notes.map((item) => {
                   const dots = jianpu(item.note);
+                  const modifiers = modifierLabel(item.note);
                   const clippedDuration = Math.max(1 / 96, Math.min(item.durationBeats, measure.lengthBeats - item.offsetBeats));
                   const left = Math.max(0, item.offsetBeats / measure.lengthBeats * 100);
                   const width = Math.max(2.6, Math.min(100 - left, clippedDuration / measure.lengthBeats * 100));
@@ -111,13 +112,15 @@ export function MeasureScore({
                       className={`measure-note ${item.index === activeIndex ? "active" : ""} ${item.index === selectedIndex ? "editing" : ""}`}
                       style={{ left: `${left}%`, width: `${width}%` }}
                       onClick={() => onSelect(item.index)}
-                      title={`${midiName(item.note.pitch)} · ${durationLabel(item.durationBeats)} · ${item.note.key}`}
+                      title={`${midiName(item.note.pitch)} · ${durationLabel(item.durationBeats)} · ${item.note.key}${modifiers}`}
                       key={`${item.index}-${item.beat}`}
                     >
-                      {dots.high && <span className="measure-dots top">{dots.high}</span>}
-                      <span className="measure-degree">{item.note.sharp && <sup>#</sup>}<b>{item.note.degree}</b></span>
-                      {dots.low && <span className="measure-dots bottom">{dots.low}</span>}
-                      <kbd>{item.note.key}</kbd>
+                      <span className="measure-degree">
+                        <span className="measure-dots top">{dots.high}</span>
+                        <span className="measure-digit">{item.note.sharp && <sup>#</sup>}<b>{item.note.degree}</b></span>
+                        <span className="measure-dots bottom">{dots.low}</span>
+                      </span>
+                      <kbd>{item.note.key}{modifiers && <em>{modifiers}</em>}</kbd>
                       <small>{durationLabel(item.durationBeats)}</small>
                     </button>
                   );

@@ -15,18 +15,20 @@
 .measure-card > header small { color: var(--muted); font: 9px/1.4 Consolas, monospace; }
 .measure-lane { position: relative; min-width: 0; min-height: 108px; margin: 14px 16px 0; border-bottom: 2px solid var(--ink); background: linear-gradient(to bottom, transparent 49%, color-mix(in srgb, var(--line), transparent 35%) 50%, transparent 51%); }
 .beat-guide { position: absolute; inset: 0 auto 0 0; width: 1px; background: color-mix(in srgb, var(--line), transparent 15%); pointer-events: none; }
-.measure-note { position: absolute; top: 9px; height: 82px; min-width: 30px; padding: 8px 4px 6px; display: grid; place-items: center; align-content: center; gap: 5px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; overflow: visible; transition: .12s ease; z-index: 3; }
+.measure-note { position: absolute; top: 9px; height: 96px; min-width: 30px; padding: 8px 4px 6px; display: grid; place-items: center; align-content: center; gap: 5px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; overflow: visible; transition: .12s ease; z-index: 3; }
 .measure-note:hover { z-index: 6; border-color: var(--ink); background: color-mix(in srgb, var(--accent), var(--panel) 87%); }
 .measure-note.active { z-index: 7; border-color: #172023; background: var(--accent); color: #172023; box-shadow: 3px 3px 0 #172023; }
-.measure-note kbd { min-width: 22px; min-height: 20px; padding: 2px 4px; box-shadow: none; font-size: 9px; }
+.measure-note kbd { min-width: 22px; min-height: 20px; padding: 2px 4px; box-shadow: none; font-size: 9px; display: inline-flex; align-items: center; justify-content: center; gap: 1px; }
+.measure-note kbd em { font: 900 8px/1 Consolas, monospace; font-style: normal; align-self: flex-start; }
 .measure-note > small { color: var(--muted); font: 8px Consolas, monospace; }
 .measure-note.active > small { color: #4d541c; }
-.measure-degree { position: relative; display: flex; align-items: flex-start; justify-content: center; font-family: Consolas, monospace; }
+/* The octave dots are their own rows instead of absolutely positioned: a low dot
+   anchored to the box bottom used to land on top of the keycap. */
+.measure-degree { display: grid; justify-items: center; gap: 1px; font-family: Consolas, monospace; }
+.measure-digit { display: flex; align-items: flex-start; justify-content: center; }
 .measure-degree b { font-size: 22px; line-height: 1; }
 .measure-degree sup { margin-right: 1px; font-size: 9px; font-weight: 900; }
-.measure-dots { position: absolute; left: 50%; transform: translateX(-50%); font: 900 9px/1 Consolas, monospace; letter-spacing: 1px; }
-.measure-dots.top { top: 2px; }
-.measure-dots.bottom { bottom: 27px; }
+.measure-dots { min-height: 9px; font: 900 9px/9px Consolas, monospace; letter-spacing: 1px; }
 .rest-block { position: absolute; top: 45px; height: 24px; min-width: 14px; display: flex; align-items: center; justify-content: center; gap: 4px; color: var(--muted); border-top: 1px dashed color-mix(in srgb, var(--muted), transparent 35%); z-index: 1; overflow: hidden; pointer-events: none; }
 .rest-block b { font: 900 14px Consolas, monospace; }
 .rest-block small { font: 8px Consolas, monospace; }
