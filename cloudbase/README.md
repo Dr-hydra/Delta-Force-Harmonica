@@ -3,6 +3,8 @@
 这部分是 DFH 公共曲谱库的低频**写入**后端，结构直接参考 Better-Endfield 已上线的 Web 后端。
 当前仓库不绑定固定 CloudBase 环境；环境 ID、网关与私有数据前缀都保留在本地 CLI 配置中。
 
+> 给常用开发机/本地 Agent 的完整部署清单见 [`DEPLOY.md`](./DEPLOY.md)。部署共享环境前先做 dry-run，任何会删除或覆盖现有 `/combat`、`/fh6` 的操作都必须停止。
+
 ## 设计
 
 ```text
