@@ -1,7 +1,23 @@
 .library-content { display: grid; gap: 18px; }
 .library-rail .brand { text-decoration: none; }
-.library-rail nav a,
-.library-rail nav button { text-decoration: none; }
+.library-rail nav a {
+  position: relative;
+  min-height: 62px;
+  padding: 10px 22px;
+  border: 0;
+  background: transparent;
+  color: #aeb7ba;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  text-align: left;
+  text-decoration: none;
+}
+.library-rail nav a::before { content: ""; position: absolute; left: 0; top: 8px; bottom: 8px; width: 4px; background: transparent; }
+.library-rail nav a:hover { color: var(--accent); background: color-mix(in srgb, var(--accent), transparent 94%); }
+.library-rail nav a i { width: 22px; color: var(--accent); font: normal 11px Consolas, monospace; }
+.library-rail nav a span { font-size: 15px; white-space: nowrap; }
 
 .cloud-library-launcher {
   position: fixed;
@@ -12,7 +28,7 @@
   box-sizing: border-box;
   border: 1px solid var(--line);
   background: var(--panel);
-  color: var(--text);
+  color: var(--ink);
   box-shadow: var(--shadow);
   padding: 12px 14px;
   text-decoration: none;
@@ -41,7 +57,7 @@
   padding: 13px 14px;
   border: 1px solid var(--line);
   background: var(--bg);
-  color: var(--text);
+  color: var(--ink);
   font: inherit;
   outline: none;
 }
@@ -72,15 +88,15 @@ a.library-row:hover { border-color: var(--accent); transform: translateY(-1px); 
 .library-tags span { border: 1px solid var(--line); padding: 3px 7px; font-size: 10px; color: var(--muted); }
 
 .library-detail-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; max-width: 520px; }
-.library-detail-actions .button { text-decoration: none; }
+.library-detail-actions .button { text-decoration: none; display: inline-grid; place-items: center; }
 .library-message { margin: 0; border-left: 3px solid var(--accent); background: var(--panel); padding: 11px 14px; color: var(--muted); }
 .library-metrics { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line); background: var(--panel); }
 .library-metrics span { display: flex; flex-direction: column; gap: 5px; padding: 17px 20px; border-right: 1px solid var(--line); color: var(--muted); font-size: 10px; letter-spacing: .08em; }
 .library-metrics span:last-child { border-right: 0; }
-.library-metrics b { color: var(--text); font-size: 22px; letter-spacing: 0; }
+.library-metrics b { color: var(--ink); font-size: 22px; letter-spacing: 0; }
 
 .library-empty { min-height: 190px; border: 1px dashed var(--line); display: grid; place-items: center; align-content: center; gap: 7px; padding: 24px; text-align: center; color: var(--muted); }
-.library-empty strong { color: var(--text); letter-spacing: .12em; }
+.library-empty strong { color: var(--ink); letter-spacing: .12em; }
 .library-empty a { color: var(--accent); }
 .library-quota { min-width: 150px; text-align: right; }
 .library-quota b { display: block; font-size: 22px; }
