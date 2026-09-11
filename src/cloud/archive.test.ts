@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { CLOUD_PART_CHARS, packCloudIndexPages, splitCloudPayload, type CloudScoreMeta } from "./archive";
+import {
+  CLOUD_MAX_KEYS,
+  CLOUD_PART_CHARS,
+  estimateCloudPeakKeyCount,
+  packCloudIndexPages,
+  splitCloudPayload,
+  type CloudScoreMeta
+} from "./archive";
 
 function meta(index: number, title = `乐谱 ${index}`): CloudScoreMeta {
   return {
@@ -29,5 +36,17 @@ describe("Toy cloud archive layout", () => {
       expect(new TextEncoder().encode(page).byteLength).toBeLessThanOrEqual(1024);
       expect(Array.isArray(JSON.parse(page))).toBe(true);
     }
+  });
+
+  it("counts the old revision during an atomic replacement", () => {
+    const existing = { ...meta(1), parts: 118 };
+    const peak = estimateCloudPeakKeyCount([existing], 1, 1, 5);
+    expect(peak).toBe(129);
+    expect(peak).toBeGreaterThan(CLOUD_MAX_KEYS);
+  });
+
+  it("allows a replacement when both revisions fit at the transient peak", () => {
+    const existing = { ...meta(1), parts: 116 };
+    expect(estimateCloudPeakKeyCount([existing], 1, 1, 5)).toBe(127);
   });
 });
