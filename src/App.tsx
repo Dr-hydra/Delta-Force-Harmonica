@@ -12,6 +12,7 @@ import ExportPanel from "./components/ExportPanel";
 import { ScoreWorkspace } from "./components/ScoreWorkspace";
 import { RailToggle, useRailCollapsed } from "./components/RailToggle";
 import { useScoreEdits } from "./score/useScoreEdits";
+import { moveNote, moveNotes, resizeNote } from "./score/editNotes";
 import type { NoteEvent, ParsedSong, TimeSignatureEvent } from "./music/types";
 import { aboutHref } from "./navigation";
 
@@ -388,15 +389,38 @@ export default function App() {
           measureStarts={measureStarts}
           bpm={bpm || 120}
           selectedIndex={conversion.notes.findIndex((_, index) => editIndexOf(index) === edits.selectedNote)}
-          onNoteSelect={(index) => edits.setSelectedNote(editIndexOf(index))}
+          selectedIndices={conversion.notes.flatMap((_, index) => edits.selectedNotes.includes(editIndexOf(index) ?? -1) ? [index] : [])}
+          insertionBeat={edits.insertionBeat}
+          editStep={edits.editStep}
+          onInsertionSelect={edits.setInsertionBeat}
+          onNoteMove={(index, delta) => {
+            const editIndex = editIndexOf(index);
+            if (editIndex !== null) edits.applyEdit((notes, tempo) => edits.selectedNotes.length > 1 && edits.selectedNotes.includes(editIndex)
+              ? moveNotes(notes, edits.selectedNotes, delta, tempo)
+              : moveNote(notes, editIndex, delta, tempo));
+          }}
+          onNoteResize={(index, delta) => {
+            const editIndex = editIndexOf(index);
+            if (editIndex !== null) edits.applyEdit((notes, tempo) => resizeNote(notes, editIndex, delta, tempo));
+          }}
+          onNoteSelect={(index, mode) => {
+            const editIndex = editIndexOf(index);
+            if (editIndex !== null) edits.selectNote(editIndex, mode);
+          }}
         />
 
         <EditPanel
           notes={melodyNotes}
           editing={editing}
           selectedNote={edits.selectedNote}
+          selectedNotes={edits.selectedNotes}
+          insertionBeat={edits.insertionBeat}
+          transpose={transpose}
+          collapsedConflictCount={mono.collapsedChordNotes}
+          truncatedConflictCount={mono.truncatedNotes}
           canUndo={edits.canUndo}
           canRedo={edits.canRedo}
+          canPaste={edits.canPaste}
           editStep={edits.editStep}
           resetHint={
             <>
@@ -407,6 +431,12 @@ export default function App() {
           onApply={edits.applyEdit}
           onUndo={edits.undo}
           onRedo={edits.redo}
+          onCopy={edits.copySelection}
+          onPaste={edits.pasteSelection}
+          onDuplicate={edits.duplicateSelection}
+          onSelectAll={edits.selectAll}
+          onClearSelection={edits.clearSelection}
+          onSelectAdjacent={edits.selectAdjacent}
           onReset={edits.reset}
           onStartBlank={edits.startBlank}
         />

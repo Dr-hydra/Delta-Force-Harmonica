@@ -7,6 +7,7 @@ import { optimizeHarmonica } from "../harmonica/optimizer";
 import { enforceMonophonic } from "../music/monophonic";
 import type { ScoreSnapshot } from "../persistence/scoreCodec";
 import { useScoreEdits } from "../score/useScoreEdits";
+import { moveNote, moveNotes, resizeNote } from "../score/editNotes";
 
 /**
  * The converter's preview, 04 / EDIT and 05 / EXPORT panels plus the Toy
@@ -50,21 +51,50 @@ export default function ScoreWorkbench({ title, snapshot, archiveId, publicId, o
         measureStarts={snapshot.measureStarts}
         bpm={bpm}
         selectedIndex={conversion.notes.findIndex((_, index) => editIndexOf(index) === edits.selectedNote)}
-        onNoteSelect={(index) => edits.setSelectedNote(editIndexOf(index))}
+        selectedIndices={conversion.notes.flatMap((_, index) => edits.selectedNotes.includes(editIndexOf(index) ?? -1) ? [index] : [])}
+        insertionBeat={edits.insertionBeat}
+        editStep={edits.editStep}
+        onInsertionSelect={edits.setInsertionBeat}
+        onNoteMove={(index, delta) => {
+          const editIndex = editIndexOf(index);
+          if (editIndex !== null) edits.applyEdit((notes, tempo) => edits.selectedNotes.length > 1 && edits.selectedNotes.includes(editIndex)
+            ? moveNotes(notes, edits.selectedNotes, delta, tempo)
+            : moveNote(notes, editIndex, delta, tempo));
+        }}
+        onNoteResize={(index, delta) => {
+          const editIndex = editIndexOf(index);
+          if (editIndex !== null) edits.applyEdit((notes, tempo) => resizeNote(notes, editIndex, delta, tempo));
+        }}
+        onNoteSelect={(index, mode) => {
+          const editIndex = editIndexOf(index);
+          if (editIndex !== null) edits.selectNote(editIndex, mode);
+        }}
       />
 
       <EditPanel
         notes={edits.notes}
         editing={edits.editing}
         selectedNote={edits.selectedNote}
+        selectedNotes={edits.selectedNotes}
+        insertionBeat={edits.insertionBeat}
+        transpose={snapshot.transpose}
+        collapsedConflictCount={mono.collapsedChordNotes}
+        truncatedConflictCount={mono.truncatedNotes}
         canUndo={edits.canUndo}
         canRedo={edits.canRedo}
+        canPaste={edits.canPaste}
         editStep={edits.editStep}
         resetHint="编辑只影响当前页面：导出、保存和发布都使用编辑后的谱面，「放弃编辑」会回到这份存档里的原谱。"
         onEditStepChange={edits.setEditStep}
         onApply={edits.applyEdit}
         onUndo={edits.undo}
         onRedo={edits.redo}
+        onCopy={edits.copySelection}
+        onPaste={edits.pasteSelection}
+        onDuplicate={edits.duplicateSelection}
+        onSelectAll={edits.selectAll}
+        onClearSelection={edits.clearSelection}
+        onSelectAdjacent={edits.selectAdjacent}
         onReset={edits.reset}
         onStartBlank={edits.startBlank}
       />

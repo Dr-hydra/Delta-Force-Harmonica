@@ -14,13 +14,31 @@
 .measure-card > header strong { font: 900 26px/1 Consolas, monospace; }
 .measure-card > header small { color: var(--muted); font: 9px/1.4 Consolas, monospace; }
 .measure-lane { position: relative; min-width: 0; min-height: 108px; margin: 14px 16px 0; border-bottom: 2px solid var(--ink); background: linear-gradient(to bottom, transparent 49%, color-mix(in srgb, var(--line), transparent 35%) 50%, transparent 51%); }
+.measure-lane.editable { cursor: crosshair; }
+.insertion-caret { position: absolute; top: 0; bottom: 0; width: 2px; transform: translateX(-1px); background: var(--accent); z-index: 8; pointer-events: none; box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink), transparent 65%); }
+.insertion-caret b { position: absolute; top: -8px; left: 50%; width: 22px; height: 22px; display: grid; place-items: center; transform: translateX(-50%); border: 1px solid var(--ink); border-radius: 50%; background: var(--accent); color: #172023; font: 900 15px/1 Consolas, monospace; }
+.note-value-editor { margin-top: 16px; padding: 14px; display: grid; grid-template-columns: repeat(3, minmax(110px, 1fr)) auto; align-items: end; gap: 10px; border: 1px solid var(--line); background: var(--panel-2); }
+.edit-toolbar { margin-top: 16px; display: flex; align-items: flex-end; flex-wrap: wrap; gap: 8px; }
+.edit-toolbar .field { flex: 1 1 220px; }
+.edit-toolbar .button { flex: 0 0 auto; padding-inline: 14px; }
+.note-value-editor .field { min-width: 0; }
+.note-value-editor .field small { min-height: 18px; color: var(--muted); font-size: 10px; }
+.note-value-editor .field select + small, .note-value-editor .field input + select { margin-top: 5px; }
+.note-value-editor .button { min-height: 42px; }
+.editor-shortcuts { margin: 10px 0 0; color: var(--muted); font: 700 10px/1.6 Consolas, monospace; letter-spacing: .02em; }
+.editor-conflict { margin-top: 14px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 14px; border: 1px solid #b56f2c; background: color-mix(in srgb, #f2a23a, var(--panel) 88%); }
+.editor-conflict p { margin: 0; font-size: 12px; line-height: 1.55; }
+.editor-conflict .button { flex: 0 0 auto; }
 .beat-guide { position: absolute; inset: 0 auto 0 0; width: 1px; background: color-mix(in srgb, var(--line), transparent 15%); pointer-events: none; }
-.measure-note { position: absolute; top: 9px; height: 96px; min-width: 30px; padding: 8px 4px 6px; display: grid; place-items: center; align-content: center; gap: 5px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; overflow: visible; transition: .12s ease; z-index: 3; }
+.measure-note { position: absolute; top: 9px; height: 96px; min-width: 30px; padding: 8px 7px 6px 4px; display: grid; place-items: center; align-content: center; gap: 5px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: grab; overflow: visible; touch-action: pan-y; transition: border-color .12s ease, background .12s ease, box-shadow .12s ease; z-index: 3; }
 .measure-note:hover { z-index: 6; border-color: var(--ink); background: color-mix(in srgb, var(--accent), var(--panel) 87%); }
+.measure-note.dragging { cursor: grabbing; z-index: 9; opacity: .86; transition: none; }
 .measure-note.active { z-index: 7; border-color: #172023; background: var(--accent); color: #172023; box-shadow: 3px 3px 0 #172023; }
 .measure-note kbd { min-width: 22px; min-height: 20px; padding: 2px 4px; box-shadow: none; font-size: 9px; display: inline-flex; align-items: center; justify-content: center; gap: 1px; }
 .measure-note kbd em { font: 900 8px/1 Consolas, monospace; font-style: normal; align-self: flex-start; }
 .measure-note > small { color: var(--muted); font: 8px Consolas, monospace; }
+.note-resize-handle { position: absolute; inset: 4px -1px 4px auto; width: 7px; border-left: 2px solid color-mix(in srgb, var(--ink), transparent 45%); cursor: ew-resize; touch-action: none; }
+.measure-note:hover .note-resize-handle, .measure-note.editing .note-resize-handle { border-left-color: var(--ink); }
 .measure-note.active > small { color: #4d541c; }
 /* The octave dots are their own rows instead of absolutely positioned: a low dot
    anchored to the box bottom used to land on top of the keycap. */
@@ -46,6 +64,9 @@
   .measure-pagination { width: 100%; justify-content: space-between; }
   .measure-card { grid-template-columns: 76px minmax(420px, 1fr); overflow-x: auto; }
   .measure-card > header { position: sticky; left: 0; z-index: 8; }
+  .note-value-editor { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .edit-toolbar .field { flex-basis: 100%; }
+  .editor-conflict { align-items: stretch; flex-direction: column; }
 }
 
 @media (max-width: 560px) {
@@ -60,6 +81,8 @@
   .measure-degree b { font-size: 19px; }
   .measure-note kbd { min-width: 18px; min-height: 18px; }
   .measure-beats { margin: 0 10px 8px; }
+  .note-value-editor { grid-template-columns: 1fr; }
+  .edit-toolbar .button { flex: 1 1 calc(50% - 8px); }
 }
 
 .measure-note.editing { outline: 2px solid var(--ink); outline-offset: 1px; z-index: 7; }

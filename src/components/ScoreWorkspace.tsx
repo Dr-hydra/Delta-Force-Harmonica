@@ -31,6 +31,12 @@ export function ScoreWorkspace({
   measureStarts,
   bpm,
   selectedIndex,
+  selectedIndices,
+  insertionBeat,
+  editStep,
+  onInsertionSelect,
+  onNoteMove,
+  onNoteResize,
   onNoteSelect
 }: {
   notes: GameNote[];
@@ -39,7 +45,13 @@ export function ScoreWorkspace({
   measureStarts: number[];
   bpm: number;
   selectedIndex?: number | null;
-  onNoteSelect?: (index: number) => void;
+  selectedIndices?: number[];
+  insertionBeat?: number | null;
+  editStep?: number;
+  onInsertionSelect?: (beat: number) => void;
+  onNoteMove?: (index: number, deltaBeats: number) => void;
+  onNoteResize?: (index: number, deltaBeats: number) => void;
+  onNoteSelect?: (index: number, mode?: "replace" | "toggle" | "range") => void;
 }) {
   const preview = useScorePreview(notes);
   const current = preview.currentNote;
@@ -144,9 +156,15 @@ export function ScoreWorkspace({
               measures={measures}
               activeIndex={preview.activeIndex}
               selectedIndex={selectedIndex}
-              onSelect={(index) => {
+              selectedIndices={selectedIndices}
+              insertionBeat={insertionBeat}
+              editStep={editStep}
+              onInsertionSelect={onInsertionSelect}
+              onMove={onNoteMove}
+              onResize={onNoteResize}
+              onSelect={(index, mode) => {
                 preview.seek(notes[index]?.start ?? 0);
-                onNoteSelect?.(index);
+                onNoteSelect?.(index, mode);
               }}
             />
           ) : (

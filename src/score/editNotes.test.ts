@@ -1,15 +1,27 @@
 import { describe, expect, it } from "vitest";
 import {
   clearLongSilences,
+  copyNoteFragment,
   deleteNote,
+  deleteNoteAndClose,
+  deleteNotes,
   insertNote,
+  insertNoteAt,
   MAX_PITCH,
   MIN_PITCH,
   moveNote,
+  moveNotes,
   normalizeNotes,
+  pasteNoteFragment,
   resizeNote,
+  resizeNotes,
+  resolveEditConflicts,
+  setNoteValues,
+  selectionEndBeat,
+  snapDragDelta,
   snapAll,
-  transposeNote
+  transposeNote,
+  transposeNotes
 } from "./editNotes";
 import type { NoteEvent } from "../music/types";
 
@@ -80,6 +92,17 @@ describe("moveNote", () => {
   });
 });
 
+describe("snapDragDelta", () => {
+  it("converts horizontal movement to the selected beat grid", () => {
+    expect(snapDragDelta(125, 500, 4, 0.5)).toBe(1);
+    expect(snapDragDelta(-70, 500, 4, 0.5)).toBe(-0.5);
+  });
+
+  it("ignores unusable lane dimensions", () => {
+    expect(snapDragDelta(100, 0, 4, 0.5)).toBe(0);
+  });
+});
+
 describe("resizeNote", () => {
   it("changes length without moving the onset", () => {
     const result = resizeNote(notes(), 1, 1, BPM);
@@ -95,6 +118,91 @@ describe("resizeNote", () => {
   });
 });
 
+describe("setNoteValues", () => {
+  it("sets pitch, onset and duration together and follows the note after sorting", () => {
+    const result = setNoteValues(notes(), 0, { pitch: 72, beat: 3, durationBeats: 0.25 }, BPM);
+    expect(result.notes.map((note) => note.pitch)).toEqual([64, 67, 72]);
+    expect(result.notes[2]).toMatchObject({ pitch: 72, beat: 3, durationBeats: 0.25, start: 1500, duration: 125 });
+    expect(result.selected).toBe(2);
+  });
+
+  it("clamps unsafe direct values", () => {
+    const result = setNoteValues(notes(), 1, { pitch: 999, beat: -2, durationBeats: 0 }, BPM);
+    const selected = result.notes[result.selected!];
+    expect(selected.pitch).toBe(MAX_PITCH);
+    expect(selected.beat).toBe(0);
+    expect(selected.durationBeats).toBeGreaterThan(0);
+  });
+});
+
+describe("batch edits", () => {
+  it("moves selected notes together and follows them after sorting", () => {
+    const result = moveNotes(notes(), [0, 1], 3, BPM);
+    expect(result.notes.map((note) => note.pitch)).toEqual([67, 60, 64]);
+    expect(result.notes.slice(1).map((note) => note.beat)).toEqual([3, 4]);
+    expect(result.selectedMany).toEqual([1, 2]);
+  });
+
+  it("transposes and resizes only the selected notes", () => {
+    const raised = transposeNotes(notes(), [0, 2], 12, BPM);
+    expect(raised.notes.map((note) => note.pitch).sort((a, b) => a - b)).toEqual([64, 72, 79]);
+    const resized = resizeNotes(notes(), [0, 2], 0.5, BPM);
+    expect(resized.notes.map((note) => note.durationBeats)).toEqual([1.5, 1, 2.5]);
+  });
+
+  it("deletes the selection and selects the nearest remaining note", () => {
+    const result = deleteNotes(notes(), [0, 1], BPM);
+    expect(result.notes.map((note) => note.pitch)).toEqual([67]);
+    expect(result.selectedMany).toEqual([0]);
+  });
+});
+
+describe("note fragments", () => {
+  it("copies a selection relative to its first onset and keeps internal timing", () => {
+    const fragment = copyNoteFragment(notes(), [1, 2], BPM);
+    expect(fragment.map((note) => note.beat)).toEqual([0, 1]);
+    expect(fragment.map((note) => note.durationBeats)).toEqual([1, 2]);
+    expect(selectionEndBeat(notes(), [1, 2], BPM)).toBe(4);
+  });
+
+  it("pastes into a free rest without moving later notes", () => {
+    const destination = normalizeNotes([
+      { pitch: 50, start: 0, duration: 250, beat: 0, durationBeats: 0.5 },
+      { pitch: 55, start: 2000, duration: 500, beat: 4, durationBeats: 1 }
+    ], BPM);
+    const fragment = copyNoteFragment(notes(), [0], BPM);
+    const result = pasteNoteFragment(destination, fragment, 2, BPM);
+    expect(result.notes.map((note) => note.beat)).toEqual([0, 2, 4]);
+    expect(result.selectedMany).toEqual([1]);
+  });
+
+  it("pushes a following phrase when the pasted fragment needs room", () => {
+    const fragment = copyNoteFragment(notes(), [0, 1], BPM);
+    const result = pasteNoteFragment(notes(), fragment, 1, BPM);
+    expect(result.notes.map((note) => note.beat)).toEqual([0, 1, 2, 3, 4]);
+    expect(result.selectedMany).toEqual([1, 2]);
+  });
+});
+
+describe("resolveEditConflicts", () => {
+  it("matches preview behavior by keeping the highest chord tone and truncating overlaps", () => {
+    const source = normalizeNotes([
+      { pitch: 60, start: 0, duration: 1000, beat: 0, durationBeats: 2 },
+      { pitch: 67, start: 0, duration: 500, beat: 0, durationBeats: 1 },
+      { pitch: 64, start: 500, duration: 500, beat: 1, durationBeats: 1 }
+    ], BPM);
+    const result = resolveEditConflicts(source, [0, 2], BPM);
+    expect(result.notes.map((note) => note.pitch)).toEqual([67, 64]);
+    expect(result.notes[0].durationBeats).toBe(1);
+    expect(result.selectedMany).toEqual([0, 1]);
+  });
+
+  it("is a no-op when the score has no conflicts", () => {
+    const source = notes();
+    expect(resolveEditConflicts(source, [1], BPM)).toEqual({ notes: source, selected: 1, selectedMany: [1] });
+  });
+});
+
 describe("deleteNote", () => {
   it("removes the note and keeps a valid selection", () => {
     const result = deleteNote(notes(), 2, BPM);
@@ -107,6 +215,20 @@ describe("deleteNote", () => {
     const result = deleteNote(single, 0, BPM);
     expect(result.notes).toHaveLength(0);
     expect(result.selected).toBeNull();
+  });
+});
+
+describe("deleteNoteAndClose", () => {
+  it("pulls the following phrase to the deleted onset", () => {
+    const result = deleteNoteAndClose(notes(), 1, BPM);
+    expect(result.notes.map((note) => note.beat)).toEqual([0, 1]);
+    expect(result.notes.map((note) => note.pitch)).toEqual([60, 67]);
+    expect(result.selected).toBe(1);
+  });
+
+  it("deletes the tail without shifting earlier notes", () => {
+    const result = deleteNoteAndClose(notes(), 2, BPM);
+    expect(result.notes.map((note) => note.beat)).toEqual([0, 1]);
   });
 });
 
@@ -130,6 +252,23 @@ describe("insertNote", () => {
   it("clears the anchor's length so it does not inherit a long note", () => {
     const result = insertNote(notes(), 2, 0.25, BPM);
     expect(result.notes[result.selected!].durationBeats).toBeCloseTo(0.25, 6);
+  });
+});
+
+describe("insertNoteAt", () => {
+  it("inserts into a free rest without moving the following phrase", () => {
+    const source = normalizeNotes([
+      { pitch: 60, start: 0, duration: 250, beat: 0, durationBeats: 0.5 },
+      { pitch: 64, start: 1000, duration: 500, beat: 2, durationBeats: 1 }
+    ], BPM);
+    const result = insertNoteAt(source, 1, 0.5, BPM);
+    expect(result.notes.map((note) => note.beat)).toEqual([0, 1, 2]);
+    expect(result.notes[result.selected!].pitch).toBe(60);
+  });
+
+  it("pushes the following phrase when the rest is too short", () => {
+    const result = insertNoteAt(notes(), 0.5, 1, BPM);
+    expect(result.notes.map((note) => note.beat)).toEqual([0, 0.5, 1.5, 2.5]);
   });
 });
 
