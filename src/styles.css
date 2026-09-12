@@ -89,6 +89,9 @@ button, label { -webkit-tap-highlight-color: transparent; }
 .text-action { margin-top: 16px; padding: 0; border: 0; background: transparent; color: var(--ink); cursor: pointer; font-size: 12px; font-weight: 800; }
 .text-action:hover { color: #849100; }
 .error-note { margin: 14px 0 0; padding: 10px 12px; border-left: 3px solid var(--red); background: color-mix(in srgb, var(--red), transparent 92%); color: var(--red); font-size: 12px; }
+/* Louder than the .preview-limit footnotes: the modifier mouse buttons only
+   reach the game when the peripheral software runs elevated. */
+.export-alert { margin: 16px 0 0; padding: 12px 14px; border: 1px solid color-mix(in srgb, var(--ink), transparent 68%); border-left: 5px solid var(--accent); background: color-mix(in srgb, var(--accent), var(--panel) 84%); color: var(--ink); font-size: 13px; font-weight: 850; line-height: 1.65; }
 .field { display: grid; gap: 8px; }
 .field > span { color: var(--muted); font: 10px Consolas, monospace; letter-spacing: .08em; }
 .field > span b { color: var(--ink); }

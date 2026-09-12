@@ -121,6 +121,8 @@ export default function ExportPanel({ title, notes, unplayableCount, bpm, timeSi
         <button className="button" disabled={empty} onClick={exportRazer}>宏 · 雷蛇 Synapse 3 .xml（未验证）</button>
       </div>
 
+      <p className="export-alert">如果升降调不能正常使用，请使用管理员权限启动你的外设管理软件。</p>
+
       <p className="preview-limit">
         <strong>MIDI 导出的是转换后的谱面本身</strong>：音高是移调后游戏里实际发出的音，时值和拍号跟着谱面，
         Tempo 用当前 BPM，单轨输出。文件里<strong>不含键位与修饰键</strong>，要 1:1 复现按键请用下面的宏导出。
