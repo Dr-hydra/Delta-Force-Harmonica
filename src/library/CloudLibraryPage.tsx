@@ -246,6 +246,7 @@ function PrivateArchive() {
   const [loading, setLoading] = useState(false);
   const [renaming, setRenaming] = useState<{ meta: CloudScoreMeta; snapshot: ScoreSnapshot } | null>(null);
   const [sharing, setSharing] = useState<{ title: string; snapshot: ScoreSnapshot } | null>(null);
+  const [pendingRemoval, setPendingRemoval] = useState<string | null>(null);
   const available = hasToyAbility("getCloudStorage");
   const canPublish = libraryPublishConfigured && hasToyAbility("getUserProfile");
 
@@ -289,7 +290,6 @@ function PrivateArchive() {
   }
 
   async function remove(meta: CloudScoreMeta) {
-    if (!confirm(`删除云存档「${meta.title}」？`)) return;
     setLoading(true);
     try {
       await deleteCloudScore(meta.id);
@@ -298,6 +298,8 @@ function PrivateArchive() {
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "删除失败");
       setLoading(false);
+    } finally {
+      setPendingRemoval(null);
     }
   }
 
@@ -323,7 +325,11 @@ function PrivateArchive() {
             )}
             <button className="button secondary" disabled={loading} onClick={() => setRenaming({ meta: selected.meta, snapshot: selected.snapshot })}>修改</button>
             <button className="button secondary" onClick={() => setSelected(null)}>返回云存档</button>
-            <button className="button secondary" disabled={loading} onClick={() => void remove(selected.meta)}>删除</button>
+            {pendingRemoval === selected.meta.id ? (
+              <><span className="library-confirm-label">确定删除？</span><button className="button secondary" disabled={loading} onClick={() => void remove(selected.meta)}>确认</button><button className="button secondary" disabled={loading} onClick={() => setPendingRemoval(null)}>取消</button></>
+            ) : (
+              <button className="button secondary" disabled={loading} onClick={() => setPendingRemoval(selected.meta.id)}>删除</button>
+            )}
           </div>
         </section>
         {message && <p className="library-message">{message}</p>}
@@ -377,7 +383,11 @@ function PrivateArchive() {
                 <button className="library-action" disabled title="需要 Toy 登录和已部署的公开曲谱接口">分享</button>
               )}
               <button className="library-action" disabled={loading} onClick={() => void withSnapshot(meta, (snapshot) => setRenaming({ meta, snapshot }))}>修改</button>
-              <button className="library-delete" onClick={() => void remove(meta)} disabled={loading}>删除</button>
+              {pendingRemoval === meta.id ? (
+                <><span className="library-confirm-label">确定删除？</span><button className="library-delete" onClick={() => void remove(meta)} disabled={loading}>确认</button><button className="library-action" onClick={() => setPendingRemoval(null)} disabled={loading}>取消</button></>
+              ) : (
+                <button className="library-delete" onClick={() => setPendingRemoval(meta.id)} disabled={loading}>删除</button>
+              )}
             </div>
           </article>
         ))}
@@ -393,6 +403,7 @@ function MyPublished() {
   const [message, setMessage] = useState("");
   const [editing, setEditing] = useState<LibraryEntry | null>(null);
   const [loading, setLoading] = useState(false);
+  const [pendingRemoval, setPendingRemoval] = useState<string | null>(null);
 
   async function load() {
     if (!libraryPublishConfigured) return;
@@ -411,7 +422,6 @@ function MyPublished() {
   useEffect(() => { void load(); }, []);
 
   async function remove(entry: LibraryEntry) {
-    if (!confirm(`从公开曲谱库删除「${entry.title}」？`)) return;
     setLoading(true);
     try {
       await deletePublicScore(entry.id, await ensureOwnerToken());
@@ -419,6 +429,8 @@ function MyPublished() {
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "删除失败");
       setLoading(false);
+    } finally {
+      setPendingRemoval(null);
     }
   }
 
@@ -445,7 +457,11 @@ function MyPublished() {
             <div className="library-row-actions">
               <ShareScoreButton id={entry.id} onMessage={setMessage} disabled={loading} />
               <button className="library-action" disabled={loading} onClick={() => setEditing(entry)}>修改</button>
-              <button className="library-delete" disabled={loading} onClick={() => void remove(entry)}>下架</button>
+              {pendingRemoval === entry.id ? (
+                <><span className="library-confirm-label">确定下架？</span><button className="library-delete" disabled={loading} onClick={() => void remove(entry)}>确认</button><button className="library-action" disabled={loading} onClick={() => setPendingRemoval(null)}>取消</button></>
+              ) : (
+                <button className="library-delete" disabled={loading} onClick={() => setPendingRemoval(entry.id)}>下架</button>
+              )}
             </div>
           </article>
         ))}

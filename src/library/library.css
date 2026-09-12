@@ -83,6 +83,7 @@ a.library-row:hover { border-color: var(--accent); transform: translateY(-1px); 
 .library-row-stats small { grid-row: 2; color: var(--muted); font-size: 9px; letter-spacing: .08em; }
 .library-delete { border: 1px solid var(--line); background: transparent; color: var(--muted); padding: 9px 11px; cursor: pointer; }
 .library-delete:hover { border-color: #b34a4a; color: #b34a4a; }
+.library-confirm-label { color: var(--muted); font-size: 0.82rem; white-space: nowrap; }
 
 .library-row-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 6px; }
 .library-action { border: 1px solid var(--line); background: transparent; color: var(--muted); padding: 9px 11px; cursor: pointer; }
