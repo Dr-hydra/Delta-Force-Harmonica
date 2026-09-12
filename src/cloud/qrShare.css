@@ -1,0 +1,16 @@
+.qr-share-backdrop { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: 24px; background: rgba(9, 15, 18, .68); }
+.qr-share-dialog { width: min(420px, 100%); max-height: 90vh; overflow: auto; display: grid; justify-items: center; gap: 18px; padding: 24px; }
+.qr-share-dialog header { width: 100%; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.qr-share-dialog h2 { margin: 5px 0 0; }
+.qr-share-close { width: 34px; height: 34px; border: 1px solid var(--line); background: transparent; color: var(--muted); font-size: 18px; line-height: 1; cursor: pointer; }
+.qr-share-close:hover { border-color: var(--accent); color: var(--ink); }
+.qr-share-dialog img { display: block; width: min(320px, 100%); height: auto; aspect-ratio: 1; padding: 10px; box-sizing: border-box; background: #fff; border: 1px solid var(--line); }
+.qr-share-link { width: 100%; display: grid; gap: 7px; color: var(--muted); font-size: 12px; }
+.qr-share-link input { width: 100%; min-width: 0; box-sizing: border-box; min-height: 44px; padding: 0 12px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font: inherit; outline: none; }
+.qr-share-link input:focus { border-color: var(--accent); }
+.qr-share-actions { width: 100%; display: flex; flex-wrap: wrap; gap: 8px; }
+
+@media (max-width: 520px) {
+  .qr-share-backdrop { padding: 12px; }
+  .qr-share-dialog { padding: 18px; gap: 14px; }
+}

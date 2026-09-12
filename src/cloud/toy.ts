@@ -159,6 +159,11 @@ export async function scoreQrCode(shortId: string, size = 320) {
   return sdk().getQrCode({ path: scoreSharePath(shortId), size });
 }
 
+/** Toy may return either a complete data URL or the raw PNG base64 payload. */
+export function qrImageSource(base64: string) {
+  return base64.startsWith("data:") ? base64 : `data:image/png;base64,${base64}`;
+}
+
 async function navigateOrOpen(type: "space" | "video", id: string, fallbackUrl: string) {
   if (hasToyAbility("navigate")) {
     try {

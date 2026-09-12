@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ensureOwnerToken, requestToyProfile, sharePublicScore } from "../cloud/toy";
+import QrShareButton from "../cloud/QrShareButton";
 import type { ScoreSnapshot } from "../persistence/scoreCodec";
 import { publishScore, updatePublicScore } from "./api";
 import type { LibraryEntry } from "./types";
@@ -44,19 +45,22 @@ export function ShareScoreButton({ id, onMessage, disabled, label = "分享", cl
 }) {
   const [busy, setBusy] = useState(false);
   return (
-    <button
-      className={className}
-      disabled={disabled || busy}
-      onClick={() => {
-        setBusy(true);
-        void sharePublicScore(id)
-          .then(onMessage)
-          .catch((reason) => onMessage(reasonText(reason, "分享失败")))
-          .finally(() => setBusy(false));
-      }}
-    >
-      {label}
-    </button>
+    <>
+      <button
+        className={className}
+        disabled={disabled || busy}
+        onClick={() => {
+          setBusy(true);
+          void sharePublicScore(id)
+            .then(onMessage)
+            .catch((reason) => onMessage(reasonText(reason, "分享失败")))
+            .finally(() => setBusy(false));
+        }}
+      >
+        {label}
+      </button>
+      <QrShareButton id={id} onMessage={onMessage} disabled={disabled} className={className} />
+    </>
   );
 }
 

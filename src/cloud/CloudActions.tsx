@@ -3,6 +3,7 @@ import { saveCloudScore, type CloudScoreMeta } from "./archive";
 import { ensureOwnerToken, hasToyAbility, requestToyProfile, sharePublicScore } from "./toy";
 import { libraryPublishConfigured, publishScore, updatePublicScore } from "../library/api";
 import type { ScoreSnapshotInput } from "../persistence/scoreCodec";
+import QrShareButton from "./QrShareButton";
 import "./converterCloud.css";
 
 const DIFFICULTY_OPTIONS = [
@@ -178,6 +179,9 @@ export default function CloudActions({
         </button>
         {publishedId && (
           <button className="button" disabled={busy} onClick={() => void sharePublished()}>分享已发布曲谱</button>
+        )}
+        {publishedId && (
+          <QrShareButton id={publishedId} onMessage={say} disabled={busy} className="button" label="二维码分享" />
         )}
         {publishedId && <a className="button converter-cloud-link" href={publicScoreHref(publishedId)}>打开公开页面</a>}
       </div>
