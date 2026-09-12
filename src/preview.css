@@ -56,3 +56,18 @@
 @media (prefers-reduced-motion: reduce) {
   .preview-key { transition: none; }
 }
+
+/* Phone landscape: the now-playing card moves beside the console instead of
+   above it, and the keyboard keys lose their extra height. */
+@media (orientation: landscape) and (max-height: 600px) and (max-width: 1100px) {
+  .preview-heading { margin-bottom: 14px; }
+  .preview-layout { grid-template-columns: minmax(132px, 176px) minmax(0, 1fr); gap: 12px; }
+  .preview-now { min-height: 150px; padding: 12px; gap: 6px; }
+  .preview-jianpu { font-size: 42px; }
+  .preview-keycap { min-width: 42px; min-height: 32px; font-size: 14px; }
+  .preview-console { padding: 12px; }
+  .preview-seek { margin-top: 12px; padding: 10px; }
+  .preview-modifiers { margin-top: 10px; }
+  .preview-keyboard { margin-top: 12px; grid-template-columns: repeat(8, minmax(38px, 1fr)); }
+  .preview-key { min-height: 52px; }
+}

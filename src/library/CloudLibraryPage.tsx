@@ -5,6 +5,7 @@ import { ensureOwnerToken, hasToyAbility, loadFavoriteIds, saveFavoriteIds } fro
 import { deletePublicScore, getCatalog, getPublicScore, libraryConfigured, libraryPublishConfigured, myPublicScores, searchCatalog } from "./api";
 import { PublicScoreMetaForm, PublishArchiveDialog, RenameCloudScoreDialog, ShareScoreButton } from "./ScoreActions";
 import ScoreWorkbench from "./ScoreWorkbench";
+import { RailToggle, useRailCollapsed } from "../components/RailToggle";
 import type { LibraryEntry, PublicScore } from "./types";
 import "./library.css";
 
@@ -447,6 +448,7 @@ export default function CloudLibraryPage() {
   const [tab, setTab] = useState<"public" | "private" | "mine">("public");
   const [favorites, setFavorites] = useState<string[]>([]);
   const [theme, setTheme] = useState(() => localStorage.getItem("dfh-theme") || "light");
+  const rail = useRailCollapsed();
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -459,15 +461,16 @@ export default function CloudLibraryPage() {
   }, []);
 
   return (
-    <div className="library-shell">
+    <div className={`library-shell${rail.collapsed ? " rail-collapsed" : ""}`}>
       <aside className="side-rail library-rail">
         <a className="brand" href={converterUrl()}><span>DFH</span><b>DELTA FORCE<br />HARMONICA</b></a>
         <nav aria-label="云端乐谱导航">
-          <a href={converterUrl()}><i>01</i><span>乐谱转换</span></a>
-          <button className={!scoreId && tab === "public" ? "active" : ""} onClick={() => { history.replaceState(null, "", libraryUrl()); setTab("public"); }}><i>02</i><span>公开曲谱</span></button>
-          <button className={!scoreId && tab === "private" ? "active" : ""} onClick={() => { history.replaceState(null, "", libraryUrl()); setTab("private"); }}><i>03</i><span>我的云存档</span></button>
-          <button className={!scoreId && tab === "mine" ? "active" : ""} onClick={() => { history.replaceState(null, "", libraryUrl()); setTab("mine"); }}><i>04</i><span>我的发布</span></button>
+          <a href={converterUrl()} title="乐谱转换"><i>01</i><span>乐谱转换</span></a>
+          <button title="公开曲谱" className={!scoreId && tab === "public" ? "active" : ""} onClick={() => { history.replaceState(null, "", libraryUrl()); setTab("public"); }}><i>02</i><span>公开曲谱</span></button>
+          <button title="我的云存档" className={!scoreId && tab === "private" ? "active" : ""} onClick={() => { history.replaceState(null, "", libraryUrl()); setTab("private"); }}><i>03</i><span>我的云存档</span></button>
+          <button title="我的发布" className={!scoreId && tab === "mine" ? "active" : ""} onClick={() => { history.replaceState(null, "", libraryUrl()); setTab("mine"); }}><i>04</i><span>我的发布</span></button>
         </nav>
+        <RailToggle collapsed={rail.collapsed} onToggle={rail.toggle} />
         <div className="rail-bottom"><b>α</b><span>TOY + CLOUDBASE<br />OBJECT STORAGE</span></div>
       </aside>
       <header className="top-status"><span><i className="status-dot" />CLOUD LIBRARY / {libraryConfigured ? "STORAGE READY" : "LOCAL PREVIEW"}</span><button onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>{theme === "dark" ? "LIGHT" : "DARK"} MODE</button></header>

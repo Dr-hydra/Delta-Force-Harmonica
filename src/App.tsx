@@ -10,6 +10,7 @@ import { MAPPING_ASSUMPTIONS } from "./harmonica/mapping";
 import EditPanel from "./components/EditPanel";
 import ExportPanel from "./components/ExportPanel";
 import { ScoreWorkspace } from "./components/ScoreWorkspace";
+import { RailToggle, useRailCollapsed } from "./components/RailToggle";
 import { useScoreEdits } from "./score/useScoreEdits";
 import type { NoteEvent, ParsedSong, TimeSignatureEvent } from "./music/types";
 
@@ -50,6 +51,7 @@ function sourceFormatLabel(song: ParsedSong | null, usingDemo: boolean) {
 
 export default function App() {
   const [theme, setTheme] = useState(() => localStorage.getItem("dfh-theme") || "light");
+  const rail = useRailCollapsed();
   const [song, setSong] = useState<ParsedSong | null>(null);
   const [trackId, setTrackId] = useState("");
   const [transpose, setTranspose] = useState(0);
@@ -178,16 +180,17 @@ export default function App() {
   const audioPresetConfig = AUDIO_PRESETS[audioPreset];
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell${rail.collapsed ? " rail-collapsed" : ""}`}>
       <aside className="side-rail">
         <button className="brand" onClick={() => scrollTo({ top: 0, behavior: "smooth" })}>
           <span>DFH</span>
           <b>DELTA FORCE<br />HARMONICA</b>
         </button>
         <nav aria-label="主导航">
-          <button className="active"><i>01</i><span>乐谱转换</span></button>
-          <button disabled><i>02</i><span>云端乐谱</span><em>SOON</em></button>
+          <button className="active" title="乐谱转换"><i>01</i><span>乐谱转换</span></button>
+          <button disabled title="云端乐谱"><i>02</i><span>云端乐谱</span><em>SOON</em></button>
         </nav>
+        <RailToggle collapsed={rail.collapsed} onToggle={rail.toggle} />
         <div className="rail-bottom">
           <b>α</b>
           <span>ENGINE 0.5<br />PURE FRONTEND</span>

@@ -34,8 +34,9 @@ button, input, select { font: inherit; }
 button { color: inherit; }
 button, label { -webkit-tap-highlight-color: transparent; }
 
-.app-shell { min-height: 100vh; padding-left: 220px; }
-.side-rail { position: fixed; inset: 0 auto 0 0; z-index: 50; width: 220px; display: flex; flex-direction: column; background: #172023; color: #f7f7ef; border-right: 1px solid #354145; }
+.app-shell { min-height: 100vh; padding-left: 220px; transition: padding-left .18s ease; }
+.library-shell { transition: padding-left .18s ease; }
+.side-rail { position: fixed; inset: 0 auto 0 0; z-index: 50; width: 220px; display: flex; flex-direction: column; background: #172023; color: #f7f7ef; border-right: 1px solid #354145; transition: width .18s ease; }
 .brand { appearance: none; min-height: 92px; padding: 15px 18px; border: 0; background: var(--accent); color: #172023; cursor: pointer; display: flex; align-items: center; gap: 12px; text-align: left; }
 .brand span { font: 900 28px/1 Arial Black, sans-serif; letter-spacing: -3px; }
 .brand b { font: 800 8px/1.2 Consolas, monospace; letter-spacing: .09em; }
@@ -51,6 +52,9 @@ button, label { -webkit-tap-highlight-color: transparent; }
 .rail-bottom { display: grid; place-items: center; gap: 10px; padding: 20px 0; border-top: 1px solid #394649; }
 .rail-bottom b { color: var(--accent); font-size: 20px; }
 .rail-bottom span { color: #879295; font: 8px/1.35 Consolas, monospace; text-align: center; letter-spacing: .06em; }
+.rail-toggle { min-height: 40px; margin: 0 12px 12px; padding: 8px 10px; display: flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid #394649; background: transparent; color: #879295; cursor: pointer; font: 700 10px Consolas, monospace; letter-spacing: .08em; }
+.rail-toggle:hover { border-color: var(--accent); color: var(--accent); }
+.rail-toggle i { font-style: normal; line-height: 1; }
 
 .top-status { position: sticky; top: 0; z-index: 40; height: 48px; padding: 0 34px; display: flex; align-items: center; justify-content: space-between; gap: 18px; background: color-mix(in srgb, var(--bg) 90%, transparent); border-bottom: 1px solid var(--line); backdrop-filter: blur(14px); }
 .top-status > span { color: var(--muted); font: 10px Consolas, monospace; letter-spacing: .1em; }
@@ -166,6 +170,7 @@ footer { padding: 28px 2px 0; display: flex; justify-content: space-between; gap
   .side-rail nav button i { width: auto; }
   .side-rail nav button span { font-size: 9px; }
   .rail-bottom { display: none; }
+  .rail-toggle { display: none; }
   .top-status { top: 0; height: 42px; padding: 0 16px; }
   .top-status > span { max-width: 70%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .page-content { padding: 18px 14px 38px; }
@@ -187,4 +192,52 @@ footer { padding: 28px 2px 0; display: flex; justify-content: space-between; gap
   .assumption-strip article:last-child { border-bottom: 0; }
   .assumption-strip span { max-width: 80%; margin-top: 24px; }
   footer { flex-direction: column; gap: 7px; }
+}
+
+/* Collapsible rail: only the desktop layout has room for it, so the phone
+   breakpoint above keeps its brand header and bottom tab bar untouched. */
+@media (min-width: 761px) {
+  .app-shell.rail-collapsed, .library-shell.rail-collapsed { padding-left: 72px; }
+  .rail-collapsed .side-rail { width: 72px; }
+  .rail-collapsed .side-rail .brand { padding: 15px 6px; justify-content: center; }
+  .rail-collapsed .side-rail .brand span { font-size: 22px; letter-spacing: -2px; }
+  .rail-collapsed .side-rail .brand b,
+  .rail-collapsed .side-rail nav button span,
+  .rail-collapsed .library-rail nav a span,
+  .rail-collapsed .side-rail nav button em,
+  .rail-collapsed .rail-bottom span,
+  .rail-collapsed .rail-toggle span { display: none; }
+  .rail-collapsed .side-rail nav button,
+  .rail-collapsed .library-rail nav a { padding: 10px 6px; justify-content: center; }
+  .rail-collapsed .side-rail nav button i,
+  .rail-collapsed .library-rail nav a i { width: auto; }
+  .rail-collapsed .rail-toggle { margin: 0 8px 12px; padding: 8px 0; }
+}
+
+/* Phone landscape: about 390px of height. The marketing hero is dropped and
+   every band is packed tighter so the score stays on screen while playing. */
+@media (orientation: landscape) and (max-height: 600px) and (max-width: 1100px) {
+  .hero { display: none; }
+  .top-status { height: 38px; padding: 0 14px; }
+  .page-content { padding: 12px 12px 24px; }
+  .workflow-grid { gap: 14px; margin-top: 14px; }
+  .upload-panel, .control-panel, .score-panel, .preview-panel { padding: 18px; }
+  .section-heading { margin-bottom: 14px; }
+  .hero-code { min-height: 110px; }
+  .song-head { margin-top: 14px; padding: 16px 18px; }
+  .song-head h2 { font-size: 24px; }
+  .metric-grid, .assumption-strip { margin-top: 14px; }
+  .metric-grid article { min-height: 78px; padding: 12px; }
+  .metric-grid strong { font-size: 24px; }
+  .assumption-strip article { min-height: 88px; padding: 16px; }
+  .assumption-strip span { margin-top: 20px; font-size: 11px; }
+  footer { padding-top: 16px; }
+}
+
+@media (orientation: landscape) and (max-height: 600px) and (max-width: 760px) {
+  .side-rail .brand { display: none; }
+  .side-rail nav { height: 52px; }
+  .side-rail nav button { min-height: 52px; }
+  .app-shell, .library-shell { padding-bottom: 52px; }
+  .converter-cloud-trigger { bottom: 60px; min-width: 108px; padding: 9px 12px; }
 }
