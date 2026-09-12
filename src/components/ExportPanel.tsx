@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { downloadText, safeFileName } from "../export/files";
+import { downloadBytes, downloadText, safeFileName } from "../export/files";
+import { toMidiFile } from "../export/midi";
 import { GAME_BINDING, buildKeySequence } from "../export/keySequence";
 import {
   STOP_LOCKS,
@@ -81,6 +82,19 @@ export default function ExportPanel({ title, notes, unplayableCount, bpm, timeSi
     );
   }
 
+  function exportMidi() {
+    setError("");
+    try {
+      downloadBytes(
+        `${safeFileName(title)}.mid`,
+        toMidiFile(notes, { bpm, timeSignatures }),
+        "audio/midi"
+      );
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "MIDI 导出失败。");
+    }
+  }
+
   function exportRazer() {
     setError("");
     try {
@@ -103,9 +117,15 @@ export default function ExportPanel({ title, notes, unplayableCount, bpm, timeSi
 
       <div className="export-stack">
         <button className="button primary" disabled={empty} onClick={exportTab}>人可演奏版 · 文本谱 .txt</button>
+        <button className="button" disabled={empty} onClick={exportMidi}>标准 MIDI .mid</button>
         <button className="button" disabled={empty} onClick={exportLogitech}>宏 · 罗技 G HUB .lua</button>
         <button className="button" disabled={empty} onClick={exportRazer}>宏 · 雷蛇 Synapse 3 .xml（未验证）</button>
       </div>
+
+      <p className="preview-limit">
+        <strong>MIDI 导出的是转换后的谱面本身</strong>：音高是移调后游戏里实际发出的音，时值和拍号跟着谱面，
+        Tempo 用当前 BPM，单轨输出。文件里<strong>不含键位与修饰键</strong>，要 1:1 复现按键请用下面的宏导出。
+      </p>
 
       <div className="export-fields">
         <label className="field">
