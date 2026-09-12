@@ -48,8 +48,7 @@ export default function ExportPanel({ title, notes, unplayableCount, bpm, timeSi
 
   function changeTriggerSource(source: TriggerSource) {
     setTriggerSource(source);
-    const clamped = Math.min(Math.max(1, triggerValue), TRIGGER_MAX[source]);
-    setTriggerValue(clamped);
+    setTriggerValue(Math.min(Math.max(1, triggerValue), TRIGGER_MAX[source]));
   }
 
   /** Typed numbers are clamped to the range the current source can actually dispatch. */
@@ -132,11 +131,11 @@ export default function ExportPanel({ title, notes, unplayableCount, bpm, timeSi
           <span>开始键来源</span>
           <select value={triggerSource} onChange={(event) => changeTriggerSource(event.target.value as TriggerSource)}>
             <option value="mouse">鼠标按键</option>
-            <option value="gkey">键盘 G 键</option>
+            <option value="gkey">罗技键盘 G 键</option>
           </select>
         </label>
         <label className="field">
-          <span>{triggerSource === "mouse" ? "鼠标键编号" : "G 键编号"}</span>
+          <span>{triggerSource === "mouse" ? "鼠标键编号" : "键盘 G 键编号"}</span>
           <input
             type="number"
             inputMode="numeric"
@@ -154,30 +153,6 @@ export default function ExportPanel({ title, notes, unplayableCount, bpm, timeSi
         </label>
       </div>
 
-      <p className="preview-limit">
-        音符键 <code>Z X C V B N M ,</code> 是键盘键；升调 / 降调 / 半音固定为<strong>鼠标右键 / 左键 / 中键</strong>，
-        所以宏里混着按键和鼠标事件。改过游戏内键位的话，这三处要改代码而不是改设置。
-      </p>
-      <p className="preview-limit">
-        宏只负责导出，本项目不向游戏注入输入——罗技脚本粘贴到 G HUB 的 SCRIPTING 面板，按开始键播放、
-        开启停止键中止。宏输出里的鼠标键用 <code>PressMouseButton</code> 的微软编号（1 左 / 2 中 / 3 右），
-        但<strong>开始键的鼠标编号走罗技顺序</strong>（1 左 / 2 右 / 3 中，4 及以上对应 G HUB 按键列表里的 G4、G5……）。
-      </p>
-      <p className="preview-limit">
-        <strong>开始键只能用 G 键或鼠标键</strong>：G HUB 的 Lua 只派发 G 键、M 键、鼠标键和配置切换事件，
-        普通键盘按键（F10、空格等）根本收不到。编号填 G HUB 界面上标给那个键的序号；鼠标侧键在 G HUB 里也显示成 G 编号，
-        但事件类型仍然是鼠标事件，所以这里的「开始键来源」要跟着选对。
-      </p>
-      <p className="preview-limit">
-        <strong>停止键只能是锁定键</strong>：播放期间 <code>Sleep</code> 占住脚本线程、收不到新事件，只能轮询锁定状态，
-        所以停止键在 Caps / Scroll / Num Lock 之间选。<strong>按一下切换它的开关状态即中止</strong>：
-        脚本只比较「开始播放时记录的状态」有没有变化，所以开始前它是开是关都不影响，脚本也不会去改你的锁定状态。
-      </p>
-      <p className="preview-limit">
-        <strong>雷蛇版未经验证</strong>：Synapse 的宏 XML 没有官方文档，格式是照社区导出的样本还原的，
-        其中鼠标键编号只确认了左键 = 1，右键和中键的取值是推测。项目里没有雷蛇设备可以实测，
-        导入 Synapse 3 后请在宏列表里核对每个事件显示的是不是右键 / 中键。Synapse 4 与 3 的格式不兼容。
-      </p>
       {keySequence.droppedChordNotes + keySequence.truncatedNotes > 0 && (
         <p className="preview-limit">
           按键编排阶段又收紧了 {keySequence.truncatedNotes} 个音符的长度（为了留出 18 ms 松键间隔）

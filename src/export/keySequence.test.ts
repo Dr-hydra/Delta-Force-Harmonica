@@ -98,7 +98,7 @@ describe("toDelays", () => {
 });
 
 describe("toLogitechLua", () => {
-  it("emits an OnEvent handler and balanced input calls", () => {
+  it("uses G_PRESSED for a Logitech keyboard G key", () => {
     const sequence = buildKeySequence([note({ start: 0, key: "Z" }), note({ start: 600, key: "M" })]);
     const lua = toLogitechLua(sequence, { songName: "Test", trigger: { source: "gkey", value: 3 } });
 

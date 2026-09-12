@@ -172,6 +172,6 @@ export async function deletePublicScore(shortId: string, ownerToken: string) {
 
 export async function myPublicScores(ownerToken: string): Promise<LibraryEntry[]> {
   const response = await fetch(endpoint(`/me/scores?ownerToken=${encodeURIComponent(ownerToken)}`));
-  const payload = await responseJson<{ scores: WireCatalogRow[]; limit: number }>(response);
+  const payload = await responseJson<{ scores: WireCatalogRow[] }>(response);
   return payload.scores.map(widen).sort((a, b) => b.updatedAt - a.updatedAt);
 }

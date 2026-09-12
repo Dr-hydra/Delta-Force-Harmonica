@@ -25,7 +25,7 @@ export type StopLock = "capslock" | "scrolllock" | "numlock";
 
 export const TRIGGER_DEFAULT: LogitechTrigger = { source: "mouse", value: 4 };
 
-/** G HUB's assignment list exposes 20 mouse buttons and 18 G keys. */
+/** G HUB's assignment list exposes 20 mouse buttons and 18 keyboard G keys. */
 export const TRIGGER_MAX: Record<TriggerSource, number> = { mouse: 20, gkey: 18 };
 
 export const STOP_LOCKS: Array<{ id: StopLock; label: string }> = [
@@ -119,7 +119,7 @@ function pressCall(target: InputTarget, down: boolean): string {
 export function toLogitechLua(sequence: KeySequence, options: LogitechOptions): string {
   const trigger = options.trigger ?? TRIGGER_DEFAULT;
   const stopLock = options.stopLock ?? "capslock";
-  const triggerLabel = trigger.source === "gkey" ? `G${trigger.value}` : `mouse button ${trigger.value}`;
+  const triggerLabel = trigger.source === "gkey" ? `keyboard G${trigger.value}` : `mouse button ${trigger.value}`;
   const delayed = toDelays(sequence.actions);
   const targets = bindingTargets(sequence.binding);
   const keyNames = targets.filter((target) => target.kind === "key").map((target) => luaString(target.name));

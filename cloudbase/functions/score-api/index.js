@@ -8,7 +8,6 @@ const zlib = require("node:zlib");
 const store = require("./store");
 
 const MAX_PAYLOAD_CHARS = 256 * 1024;
-const MAX_SCORES = 50;
 const DFHS_VERSION = 1;
 
 function json(statusCode, body) {
@@ -238,7 +237,6 @@ async function ingest(body) {
   const head = inspectPayload(payload);
   const ownerHash = sha256(ownerToken);
   const mine = await readOwner(ownerHash);
-  if (mine.length >= MAX_SCORES) throw new Error(`公开曲谱已达上限（${MAX_SCORES} 首）`);
   if (mine.some((row) => row.h === head.payloadHash)) throw new Error("你已经发布过相同内容的曲谱");
 
   const row = {
@@ -369,7 +367,7 @@ exports.main = async (event) => {
       const ownerToken = String(queryOf(event).ownerToken || "");
       if (ownerToken.length < 32) throw new Error("缺少 owner token");
       const rows = await readOwner(sha256(ownerToken));
-      return json(200, { scores: rows.map(publicRow), limit: MAX_SCORES });
+      return json(200, { scores: rows.map(publicRow) });
     }
 
     if (method === "PATCH" && scoreMatch) {
