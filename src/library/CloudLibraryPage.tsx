@@ -15,11 +15,26 @@ function durationLabel(ms: number) {
   return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
 }
 
-function scoreUrl(id: string) {
+function scoreUrl(id: string, query = "") {
   const url = new URL(window.location.href);
-  url.searchParams.delete("view");
+  url.search = "";
+  url.searchParams.set("view", "library");
   url.searchParams.set("s", id);
+  if (query.trim()) url.searchParams.set("q", query.trim());
   return `${url.pathname}${url.search}`;
+}
+
+function publicListUrl(query = "") {
+  const url = new URL(window.location.href);
+  url.search = "";
+  url.searchParams.set("view", "library");
+  if (query.trim()) url.searchParams.set("q", query.trim());
+  return `${url.pathname}${url.search}`;
+}
+
+function readLibraryRoute() {
+  const params = new URLSearchParams(window.location.search);
+  return { scoreId: params.get("s") || "", query: params.get("q") || "" };
 }
 
 function difficultyLabel(value: number) {
@@ -122,7 +137,15 @@ function PublicDetail({ id, favorites, onFavorites }: {
             {favorites.includes(id) ? "取消收藏" : "收藏"}
           </button>
           <button className="button secondary" disabled={busy || !hasToyAbility("setCloudStorage")} onClick={() => void savePrivate()}>保存到云存档</button>
-          <a className="button secondary" href={libraryHref()}>返回曲谱库</a>
+          <button
+            className="button secondary"
+            onClick={() => {
+              // Keep the catalog search context and update the Toy SPA route in place.
+              const query = new URLSearchParams(window.location.search).get("q") || "";
+              history.pushState(null, "", publicListUrl(query));
+              window.dispatchEvent(new PopStateEvent("popstate"));
+            }}
+          >返回曲谱库</button>
         </div>
       </section>
       {editing && (
@@ -150,9 +173,9 @@ function PublicDetail({ id, favorites, onFavorites }: {
   );
 }
 
-function PublicCatalog({ favorites }: { favorites: string[] }) {
+function PublicCatalog({ favorites, initialQuery }: { favorites: string[]; initialQuery: string }) {
   const [entries, setEntries] = useState<LibraryEntry[]>([]);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery);
   const [loading, setLoading] = useState(libraryConfigured);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
@@ -191,7 +214,7 @@ function PublicCatalog({ favorites }: { favorites: string[] }) {
         <section className="library-list">
           {filtered.map((entry) => (
             <article className="panel library-row" key={entry.id}>
-              <a className="library-row-main" href={scoreUrl(entry.id)}>
+              <a className="library-row-main" href={scoreUrl(entry.id, query)}>
                 <span className="eyebrow">{favorites.includes(entry.id) ? "★ FAVORITE" : `SCORE / ${entry.id}`}</span>
                 <h3>{entry.title}</h3>
                 <p>{entry.composer || "未标注原作者"} · {entry.uploader}</p>
@@ -433,12 +456,23 @@ function MyPublished() {
 }
 
 export default function CloudLibraryPage() {
-  const params = new URLSearchParams(window.location.search);
-  const scoreId = params.get("s") || "";
+  const initialRoute = readLibraryRoute();
+  const [scoreId, setScoreId] = useState(initialRoute.scoreId);
+  const [listQuery, setListQuery] = useState(initialRoute.query);
   const [tab, setTab] = useState<"public" | "private" | "mine">("public");
   const [favorites, setFavorites] = useState<string[]>([]);
   const [theme, setTheme] = useState(() => localStorage.getItem("dfh-theme") || "light");
   const rail = useRailCollapsed();
+
+  useEffect(() => {
+    const onPopState = () => {
+      const route = readLibraryRoute();
+      setScoreId(route.scoreId);
+      setListQuery(route.query);
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -456,9 +490,9 @@ export default function CloudLibraryPage() {
         <a className="brand" href={converterHref()}><span>DFH</span><b>DELTA FORCE<br />HARMONICA</b></a>
         <nav aria-label="云端乐谱导航">
           <a href={converterHref()} title="乐谱转换"><i>01</i><span>乐谱转换</span></a>
-          <button title="公开曲谱" className={!scoreId && tab === "public" ? "active" : ""} onClick={() => { history.replaceState(null, "", libraryHref()); setTab("public"); }}><i>02</i><span>公开曲谱</span></button>
-          <button title="我的云存档" className={!scoreId && tab === "private" ? "active" : ""} onClick={() => { history.replaceState(null, "", libraryHref()); setTab("private"); }}><i>03</i><span>我的云存档</span></button>
-          <button title="我的发布" className={!scoreId && tab === "mine" ? "active" : ""} onClick={() => { history.replaceState(null, "", libraryHref()); setTab("mine"); }}><i>04</i><span>我的发布</span></button>
+          <button title="公开曲谱" className={!scoreId && tab === "public" ? "active" : ""} onClick={() => { history.pushState(null, "", publicListUrl(listQuery)); setScoreId(""); setTab("public"); }}><i>02</i><span>公开曲谱</span></button>
+          <button title="我的云存档" className={!scoreId && tab === "private" ? "active" : ""} onClick={() => { history.pushState(null, "", libraryHref()); setScoreId(""); setListQuery(""); setTab("private"); }}><i>03</i><span>我的云存档</span></button>
+          <button title="我的发布" className={!scoreId && tab === "mine" ? "active" : ""} onClick={() => { history.pushState(null, "", libraryHref()); setScoreId(""); setListQuery(""); setTab("mine"); }}><i>04</i><span>我的发布</span></button>
           <a href={aboutHref()} title="关于项目"><i>05</i><span>关于</span></a>
         </nav>
         <RailToggle collapsed={rail.collapsed} onToggle={rail.toggle} />
@@ -466,7 +500,7 @@ export default function CloudLibraryPage() {
       </aside>
       <header className="top-status"><span><i className="status-dot" />CLOUD LIBRARY / {libraryConfigured ? "STORAGE READY" : "LOCAL PREVIEW"}</span><button onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>{theme === "dark" ? "LIGHT" : "DARK"} MODE</button></header>
       <main className="page-content library-content">
-        {scoreId ? <PublicDetail id={scoreId} favorites={favorites} onFavorites={setFavorites} /> : tab === "public" ? <PublicCatalog favorites={favorites} /> : tab === "private" ? <PrivateArchive /> : <MyPublished />}
+        {scoreId ? <PublicDetail id={scoreId} favorites={favorites} onFavorites={setFavorites} /> : tab === "public" ? <PublicCatalog favorites={favorites} initialQuery={listQuery} /> : tab === "private" ? <PrivateArchive /> : <MyPublished />}
       </main>
     </div>
   );
