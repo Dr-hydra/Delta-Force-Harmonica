@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  clearLongSilences,
   deleteNote,
   insertNote,
   MAX_PITCH,
@@ -148,5 +149,26 @@ describe("snapAll", () => {
   it("never snaps a length down to zero", () => {
     const source = normalizeNotes([{ pitch: 60, start: 0, duration: 20 }], BPM);
     expect(snapAll(source, 1, BPM)[0].durationBeats).toBeGreaterThanOrEqual(1);
+  });
+});
+
+describe("clearLongSilences", () => {
+  it("removes leading and internal silence at the threshold while preserving short rests", () => {
+    const source = normalizeNotes([
+      { pitch: 60, start: 5000, duration: 500 },
+      { pitch: 62, start: 6000, duration: 500 },
+      { pitch: 64, start: 11500, duration: 500 }
+    ], BPM);
+
+    const result = clearLongSilences(source, 5, BPM, 2);
+
+    expect(result.notes.map((note) => note.start)).toEqual([0, 1000, 1500]);
+    expect(result.notes.map((note) => note.duration)).toEqual([500, 500, 500]);
+    expect(result.selected).toBe(2);
+  });
+
+  it("returns the original score when no silence reaches the threshold", () => {
+    const source = notes();
+    expect(clearLongSilences(source, 5, BPM, 1)).toEqual({ notes: source, selected: 1 });
   });
 });

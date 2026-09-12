@@ -28,6 +28,9 @@ export const TRIGGER_DEFAULT: LogitechTrigger = { source: "mouse", value: 4 };
 /** G HUB's assignment list exposes 20 mouse buttons and 18 keyboard G keys. */
 export const TRIGGER_MAX: Record<TriggerSource, number> = { mouse: 20, gkey: 18 };
 
+/** Lets queued trigger events drain after a blocking playback finishes. */
+export const START_COOLDOWN_MS = 800;
+
 export const STOP_LOCKS: Array<{ id: StopLock; label: string }> = [
   { id: "capslock", label: "Caps Lock" },
   { id: "scrolllock", label: "Scroll Lock" },
@@ -161,6 +164,8 @@ export function toLogitechLua(sequence: KeySequence, options: LogitechOptions): 
   lines.push("-- Playback aborts on a *change* to the stop lock rather than on it being on,");
   lines.push("-- so a lock already engaged before playback cannot kill the run.");
   lines.push("local lockBaseline = false");
+  lines.push("local playing = false");
+  lines.push("local nextStartAt = 0");
   lines.push("");
   lines.push("local function aborted()");
   lines.push(`  if IsKeyLockOn("${stopLock}") ~= lockBaseline then`);
@@ -191,7 +196,14 @@ export function toLogitechLua(sequence: KeySequence, options: LogitechOptions): 
   lines.push("");
   lines.push("function OnEvent(event, arg)");
   lines.push(`  if event == "${trigger.source === "gkey" ? "G_PRESSED" : "MOUSE_BUTTON_PRESSED"}" and arg == ${trigger.value} then`);
+  lines.push("    if playing or GetRunningTime() < nextStartAt then");
+  lines.push('      OutputLogMessage("DFH: ignored repeated start\\n")');
+  lines.push("      return");
+  lines.push("    end");
+  lines.push("    playing = true");
   lines.push("    play()");
+  lines.push("    playing = false");
+  lines.push(`    nextStartAt = GetRunningTime() + ${START_COOLDOWN_MS}`);
   lines.push("  end");
   lines.push("end");
   lines.push("");

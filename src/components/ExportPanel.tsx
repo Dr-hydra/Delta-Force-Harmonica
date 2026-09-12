@@ -162,6 +162,9 @@ export default function ExportPanel({ title, notes, unplayableCount, bpm, timeSi
       )}
       {error && <p className="error-note">{error}</p>}
       <p className="preview-limit">
+        雷云宏导入后，请在按键绑定的播放方式中选择<strong>“播放一次”</strong>；循环、按住循环或切换连续播放都会重复执行。
+      </p>
+      <p className="preview-limit">
         自动化输入可能被反作弊判定，使用宏前请自行确认游戏规则与账号风险。
       </p>
     </section>

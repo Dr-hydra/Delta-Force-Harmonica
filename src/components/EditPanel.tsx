@@ -1,7 +1,8 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { midiName } from "../harmonica/mapping";
 import type { NoteEvent } from "../music/types";
 import {
+  clearLongSilences,
   deleteNote,
   insertNote,
   moveNote,
@@ -53,6 +54,9 @@ export default function EditPanel({
   onStartBlank: () => void;
 }) {
   const selected = selectedNote !== null ? notes[selectedNote] : undefined;
+  const [silenceThreshold, setSilenceThreshold] = useState("5");
+  const parsedSilenceThreshold = Number(silenceThreshold);
+  const validSilenceThreshold = Number.isFinite(parsedSilenceThreshold) && parsedSilenceThreshold > 0;
 
   return (
     <section className="panel control-panel" style={{ marginTop: 18 }}>
@@ -93,6 +97,27 @@ export default function EditPanel({
         <button className="button" onClick={() => onApply((n, b) => insertNote(n, selectedNote, editStep, b))}>插入音符</button>
         <button className="button" disabled={selectedNote === null} onClick={() => onApply((n, b) => deleteNote(n, selectedNote!, b))}>删除音符</button>
         <button className="button" disabled={notes.length === 0} onClick={() => onApply((n, b) => ({ notes: snapAll(n, editStep, b), selected: selectedNote }))}>全部对齐到步长</button>
+      </div>
+
+      <div className="silence-cleaner">
+        <label className="field">
+          <span>空白段阈值（秒）</span>
+          <input
+            type="number"
+            min="0.1"
+            step="0.5"
+            value={silenceThreshold}
+            onChange={(event) => setSilenceThreshold(event.target.value)}
+          />
+        </label>
+        <button
+          className="button"
+          disabled={notes.length === 0 || !validSilenceThreshold}
+          onClick={() => onApply((n, b) => clearLongSilences(n, parsedSilenceThreshold, b, selectedNote))}
+        >
+          清除空白段
+        </button>
+        <p>达到阈值的无音区间会被删除，较短的停顿保持不变。</p>
       </div>
 
       <p className="preview-limit">

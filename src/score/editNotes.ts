@@ -131,3 +131,42 @@ export function snapAll(notes: NoteEvent[], stepBeats: number, bpm: number): Not
     bpm
   );
 }
+
+/**
+ * Removes silent spans at or above the requested length. Shorter rests are
+ * preserved, while later notes are shifted left in both beat and millisecond
+ * time so playback and exports remain aligned.
+ */
+export function clearLongSilences(
+  notes: NoteEvent[],
+  thresholdSeconds: number,
+  bpm: number,
+  selected: number | null = null
+): EditResult {
+  if (notes.length === 0 || !Number.isFinite(thresholdSeconds) || thresholdSeconds <= 0) {
+    return { notes, selected };
+  }
+
+  const thresholdBeats = thresholdSeconds * 1000 / msPerBeat(bpm);
+  let removedBeats = 0;
+  let soundingUntil = 0;
+  let changed = false;
+
+  const shifted = notes.map((note) => {
+    const { beat, durationBeats } = toBeats(note, bpm);
+    const silence = beat - soundingUntil;
+    if (silence >= thresholdBeats) {
+      removedBeats += silence;
+      changed = true;
+    }
+
+    soundingUntil = Math.max(soundingUntil, beat + durationBeats);
+    return removedBeats > 0 ? { ...note, beat: beat - removedBeats, durationBeats } : note;
+  });
+
+  if (!changed) return { notes, selected };
+  return {
+    notes: normalizeNotes(shifted, bpm),
+    selected: selected === null ? null : Math.min(selected, shifted.length - 1)
+  };
+}

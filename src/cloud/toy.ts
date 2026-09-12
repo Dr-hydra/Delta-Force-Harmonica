@@ -12,6 +12,7 @@ interface ToySdk {
   removeCloudStorage(keys: string[]): Promise<void>;
   share(req: { path: string }): Promise<void>;
   getQrCode(req?: { path?: string; size?: number }): Promise<{ base64: string; url: string }>;
+  navigate(req: { type: "space" | "video"; id: string; extra?: Record<string, string> }): Promise<void>;
 }
 
 declare global {
@@ -156,4 +157,24 @@ export async function sharePublicScore(shortId: string): Promise<string> {
 export async function scoreQrCode(shortId: string, size = 320) {
   if (!hasToyAbility("getQrCode")) throw new Error("当前环境不支持 Toy 二维码");
   return sdk().getQrCode({ path: scoreSharePath(shortId), size });
+}
+
+async function navigateOrOpen(type: "space" | "video", id: string, fallbackUrl: string) {
+  if (hasToyAbility("navigate")) {
+    try {
+      await sdk().navigate({ type, id, extra: { from: "toy" } });
+      return;
+    } catch {
+      // Ordinary web builds can expose the API surface without a native bridge.
+    }
+  }
+  window.open(fallbackUrl, "_blank", "noopener,noreferrer");
+}
+
+export function openBilibiliAuthor(mid: string) {
+  return navigateOrOpen("space", mid, `https://space.bilibili.com/${encodeURIComponent(mid)}`);
+}
+
+export function openBilibiliVideo(bvid: string) {
+  return navigateOrOpen("video", bvid, `https://www.bilibili.com/video/${encodeURIComponent(bvid)}`);
 }

@@ -7,6 +7,7 @@ import { PublicScoreMetaForm, PublishArchiveDialog, RenameCloudScoreDialog, Shar
 import ScoreWorkbench from "./ScoreWorkbench";
 import { RailToggle, useRailCollapsed } from "../components/RailToggle";
 import type { LibraryEntry, PublicScore } from "./types";
+import { aboutHref, converterHref, libraryHref } from "../navigation";
 import "./library.css";
 
 function durationLabel(ms: number) {
@@ -19,17 +20,6 @@ function scoreUrl(id: string) {
   url.searchParams.delete("view");
   url.searchParams.set("s", id);
   return `${url.pathname}${url.search}`;
-}
-
-function libraryUrl() {
-  const url = new URL(window.location.href);
-  url.search = "?view=library";
-  url.hash = "";
-  return `${url.pathname}${url.search}`;
-}
-
-function converterUrl() {
-  return window.location.pathname;
 }
 
 function difficultyLabel(value: number) {
@@ -106,7 +96,7 @@ function PublicDetail({ id, favorites, onFavorites }: {
     }
   }
 
-  if (error) return <div className="library-empty"><strong>LOAD FAILED</strong><span>{error}</span><a href={libraryUrl()}>返回曲谱库</a></div>;
+  if (error) return <div className="library-empty"><strong>LOAD FAILED</strong><span>{error}</span><a href={libraryHref()}>返回曲谱库</a></div>;
   if (!score) return <div className="library-empty"><strong>LOADING SCORE</strong><span>正在从 CloudBase CDN 读取公开曲谱…</span></div>;
 
   return (
@@ -132,7 +122,7 @@ function PublicDetail({ id, favorites, onFavorites }: {
             {favorites.includes(id) ? "取消收藏" : "收藏"}
           </button>
           <button className="button secondary" disabled={busy || !hasToyAbility("setCloudStorage")} onClick={() => void savePrivate()}>保存到云存档</button>
-          <a className="button secondary" href={libraryUrl()}>返回曲谱库</a>
+          <a className="button secondary" href={libraryHref()}>返回曲谱库</a>
         </div>
       </section>
       {editing && (
@@ -463,12 +453,13 @@ export default function CloudLibraryPage() {
   return (
     <div className={`library-shell${rail.collapsed ? " rail-collapsed" : ""}`}>
       <aside className="side-rail library-rail">
-        <a className="brand" href={converterUrl()}><span>DFH</span><b>DELTA FORCE<br />HARMONICA</b></a>
+        <a className="brand" href={converterHref()}><span>DFH</span><b>DELTA FORCE<br />HARMONICA</b></a>
         <nav aria-label="云端乐谱导航">
-          <a href={converterUrl()} title="乐谱转换"><i>01</i><span>乐谱转换</span></a>
-          <button title="公开曲谱" className={!scoreId && tab === "public" ? "active" : ""} onClick={() => { history.replaceState(null, "", libraryUrl()); setTab("public"); }}><i>02</i><span>公开曲谱</span></button>
-          <button title="我的云存档" className={!scoreId && tab === "private" ? "active" : ""} onClick={() => { history.replaceState(null, "", libraryUrl()); setTab("private"); }}><i>03</i><span>我的云存档</span></button>
-          <button title="我的发布" className={!scoreId && tab === "mine" ? "active" : ""} onClick={() => { history.replaceState(null, "", libraryUrl()); setTab("mine"); }}><i>04</i><span>我的发布</span></button>
+          <a href={converterHref()} title="乐谱转换"><i>01</i><span>乐谱转换</span></a>
+          <button title="公开曲谱" className={!scoreId && tab === "public" ? "active" : ""} onClick={() => { history.replaceState(null, "", libraryHref()); setTab("public"); }}><i>02</i><span>公开曲谱</span></button>
+          <button title="我的云存档" className={!scoreId && tab === "private" ? "active" : ""} onClick={() => { history.replaceState(null, "", libraryHref()); setTab("private"); }}><i>03</i><span>我的云存档</span></button>
+          <button title="我的发布" className={!scoreId && tab === "mine" ? "active" : ""} onClick={() => { history.replaceState(null, "", libraryHref()); setTab("mine"); }}><i>04</i><span>我的发布</span></button>
+          <a href={aboutHref()} title="关于项目"><i>05</i><span>关于</span></a>
         </nav>
         <RailToggle collapsed={rail.collapsed} onToggle={rail.toggle} />
         <div className="rail-bottom"><b>α</b><span>TOY + CLOUDBASE<br />OBJECT STORAGE</span></div>

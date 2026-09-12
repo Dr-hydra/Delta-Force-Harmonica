@@ -1,21 +1,16 @@
 import { StrictMode, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
+import AboutPage from "./about/AboutPage";
 import ConverterCloudPanel from "./cloud/ConverterCloudPanel";
 import CloudLibraryPage from "./library/CloudLibraryPage";
 import "./styles.css";
 import "./library/navigation-fixes.css";
+import { libraryHref } from "./navigation";
 
 const params = new URLSearchParams(window.location.search);
 const cloudView = params.get("view") === "library" || Boolean(params.get("s"));
-
-function libraryHref() {
-  const url = new URL(window.location.href);
-  url.search = "";
-  url.searchParams.set("view", "library");
-  url.hash = "";
-  return `${url.pathname}${url.search}`;
-}
+const aboutView = params.get("view") === "about";
 
 /**
  * App.tsx still owns the legacy converter rail. Until that rail is split into a
@@ -47,6 +42,7 @@ function ConverterLibraryNavigation() {
 }
 
 function Root() {
+  if (aboutView) return <AboutPage />;
   if (cloudView) return <CloudLibraryPage />;
   return (
     <>

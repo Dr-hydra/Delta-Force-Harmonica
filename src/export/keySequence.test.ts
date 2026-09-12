@@ -141,6 +141,14 @@ describe("toLogitechLua", () => {
     expect(lua).toContain("for _, k in ipairs(KEYS) do ReleaseKey(k) end");
     expect(lua).toContain("for _, b in ipairs(MOUSE) do ReleaseMouseButton(b) end");
   });
+
+  it("ignores repeated starts during playback and while queued events drain", () => {
+    const lua = toLogitechLua(buildKeySequence([note({ start: 0, key: "Z" })]), { songName: "T" });
+
+    expect(lua).toContain("if playing or GetRunningTime() < nextStartAt then");
+    expect(lua).toContain("playing = true");
+    expect(lua).toContain("nextStartAt = GetRunningTime() + 800");
+  });
 });
 
 describe("toRazerXml", () => {
@@ -151,6 +159,8 @@ describe("toRazerXml", () => {
     expect(xml).toContain("<Makecode>44</Makecode>");
     expect((xml.match(/<State>1<\/State>/g) ?? []).length).toBe(1);
     expect((xml.match(/<MacroEvent>/g) ?? []).length).toBe(2);
+    expect(xml).toContain("<Delay>382</Delay>");
+    expect(xml).not.toContain("<Delay2>");
     expect(xml).toContain("<FolderGuid>00000000-0000-0000-0000-000000000000</FolderGuid>");
   });
 

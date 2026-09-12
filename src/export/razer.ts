@@ -64,8 +64,10 @@ function randomGuid(): string {
  * macros the community has published, not an official one:
  *   Type 1 -> KeyEvent   (Makecode; no State means press, State 1 means release)
  *   Type 2 -> MouseEvent (MouseButton; State 0 press, State 1 release)
- * Delay2 is the wait before the event it sits with. Synapse 4 uses a different,
- * incompatible format.
+ * Delay is the wait in milliseconds before the event it sits with. Synapse 3
+ * exports use Delay2 for events whose delay is disabled, so writing timing
+ * values there makes Synapse import the sequence without those waits. Synapse 4
+ * uses a different, incompatible format.
  */
 export function toRazerXml(sequence: KeySequence, options: RazerOptions): string {
   const unsupported = bindingTargets(sequence.binding)
@@ -86,14 +88,14 @@ export function toRazerXml(sequence: KeySequence, options: RazerOptions): string
     lines.push("    <MacroEvent>");
     if (action.target.kind === "mouse") {
       lines.push("      <Type>2</Type>");
-      lines.push(`      <Delay2>${action.delay}</Delay2>`);
+      if (action.delay > 0) lines.push(`      <Delay>${action.delay}</Delay>`);
       lines.push("      <MouseEvent>");
       lines.push(`        <MouseButton>${MOUSE_BUTTONS[action.target.button]}</MouseButton>`);
       lines.push(`        <State>${action.down ? 0 : 1}</State>`);
       lines.push("      </MouseEvent>");
     } else {
       lines.push("      <Type>1</Type>");
-      lines.push(`      <Delay2>${action.delay}</Delay2>`);
+      if (action.delay > 0) lines.push(`      <Delay>${action.delay}</Delay>`);
       lines.push("      <KeyEvent>");
       lines.push(`        <Makecode>${MAKE_CODES[action.target.name]}</Makecode>`);
       if (!action.down) lines.push("        <State>1</State>");

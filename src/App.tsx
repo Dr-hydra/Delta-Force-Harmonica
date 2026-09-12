@@ -13,6 +13,7 @@ import { ScoreWorkspace } from "./components/ScoreWorkspace";
 import { RailToggle, useRailCollapsed } from "./components/RailToggle";
 import { useScoreEdits } from "./score/useScoreEdits";
 import type { NoteEvent, ParsedSong, TimeSignatureEvent } from "./music/types";
+import { aboutHref } from "./navigation";
 
 const DEMO_BPM = 143;
 const DEMO_SIGNATURES: TimeSignatureEvent[] = [{ beat: 0, numerator: 4, denominator: 4 }];
@@ -189,6 +190,7 @@ export default function App() {
         <nav aria-label="主导航">
           <button className="active" title="乐谱转换"><i>01</i><span>乐谱转换</span></button>
           <button disabled title="云端乐谱"><i>02</i><span>云端乐谱</span><em>SOON</em></button>
+          <button className="nav-available" title="关于项目" onClick={() => window.location.assign(aboutHref())}><i>03</i><span>关于</span></button>
         </nav>
         <RailToggle collapsed={rail.collapsed} onToggle={rail.toggle} />
         <div className="rail-bottom">
