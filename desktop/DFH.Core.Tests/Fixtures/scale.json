@@ -427,7 +427,7 @@
     "down": true
    },
    {
-    "time": 309,
+    "time": 287,
     "target": "key:z",
     "down": false
    },
@@ -437,7 +437,7 @@
     "down": true
    },
    {
-    "time": 729,
+    "time": 707,
     "target": "key:x",
     "down": false
    },
@@ -447,7 +447,7 @@
     "down": true
    },
    {
-    "time": 1148,
+    "time": 1126,
     "target": "key:c",
     "down": false
    },
@@ -457,7 +457,7 @@
     "down": true
    },
    {
-    "time": 1568,
+    "time": 1546,
     "target": "key:v",
     "down": false
    },
@@ -467,7 +467,7 @@
     "down": true
    },
    {
-    "time": 1987,
+    "time": 1965,
     "target": "key:b",
     "down": false
    },
@@ -477,7 +477,7 @@
     "down": true
    },
    {
-    "time": 2407,
+    "time": 2385,
     "target": "key:n",
     "down": false
    },
@@ -487,7 +487,7 @@
     "down": true
    },
    {
-    "time": 2826,
+    "time": 2804,
     "target": "key:m",
     "down": false
    },
@@ -497,7 +497,7 @@
     "down": true
    },
    {
-    "time": 3246,
+    "time": 3224,
     "target": "key:comma",
     "down": false
    },
@@ -507,7 +507,7 @@
     "down": true
    },
    {
-    "time": 3666,
+    "time": 3644,
     "target": "key:m",
     "down": false
    },
@@ -517,7 +517,7 @@
     "down": true
    },
    {
-    "time": 4085,
+    "time": 4063,
     "target": "key:n",
     "down": false
    },
@@ -527,7 +527,7 @@
     "down": true
    },
    {
-    "time": 4505,
+    "time": 4483,
     "target": "key:b",
     "down": false
    },
@@ -537,7 +537,7 @@
     "down": true
    },
    {
-    "time": 4924,
+    "time": 4902,
     "target": "key:v",
     "down": false
    },
@@ -547,7 +547,7 @@
     "down": true
    },
    {
-    "time": 5344,
+    "time": 5322,
     "target": "key:c",
     "down": false
    },
@@ -557,7 +557,7 @@
     "down": true
    },
    {
-    "time": 5764,
+    "time": 5742,
     "target": "key:x",
     "down": false
    },
@@ -567,12 +567,12 @@
     "down": true
    },
    {
-    "time": 6183,
+    "time": 6161,
     "target": "key:z",
     "down": false
    }
   ],
-  "durationMs": 6183,
+  "durationMs": 6161,
   "noteCount": 15,
   "droppedChordNotes": 0,
   "truncatedNotes": 0,

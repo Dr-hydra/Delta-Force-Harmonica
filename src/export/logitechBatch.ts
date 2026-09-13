@@ -3,6 +3,7 @@ import { loadLogitechSettings, STOP_LOCKS, TRIGGER_MAX, type LogitechTrigger, ty
 import { enforceMonophonic } from "../music/monophonic";
 import { optimizeHarmonica } from "../harmonica/optimizer";
 import type { ScoreSnapshot } from "../persistence/scoreCodec";
+import type { KeyTiming } from "./timing";
 
 export interface BatchSettings {
   trigger: LogitechTrigger;
@@ -43,11 +44,14 @@ export function toggleBatchSelection(ids: string[], id: string): string[] {
   return ids.includes(id) ? ids.filter((value) => value !== id) : [...ids, id];
 }
 
-/** Match ScoreWorkbench's saved-score conversion, including the stored transpose. */
-export function prepareBatchSong(name: string, snapshot: ScoreSnapshot) {
+/**
+ * Match ScoreWorkbench's saved-score conversion, including the stored transpose.
+ * `timing` is the export panel's key timing tier; omitted means the standard tier.
+ */
+export function prepareBatchSong(name: string, snapshot: ScoreSnapshot, timing?: KeyTiming) {
   const mono = enforceMonophonic(snapshot.notes);
   const conversion = optimizeHarmonica(mono.notes, snapshot.transpose);
-  const sequence = buildKeySequence(conversion.notes);
+  const sequence = buildKeySequence(conversion.notes, timing);
   if (!sequence.actions.length) throw new Error(`「${name}」没有可演奏的音符，请取消选择或修改云存档后重试。`);
   return { song: { name, sequence }, unplayableCount: conversion.unplayable.length };
 }

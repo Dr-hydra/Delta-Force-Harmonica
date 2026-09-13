@@ -1,4 +1,5 @@
 import type { GameNote, HarmonicaKey } from "../music/types";
+import { DEFAULT_TIMING, type KeyTiming } from "./timing";
 
 export type MouseButton = "left" | "middle" | "right";
 
@@ -47,13 +48,9 @@ export interface InputAction {
   down: boolean;
 }
 
-export interface KeySequenceOptions {
+/** Timing fields default to the standard tier in ./timing.ts. */
+export interface KeySequenceOptions extends Partial<KeyTiming> {
   binding?: InputBinding;
-  /** Modifiers go down this early so the game registers them before the note. */
-  modifierLeadMs?: number;
-  /** Notes are released early by this much so a repeated pitch retriggers. */
-  releaseGapMs?: number;
-  minNoteMs?: number;
 }
 
 export interface KeySequence {
@@ -68,8 +65,6 @@ export interface KeySequence {
   modifierPresses: number;
 }
 
-const DEFAULTS = { modifierLeadMs: 12, releaseGapMs: 18, minNoteMs: 30 };
-
 function modifierTargets(note: GameNote, binding: InputBinding): InputTarget[] {
   const targets: InputTarget[] = [];
   if (note.octaveModifier > 0) targets.push(binding.octaveUp);
@@ -82,12 +77,17 @@ function modifierTargets(note: GameNote, binding: InputBinding): InputTarget[] {
  * Flattens optimized notes into an absolute-time press/release stream. Modifiers
  * are held across consecutive notes that need the same ones, so the optimizer's
  * work on minimising modifier changes carries through to the macro.
+ *
+ * The game samples input per frame, so the three timing values are hard floors
+ * rather than targets: when a passage is too dense to honour them, a note is
+ * pushed later instead of being squeezed into the same frame as a modifier
+ * change or the previous release, which the game would drop or mis-pitch.
  */
 export function buildKeySequence(notes: GameNote[], options: KeySequenceOptions = {}): KeySequence {
   const binding = options.binding ?? GAME_BINDING;
-  const leadMs = options.modifierLeadMs ?? DEFAULTS.modifierLeadMs;
-  const releaseGapMs = options.releaseGapMs ?? DEFAULTS.releaseGapMs;
-  const minNoteMs = options.minNoteMs ?? DEFAULTS.minNoteMs;
+  const leadMs = options.modifierLeadMs ?? DEFAULT_TIMING.modifierLeadMs;
+  const releaseGapMs = options.releaseGapMs ?? DEFAULT_TIMING.releaseGapMs;
+  const minNoteMs = options.minNoteMs ?? DEFAULT_TIMING.minNoteMs;
 
   const sorted = [...notes].sort((a, b) => a.start - b.start || b.pitch - a.pitch);
   const actions: InputAction[] = [];
@@ -119,19 +119,26 @@ export function buildKeySequence(notes: GameNote[], options: KeySequenceOptions 
     const wantedIds = wanted.map(targetId);
     const heldIds = held.map(targetId);
     const switchTime = Math.max(lastTime, note.start - leadMs);
+    let modifiersChanged = false;
     for (const target of held) {
-      if (!wantedIds.includes(targetId(target))) actions.push({ time: switchTime, target, down: false });
+      if (!wantedIds.includes(targetId(target))) {
+        actions.push({ time: switchTime, target, down: false });
+        modifiersChanged = true;
+      }
     }
     for (const target of wanted) {
       if (!heldIds.includes(targetId(target))) {
         actions.push({ time: switchTime, target, down: true });
         modifierPresses++;
+        modifiersChanged = true;
       }
     }
     held = wanted;
 
     const noteTarget = binding.notes[note.key];
-    const down = Math.max(switchTime, note.start);
+    let down = Math.max(switchTime, note.start);
+    if (modifiersChanged) down = Math.max(down, switchTime + leadMs);
+    if (noteCount > 0) down = Math.max(down, lastTime + releaseGapMs);
     const up = Math.max(down + minNoteMs, end - releaseGapMs);
     actions.push({ time: down, target: noteTarget, down: true });
     actions.push({ time: up, target: noteTarget, down: false });

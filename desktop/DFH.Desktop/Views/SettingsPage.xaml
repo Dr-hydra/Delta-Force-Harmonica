@@ -21,14 +21,17 @@
             <CheckBox Margin="0,12,0,0" IsChecked="{Binding StopWhenForegroundChanges}" Content="前台窗口切换时自动停止（防止按键发到别的程序）" />
             <CheckBox Margin="0,8,0,0" IsChecked="{Binding MinimizeOnPlay}" Content="开始演奏时最小化本窗口" />
 
-            <TextBlock Style="{StaticResource SectionTitle}" Margin="0,22,0,8" Text="按键时序（毫秒）" />
-            <TextBlock Style="{StaticResource Muted}" Text="默认值与网页宏导出一致。游戏按帧采样输入，漏音时可以把三项都调大。" />
-            <TextBlock Style="{StaticResource FieldLabel}" Text="修饰键提前按下" />
-            <TextBox Text="{Binding ModifierLeadMs, UpdateSourceTrigger=PropertyChanged}" />
-            <TextBlock Style="{StaticResource FieldLabel}" Text="音键提前松开（同音重触发间隔）" />
-            <TextBox Text="{Binding ReleaseGapMs, UpdateSourceTrigger=PropertyChanged}" />
-            <TextBlock Style="{StaticResource FieldLabel}" Text="音键最短按住" />
-            <TextBox Text="{Binding MinNoteMs, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock Style="{StaticResource SectionTitle}" Margin="0,22,0,8" Text="按键时序" />
+            <TextBlock Style="{StaticResource Muted}" TextWrapping="Wrap"
+                       Text="游戏按帧采样输入，修饰键、松键、按住之间要留够整帧的余量。三个档位与网页导出面板同名同值：漏音换「稳健」，跟快歌换「极限」。密集乐段里为了保住这些间隔，音符会被推迟而不是挤在一起。" />
+            <TextBlock Style="{StaticResource FieldLabel}" Text="档位" />
+            <ComboBox ItemsSource="{Binding TimingTierOptions}" SelectedItem="{Binding SelectedTimingTier}" DisplayMemberPath="Label" />
+            <TextBlock Style="{StaticResource FieldLabel}" Text="修饰键提前按下（毫秒）" />
+            <TextBox Text="{Binding ModifierLeadMs, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsCustomTiming}" />
+            <TextBlock Style="{StaticResource FieldLabel}" Text="松键到下一次按下的间隔（毫秒）" />
+            <TextBox Text="{Binding ReleaseGapMs, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsCustomTiming}" />
+            <TextBlock Style="{StaticResource FieldLabel}" Text="音键最短按住（毫秒）" />
+            <TextBox Text="{Binding MinNoteMs, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsCustomTiming}" />
 
             <TextBlock Style="{StaticResource SectionTitle}" Margin="0,22,0,8" Text="曲库" />
             <TextBlock Style="{StaticResource FieldLabel}" Text="公开曲库地址" />

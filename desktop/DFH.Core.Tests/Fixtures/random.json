@@ -9456,17 +9456,17 @@
     "down": true
    },
    {
-    "time": 0,
+    "time": 40,
     "target": "key:b",
     "down": true
    },
    {
-    "time": 216,
+    "time": 194,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 222,
+    "time": 194,
     "target": "mouse:left",
     "down": true
    },
@@ -9476,12 +9476,12 @@
     "down": true
    },
    {
-    "time": 333,
+    "time": 311,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 457,
+    "time": 429,
     "target": "mouse:left",
     "down": false
    },
@@ -9491,17 +9491,17 @@
     "down": true
    },
    {
-    "time": 568,
+    "time": 546,
     "target": "key:comma",
     "down": false
    },
    {
-    "time": 1160,
+    "time": 1132,
     "target": "mouse:middle",
     "down": false
    },
    {
-    "time": 1160,
+    "time": 1132,
     "target": "mouse:right",
     "down": true
    },
@@ -9511,17 +9511,17 @@
     "down": true
    },
    {
-    "time": 1271,
+    "time": 1249,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 1277,
+    "time": 1249,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 1277,
+    "time": 1249,
     "target": "mouse:left",
     "down": true
    },
@@ -9531,12 +9531,12 @@
     "down": true
    },
    {
-    "time": 1505,
+    "time": 1483,
     "target": "key:c",
     "down": false
    },
    {
-    "time": 1511,
+    "time": 1483,
     "target": "mouse:left",
     "down": false
    },
@@ -9546,7 +9546,7 @@
     "down": true
    },
    {
-    "time": 1622,
+    "time": 1600,
     "target": "key:comma",
     "down": false
    },
@@ -9556,12 +9556,12 @@
     "down": true
    },
    {
-    "time": 1974,
+    "time": 1952,
     "target": "key:z",
     "down": false
    },
    {
-    "time": 2215,
+    "time": 2187,
     "target": "mouse:right",
     "down": true
    },
@@ -9571,7 +9571,7 @@
     "down": true
    },
    {
-    "time": 2443,
+    "time": 2421,
     "target": "key:z",
     "down": false
    },
@@ -9581,12 +9581,12 @@
     "down": true
    },
    {
-    "time": 2560,
+    "time": 2538,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 3035,
+    "time": 3007,
     "target": "mouse:right",
     "down": false
    },
@@ -9596,12 +9596,12 @@
     "down": true
    },
    {
-    "time": 3498,
+    "time": 3476,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 3504,
+    "time": 3476,
     "target": "mouse:middle",
     "down": true
    },
@@ -9611,17 +9611,17 @@
     "down": true
    },
    {
-    "time": 3615,
+    "time": 3593,
     "target": "key:comma",
     "down": false
    },
    {
-    "time": 3972,
+    "time": 3944,
     "target": "mouse:middle",
     "down": false
    },
    {
-    "time": 3972,
+    "time": 3944,
     "target": "mouse:left",
     "down": true
    },
@@ -9631,17 +9631,17 @@
     "down": true
    },
    {
-    "time": 4201,
+    "time": 4179,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 4207,
+    "time": 4179,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 4207,
+    "time": 4179,
     "target": "mouse:right",
     "down": true
    },
@@ -9651,12 +9651,12 @@
     "down": true
    },
    {
-    "time": 4435,
+    "time": 4413,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 4910,
+    "time": 4882,
     "target": "mouse:middle",
     "down": true
    },
@@ -9666,22 +9666,22 @@
     "down": true
    },
    {
-    "time": 5021,
+    "time": 4999,
     "target": "key:z",
     "down": false
    },
    {
-    "time": 5144,
+    "time": 5116,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 5144,
+    "time": 5116,
     "target": "mouse:middle",
     "down": false
    },
    {
-    "time": 5144,
+    "time": 5116,
     "target": "mouse:left",
     "down": true
    },
@@ -9691,17 +9691,17 @@
     "down": true
    },
    {
-    "time": 5372,
+    "time": 5350,
     "target": "key:c",
     "down": false
    },
    {
-    "time": 5613,
+    "time": 5585,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 5613,
+    "time": 5585,
     "target": "mouse:middle",
     "down": true
    },
@@ -9711,17 +9711,17 @@
     "down": true
    },
    {
-    "time": 5959,
+    "time": 5937,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 6199,
+    "time": 6171,
     "target": "mouse:middle",
     "down": false
    },
    {
-    "time": 6199,
+    "time": 6171,
     "target": "mouse:right",
     "down": true
    },
@@ -9731,17 +9731,17 @@
     "down": true
    },
    {
-    "time": 6427,
+    "time": 6405,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 6433,
+    "time": 6405,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 6433,
+    "time": 6405,
     "target": "mouse:middle",
     "down": true
    },
@@ -9751,17 +9751,17 @@
     "down": true
    },
    {
-    "time": 6661,
+    "time": 6639,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 7136,
+    "time": 7108,
     "target": "mouse:middle",
     "down": false
    },
    {
-    "time": 7136,
+    "time": 7108,
     "target": "mouse:left",
     "down": true
    },
@@ -9771,7 +9771,7 @@
     "down": true
    },
    {
-    "time": 7365,
+    "time": 7343,
     "target": "key:v",
     "down": false
    },
@@ -9781,17 +9781,17 @@
     "down": true
    },
    {
-    "time": 7599,
+    "time": 7577,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 7605,
+    "time": 7577,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 7605,
+    "time": 7577,
     "target": "mouse:right",
     "down": true
    },
@@ -9801,17 +9801,17 @@
     "down": true
    },
    {
-    "time": 7834,
+    "time": 7812,
     "target": "key:m",
     "down": false
    },
    {
-    "time": 8308,
+    "time": 8280,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 8308,
+    "time": 8280,
     "target": "mouse:middle",
     "down": true
    },
@@ -9821,12 +9821,12 @@
     "down": true
    },
    {
-    "time": 8771,
+    "time": 8749,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 8777,
+    "time": 8749,
     "target": "mouse:middle",
     "down": false
    },
@@ -9836,12 +9836,12 @@
     "down": true
    },
    {
-    "time": 8888,
+    "time": 8866,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 9246,
+    "time": 9218,
     "target": "mouse:left",
     "down": true
    },
@@ -9851,7 +9851,7 @@
     "down": true
    },
    {
-    "time": 9357,
+    "time": 9335,
     "target": "key:v",
     "down": false
    },
@@ -9861,22 +9861,22 @@
     "down": true
    },
    {
-    "time": 9943,
+    "time": 9921,
     "target": "key:m",
     "down": false
    },
    {
-    "time": 9949,
+    "time": 9921,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 9949,
+    "time": 9921,
     "target": "mouse:right",
     "down": true
    },
    {
-    "time": 9949,
+    "time": 9921,
     "target": "mouse:middle",
     "down": true
    },
@@ -9886,17 +9886,17 @@
     "down": true
    },
    {
-    "time": 10177,
+    "time": 10155,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 10183,
+    "time": 10155,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 10183,
+    "time": 10155,
     "target": "mouse:middle",
     "down": false
    },
@@ -9906,17 +9906,17 @@
     "down": true
    },
    {
-    "time": 10412,
+    "time": 10390,
     "target": "key:m",
     "down": false
    },
    {
-    "time": 11121,
+    "time": 11093,
     "target": "mouse:right",
     "down": true
    },
    {
-    "time": 11121,
+    "time": 11093,
     "target": "mouse:middle",
     "down": true
    },
@@ -9926,17 +9926,17 @@
     "down": true
    },
    {
-    "time": 11232,
+    "time": 11210,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 11472,
+    "time": 11444,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 11472,
+    "time": 11444,
     "target": "mouse:middle",
     "down": false
    },
@@ -9946,12 +9946,12 @@
     "down": true
    },
    {
-    "time": 11584,
+    "time": 11562,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 11590,
+    "time": 11562,
     "target": "mouse:left",
     "down": true
    },
@@ -9961,12 +9961,12 @@
     "down": true
    },
    {
-    "time": 11701,
+    "time": 11679,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 11707,
+    "time": 11679,
     "target": "mouse:left",
     "down": false
    },
@@ -9976,12 +9976,12 @@
     "down": true
    },
    {
-    "time": 11935,
+    "time": 11913,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 11941,
+    "time": 11913,
     "target": "mouse:middle",
     "down": true
    },
@@ -9991,12 +9991,12 @@
     "down": true
    },
    {
-    "time": 12170,
+    "time": 12148,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 12176,
+    "time": 12148,
     "target": "mouse:left",
     "down": true
    },
@@ -10006,22 +10006,22 @@
     "down": true
    },
    {
-    "time": 12404,
+    "time": 12382,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 12879,
+    "time": 12851,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 12879,
+    "time": 12851,
     "target": "mouse:middle",
     "down": false
    },
    {
-    "time": 12879,
+    "time": 12851,
     "target": "mouse:right",
     "down": true
    },
@@ -10031,12 +10031,12 @@
     "down": true
    },
    {
-    "time": 12990,
+    "time": 12968,
     "target": "key:c",
     "down": false
    },
    {
-    "time": 12996,
+    "time": 12968,
     "target": "mouse:middle",
     "down": true
    },
@@ -10046,17 +10046,17 @@
     "down": true
    },
    {
-    "time": 13224,
+    "time": 13202,
     "target": "key:z",
     "down": false
    },
    {
-    "time": 13465,
+    "time": 13437,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 13465,
+    "time": 13437,
     "target": "mouse:middle",
     "down": false
    },
@@ -10066,12 +10066,12 @@
     "down": true
    },
    {
-    "time": 13576,
+    "time": 13554,
     "target": "key:z",
     "down": false
    },
    {
-    "time": 14051,
+    "time": 14023,
     "target": "mouse:left",
     "down": true
    },
@@ -10081,12 +10081,12 @@
     "down": true
    },
    {
-    "time": 14279,
+    "time": 14257,
     "target": "key:c",
     "down": false
    },
    {
-    "time": 14285,
+    "time": 14257,
     "target": "mouse:middle",
     "down": true
    },
@@ -10096,22 +10096,22 @@
     "down": true
    },
    {
-    "time": 14513,
+    "time": 14491,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 14519,
+    "time": 14491,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 14519,
+    "time": 14491,
     "target": "mouse:middle",
     "down": false
    },
    {
-    "time": 14519,
+    "time": 14491,
     "target": "mouse:right",
     "down": true
    },
@@ -10121,7 +10121,7 @@
     "down": true
    },
    {
-    "time": 14630,
+    "time": 14608,
     "target": "key:comma",
     "down": false
    },
@@ -10131,12 +10131,12 @@
     "down": true
    },
    {
-    "time": 14747,
+    "time": 14725,
     "target": "key:m",
     "down": false
    },
    {
-    "time": 15105,
+    "time": 15077,
     "target": "mouse:right",
     "down": false
    },
@@ -10146,12 +10146,12 @@
     "down": true
    },
    {
-    "time": 15216,
+    "time": 15194,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 15340,
+    "time": 15312,
     "target": "mouse:middle",
     "down": true
    },
@@ -10161,12 +10161,12 @@
     "down": true
    },
    {
-    "time": 15802,
+    "time": 15780,
     "target": "key:z",
     "down": false
    },
    {
-    "time": 16043,
+    "time": 16015,
     "target": "mouse:middle",
     "down": false
    },
@@ -10176,12 +10176,12 @@
     "down": true
    },
    {
-    "time": 16271,
+    "time": 16249,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 16394,
+    "time": 16366,
     "target": "mouse:middle",
     "down": true
    },
@@ -10191,7 +10191,7 @@
     "down": true
    },
    {
-    "time": 16622,
+    "time": 16600,
     "target": "key:n",
     "down": false
    },
@@ -10201,12 +10201,12 @@
     "down": true
    },
    {
-    "time": 16857,
+    "time": 16835,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 16863,
+    "time": 16835,
     "target": "mouse:middle",
     "down": false
    },
@@ -10216,12 +10216,12 @@
     "down": true
    },
    {
-    "time": 17091,
+    "time": 17069,
     "target": "key:c",
     "down": false
    },
    {
-    "time": 17332,
+    "time": 17304,
     "target": "mouse:middle",
     "down": true
    },
@@ -10231,12 +10231,12 @@
     "down": true
    },
    {
-    "time": 17443,
+    "time": 17421,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 17449,
+    "time": 17421,
     "target": "mouse:middle",
     "down": false
    },
@@ -10246,17 +10246,17 @@
     "down": true
    },
    {
-    "time": 17560,
+    "time": 17538,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 17683,
+    "time": 17655,
     "target": "mouse:right",
     "down": true
    },
    {
-    "time": 17683,
+    "time": 17655,
     "target": "mouse:middle",
     "down": true
    },
@@ -10266,12 +10266,12 @@
     "down": true
    },
    {
-    "time": 17795,
+    "time": 17773,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 18269,
+    "time": 18241,
     "target": "mouse:right",
     "down": false
    },
@@ -10281,12 +10281,12 @@
     "down": true
    },
    {
-    "time": 18497,
+    "time": 18475,
     "target": "key:m",
     "down": false
    },
    {
-    "time": 18504,
+    "time": 18476,
     "target": "mouse:left",
     "down": true
    },
@@ -10296,7 +10296,7 @@
     "down": true
    },
    {
-    "time": 18732,
+    "time": 18710,
     "target": "key:v",
     "down": false
    },
@@ -10306,12 +10306,12 @@
     "down": true
    },
    {
-    "time": 19083,
+    "time": 19061,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 19910,
+    "time": 19882,
     "target": "mouse:left",
     "down": false
    },
@@ -10321,17 +10321,17 @@
     "down": true
    },
    {
-    "time": 20138,
+    "time": 20116,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 20144,
+    "time": 20116,
     "target": "mouse:middle",
     "down": false
    },
    {
-    "time": 20144,
+    "time": 20116,
     "target": "mouse:right",
     "down": true
    },
@@ -10341,17 +10341,17 @@
     "down": true
    },
    {
-    "time": 20607,
+    "time": 20585,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 20613,
+    "time": 20585,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 20613,
+    "time": 20585,
     "target": "mouse:middle",
     "down": true
    },
@@ -10361,12 +10361,12 @@
     "down": true
    },
    {
-    "time": 20724,
+    "time": 20702,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 20847,
+    "time": 20819,
     "target": "mouse:right",
     "down": true
    },
@@ -10376,7 +10376,7 @@
     "down": true
    },
    {
-    "time": 21076,
+    "time": 21054,
     "target": "key:c",
     "down": false
    },
@@ -10386,7 +10386,7 @@
     "down": true
    },
    {
-    "time": 21662,
+    "time": 21640,
     "target": "key:m",
     "down": false
    },
@@ -10396,7 +10396,7 @@
     "down": true
    },
    {
-    "time": 21896,
+    "time": 21874,
     "target": "key:z",
     "down": false
    },
@@ -10406,22 +10406,22 @@
     "down": true
    },
    {
-    "time": 22130,
+    "time": 22108,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 22371,
+    "time": 22343,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 22371,
+    "time": 22343,
     "target": "mouse:middle",
     "down": false
    },
    {
-    "time": 22371,
+    "time": 22343,
     "target": "mouse:left",
     "down": true
    },
@@ -10431,7 +10431,7 @@
     "down": true
    },
    {
-    "time": 22599,
+    "time": 22577,
     "target": "key:v",
     "down": false
    },
@@ -10441,7 +10441,7 @@
     "down": true
    },
    {
-    "time": 22716,
+    "time": 22694,
     "target": "key:v",
     "down": false
    },
@@ -10451,12 +10451,12 @@
     "down": true
    },
    {
-    "time": 23419,
+    "time": 23397,
     "target": "key:c",
     "down": false
    },
    {
-    "time": 23894,
+    "time": 23866,
     "target": "mouse:left",
     "down": false
    },
@@ -10466,12 +10466,12 @@
     "down": true
    },
    {
-    "time": 24005,
+    "time": 23983,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 24129,
+    "time": 24101,
     "target": "mouse:middle",
     "down": true
    },
@@ -10481,17 +10481,17 @@
     "down": true
    },
    {
-    "time": 24357,
+    "time": 24335,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 24597,
+    "time": 24569,
     "target": "mouse:middle",
     "down": false
    },
    {
-    "time": 24597,
+    "time": 24569,
     "target": "mouse:left",
     "down": true
    },
@@ -10501,17 +10501,17 @@
     "down": true
    },
    {
-    "time": 24826,
+    "time": 24804,
     "target": "key:c",
     "down": false
    },
    {
-    "time": 24832,
+    "time": 24804,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 24832,
+    "time": 24804,
     "target": "mouse:right",
     "down": true
    },
@@ -10521,17 +10521,17 @@
     "down": true
    },
    {
-    "time": 24943,
+    "time": 24921,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 25066,
+    "time": 25038,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 25066,
+    "time": 25038,
     "target": "mouse:middle",
     "down": true
    },
@@ -10541,12 +10541,12 @@
     "down": true
    },
    {
-    "time": 25295,
+    "time": 25273,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 25535,
+    "time": 25507,
     "target": "mouse:right",
     "down": true
    },
@@ -10556,7 +10556,7 @@
     "down": true
    },
    {
-    "time": 25998,
+    "time": 25976,
     "target": "key:comma",
     "down": false
    },
@@ -10566,12 +10566,12 @@
     "down": true
    },
    {
-    "time": 26466,
+    "time": 26444,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 26472,
+    "time": 26444,
     "target": "mouse:right",
     "down": false
    },
@@ -10581,7 +10581,7 @@
     "down": true
    },
    {
-    "time": 26583,
+    "time": 26561,
     "target": "key:x",
     "down": false
    },
@@ -10591,12 +10591,12 @@
     "down": true
    },
    {
-    "time": 26701,
+    "time": 26679,
     "target": "key:comma",
     "down": false
    },
    {
-    "time": 26707,
+    "time": 26679,
     "target": "mouse:middle",
     "down": false
    },
@@ -10606,17 +10606,17 @@
     "down": true
    },
    {
-    "time": 26935,
+    "time": 26913,
     "target": "key:c",
     "down": false
    },
    {
-    "time": 26941,
+    "time": 26913,
     "target": "mouse:left",
     "down": true
    },
    {
-    "time": 26941,
+    "time": 26913,
     "target": "mouse:middle",
     "down": true
    },
@@ -10626,17 +10626,17 @@
     "down": true
    },
    {
-    "time": 27404,
+    "time": 27382,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 27410,
+    "time": 27382,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 27410,
+    "time": 27382,
     "target": "mouse:right",
     "down": true
    },
@@ -10646,12 +10646,12 @@
     "down": true
    },
    {
-    "time": 27638,
+    "time": 27616,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 27644,
+    "time": 27616,
     "target": "mouse:middle",
     "down": false
    },
@@ -10661,12 +10661,12 @@
     "down": true
    },
    {
-    "time": 27872,
+    "time": 27850,
     "target": "key:comma",
     "down": false
    },
    {
-    "time": 27879,
+    "time": 27851,
     "target": "mouse:right",
     "down": false
    },
@@ -10676,17 +10676,17 @@
     "down": true
    },
    {
-    "time": 28107,
+    "time": 28085,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 28113,
+    "time": 28085,
     "target": "mouse:left",
     "down": true
    },
    {
-    "time": 28113,
+    "time": 28085,
     "target": "mouse:middle",
     "down": true
    },
@@ -10696,12 +10696,12 @@
     "down": true
    },
    {
-    "time": 28341,
+    "time": 28319,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 28347,
+    "time": 28319,
     "target": "mouse:left",
     "down": false
    },
@@ -10711,12 +10711,12 @@
     "down": true
    },
    {
-    "time": 28575,
+    "time": 28553,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 28582,
+    "time": 28554,
     "target": "mouse:right",
     "down": true
    },
@@ -10726,17 +10726,17 @@
     "down": true
    },
    {
-    "time": 28810,
+    "time": 28788,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 28816,
+    "time": 28788,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 28816,
+    "time": 28788,
     "target": "mouse:middle",
     "down": false
    },
@@ -10746,12 +10746,12 @@
     "down": true
    },
    {
-    "time": 29279,
+    "time": 29257,
     "target": "key:z",
     "down": false
    },
    {
-    "time": 29285,
+    "time": 29257,
     "target": "mouse:left",
     "down": true
    },
@@ -10761,12 +10761,12 @@
     "down": true
    },
    {
-    "time": 29513,
+    "time": 29491,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 30457,
+    "time": 30429,
     "target": "mouse:middle",
     "down": true
    },
@@ -10776,12 +10776,12 @@
     "down": true
    },
    {
-    "time": 30568,
+    "time": 30546,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 30691,
+    "time": 30663,
     "target": "mouse:middle",
     "down": false
    },
@@ -10791,7 +10791,7 @@
     "down": true
    },
    {
-    "time": 30920,
+    "time": 30898,
     "target": "key:m",
     "down": false
    },
@@ -10801,12 +10801,12 @@
     "down": true
    },
    {
-    "time": 31154,
+    "time": 31132,
     "target": "key:comma",
     "down": false
    },
    {
-    "time": 31394,
+    "time": 31366,
     "target": "mouse:middle",
     "down": true
    },
@@ -10816,7 +10816,7 @@
     "down": true
    },
    {
-    "time": 31622,
+    "time": 31600,
     "target": "key:n",
     "down": false
    },
@@ -10826,17 +10826,17 @@
     "down": true
    },
    {
-    "time": 31740,
+    "time": 31718,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 31746,
+    "time": 31718,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 31746,
+    "time": 31718,
     "target": "mouse:middle",
     "down": false
    },
@@ -10846,7 +10846,7 @@
     "down": true
    },
    {
-    "time": 31974,
+    "time": 31952,
     "target": "key:comma",
     "down": false
    },
@@ -10856,12 +10856,12 @@
     "down": true
    },
    {
-    "time": 32208,
+    "time": 32186,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 32215,
+    "time": 32187,
     "target": "mouse:middle",
     "down": true
    },
@@ -10871,12 +10871,12 @@
     "down": true
    },
    {
-    "time": 32443,
+    "time": 32421,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 32449,
+    "time": 32421,
     "target": "mouse:right",
     "down": true
    },
@@ -10886,12 +10886,12 @@
     "down": true
    },
    {
-    "time": 32912,
+    "time": 32890,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 32918,
+    "time": 32890,
     "target": "mouse:middle",
     "down": false
    },
@@ -10901,12 +10901,12 @@
     "down": true
    },
    {
-    "time": 33146,
+    "time": 33124,
     "target": "key:m",
     "down": false
    },
    {
-    "time": 33152,
+    "time": 33124,
     "target": "mouse:middle",
     "down": true
    },
@@ -10916,12 +10916,12 @@
     "down": true
    },
    {
-    "time": 33615,
+    "time": 33593,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 33621,
+    "time": 33593,
     "target": "mouse:middle",
     "down": false
    },
@@ -10931,7 +10931,7 @@
     "down": true
    },
    {
-    "time": 33732,
+    "time": 33710,
     "target": "key:x",
     "down": false
    },
@@ -10941,12 +10941,12 @@
     "down": true
    },
    {
-    "time": 34084,
+    "time": 34062,
     "target": "key:comma",
     "down": false
    },
    {
-    "time": 34207,
+    "time": 34179,
     "target": "mouse:middle",
     "down": true
    },
@@ -10956,17 +10956,17 @@
     "down": true
    },
    {
-    "time": 34670,
+    "time": 34648,
     "target": "key:comma",
     "down": false
    },
    {
-    "time": 34676,
+    "time": 34648,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 34676,
+    "time": 34648,
     "target": "mouse:left",
     "down": true
    },
@@ -10976,12 +10976,12 @@
     "down": true
    },
    {
-    "time": 34904,
+    "time": 34882,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 34910,
+    "time": 34882,
     "target": "mouse:middle",
     "down": false
    },
@@ -10991,17 +10991,17 @@
     "down": true
    },
    {
-    "time": 35138,
+    "time": 35116,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 35144,
+    "time": 35116,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 35144,
+    "time": 35116,
     "target": "mouse:right",
     "down": true
    },
@@ -11011,17 +11011,17 @@
     "down": true
    },
    {
-    "time": 35255,
+    "time": 35233,
     "target": "key:comma",
     "down": false
    },
    {
-    "time": 35261,
+    "time": 35233,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 35261,
+    "time": 35233,
     "target": "mouse:middle",
     "down": true
    },
@@ -11031,17 +11031,17 @@
     "down": true
    },
    {
-    "time": 35490,
+    "time": 35468,
     "target": "key:z",
     "down": false
    },
    {
-    "time": 35496,
+    "time": 35468,
     "target": "mouse:middle",
     "down": false
    },
    {
-    "time": 35496,
+    "time": 35468,
     "target": "mouse:right",
     "down": true
    },
@@ -11051,17 +11051,17 @@
     "down": true
    },
    {
-    "time": 35724,
+    "time": 35702,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 35730,
+    "time": 35702,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 35730,
+    "time": 35702,
     "target": "mouse:middle",
     "down": true
    },
@@ -11071,17 +11071,17 @@
     "down": true
    },
    {
-    "time": 35841,
+    "time": 35819,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 35847,
+    "time": 35819,
     "target": "mouse:middle",
     "down": false
    },
    {
-    "time": 35847,
+    "time": 35819,
     "target": "mouse:left",
     "down": true
    },
@@ -11091,17 +11091,17 @@
     "down": true
    },
    {
-    "time": 36076,
+    "time": 36054,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 36902,
+    "time": 36874,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 36902,
+    "time": 36874,
     "target": "mouse:middle",
     "down": true
    },
@@ -11111,12 +11111,12 @@
     "down": true
    },
    {
-    "time": 37130,
+    "time": 37108,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 37136,
+    "time": 37108,
     "target": "mouse:middle",
     "down": false
    },
@@ -11126,12 +11126,12 @@
     "down": true
    },
    {
-    "time": 37248,
+    "time": 37226,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 37488,
+    "time": 37460,
     "target": "mouse:right",
     "down": true
    },
@@ -11141,12 +11141,12 @@
     "down": true
    },
    {
-    "time": 37599,
+    "time": 37577,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 38426,
+    "time": 38398,
     "target": "mouse:middle",
     "down": true
    },
@@ -11156,17 +11156,17 @@
     "down": true
    },
    {
-    "time": 38654,
+    "time": 38632,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 38660,
+    "time": 38632,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 38660,
+    "time": 38632,
     "target": "mouse:middle",
     "down": false
    },
@@ -11176,7 +11176,7 @@
     "down": true
    },
    {
-    "time": 38771,
+    "time": 38749,
     "target": "key:x",
     "down": false
    },
@@ -11186,17 +11186,17 @@
     "down": true
    },
    {
-    "time": 39005,
+    "time": 38983,
     "target": "key:comma",
     "down": false
    },
    {
-    "time": 39480,
+    "time": 39452,
     "target": "mouse:right",
     "down": true
    },
    {
-    "time": 39480,
+    "time": 39452,
     "target": "mouse:middle",
     "down": true
    },
@@ -11206,12 +11206,12 @@
     "down": true
    },
    {
-    "time": 39708,
+    "time": 39686,
     "target": "key:comma",
     "down": false
    },
    {
-    "time": 39949,
+    "time": 39921,
     "target": "mouse:right",
     "down": false
    },
@@ -11221,17 +11221,17 @@
     "down": true
    },
    {
-    "time": 40412,
+    "time": 40390,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 40418,
+    "time": 40390,
     "target": "mouse:middle",
     "down": false
    },
    {
-    "time": 40418,
+    "time": 40390,
     "target": "mouse:left",
     "down": true
    },
@@ -11241,17 +11241,17 @@
     "down": true
    },
    {
-    "time": 40529,
+    "time": 40507,
     "target": "key:c",
     "down": false
    },
    {
-    "time": 40535,
+    "time": 40507,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 40535,
+    "time": 40507,
     "target": "mouse:right",
     "down": true
    },
@@ -11261,12 +11261,12 @@
     "down": true
    },
    {
-    "time": 40763,
+    "time": 40741,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 40769,
+    "time": 40741,
     "target": "mouse:right",
     "down": false
    },
@@ -11276,17 +11276,17 @@
     "down": true
    },
    {
-    "time": 40880,
+    "time": 40858,
     "target": "key:z",
     "down": false
    },
    {
-    "time": 40886,
+    "time": 40858,
     "target": "mouse:right",
     "down": true
    },
    {
-    "time": 40886,
+    "time": 40858,
     "target": "mouse:middle",
     "down": true
    },
@@ -11296,12 +11296,12 @@
     "down": true
    },
    {
-    "time": 41115,
+    "time": 41093,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 41121,
+    "time": 41093,
     "target": "mouse:right",
     "down": false
    },
@@ -11311,12 +11311,12 @@
     "down": true
    },
    {
-    "time": 41232,
+    "time": 41210,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 41355,
+    "time": 41327,
     "target": "mouse:middle",
     "down": false
    },
@@ -11326,17 +11326,17 @@
     "down": true
    },
    {
-    "time": 41466,
+    "time": 41444,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 41472,
+    "time": 41444,
     "target": "mouse:left",
     "down": true
    },
    {
-    "time": 41472,
+    "time": 41444,
     "target": "mouse:middle",
     "down": true
    },
@@ -11346,17 +11346,17 @@
     "down": true
    },
    {
-    "time": 41701,
+    "time": 41679,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 41707,
+    "time": 41679,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 41707,
+    "time": 41679,
     "target": "mouse:middle",
     "down": false
    },
@@ -11366,12 +11366,12 @@
     "down": true
    },
    {
-    "time": 42170,
+    "time": 42148,
     "target": "key:comma",
     "down": false
    },
    {
-    "time": 42176,
+    "time": 42148,
     "target": "mouse:right",
     "down": true
    },
@@ -11381,7 +11381,7 @@
     "down": true
    },
    {
-    "time": 42404,
+    "time": 42382,
     "target": "key:b",
     "down": false
    },
@@ -11391,17 +11391,17 @@
     "down": true
    },
    {
-    "time": 42638,
+    "time": 42616,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 43230,
+    "time": 43202,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 43230,
+    "time": 43202,
     "target": "mouse:middle",
     "down": true
    },
@@ -11411,7 +11411,7 @@
     "down": true
    },
    {
-    "time": 43458,
+    "time": 43436,
     "target": "key:x",
     "down": false
    },
@@ -11421,12 +11421,12 @@
     "down": true
    },
    {
-    "time": 43810,
+    "time": 43788,
     "target": "key:c",
     "down": false
    },
    {
-    "time": 44168,
+    "time": 44140,
     "target": "mouse:left",
     "down": true
    },
@@ -11436,17 +11436,17 @@
     "down": true
    },
    {
-    "time": 44279,
+    "time": 44257,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 44402,
+    "time": 44374,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 44402,
+    "time": 44374,
     "target": "mouse:middle",
     "down": false
    },
@@ -11456,12 +11456,12 @@
     "down": true
    },
    {
-    "time": 44630,
+    "time": 44608,
     "target": "key:m",
     "down": false
    },
    {
-    "time": 44871,
+    "time": 44843,
     "target": "mouse:right",
     "down": true
    },
@@ -11471,7 +11471,7 @@
     "down": true
    },
    {
-    "time": 45099,
+    "time": 45077,
     "target": "key:m",
     "down": false
    },
@@ -11481,17 +11481,17 @@
     "down": true
    },
    {
-    "time": 45568,
+    "time": 45546,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 45574,
+    "time": 45546,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 45574,
+    "time": 45546,
     "target": "mouse:left",
     "down": true
    },
@@ -11501,7 +11501,7 @@
     "down": true
    },
    {
-    "time": 45802,
+    "time": 45780,
     "target": "key:v",
     "down": false
    },
@@ -11511,7 +11511,7 @@
     "down": true
    },
    {
-    "time": 46271,
+    "time": 46249,
     "target": "key:m",
     "down": false
    },
@@ -11521,12 +11521,12 @@
     "down": true
    },
    {
-    "time": 46505,
+    "time": 46483,
     "target": "key:c",
     "down": false
    },
    {
-    "time": 46511,
+    "time": 46483,
     "target": "mouse:middle",
     "down": true
    },
@@ -11536,17 +11536,17 @@
     "down": true
    },
    {
-    "time": 46623,
+    "time": 46601,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 46629,
+    "time": 46601,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 46629,
+    "time": 46601,
     "target": "mouse:middle",
     "down": false
    },
@@ -11556,12 +11556,12 @@
     "down": true
    },
    {
-    "time": 46740,
+    "time": 46718,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 47215,
+    "time": 47187,
     "target": "mouse:right",
     "down": true
    },
@@ -11571,7 +11571,7 @@
     "down": true
    },
    {
-    "time": 47326,
+    "time": 47304,
     "target": "key:x",
     "down": false
    },
@@ -11581,12 +11581,12 @@
     "down": true
    },
    {
-    "time": 47560,
+    "time": 47538,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 47566,
+    "time": 47538,
     "target": "mouse:middle",
     "down": true
    },
@@ -11596,12 +11596,12 @@
     "down": true
    },
    {
-    "time": 47794,
+    "time": 47772,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 48035,
+    "time": 48007,
     "target": "mouse:middle",
     "down": false
    },
@@ -11611,12 +11611,12 @@
     "down": true
    },
    {
-    "time": 48146,
+    "time": 48124,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 48152,
+    "time": 48124,
     "target": "mouse:right",
     "down": false
    },
@@ -11626,7 +11626,7 @@
     "down": true
    },
    {
-    "time": 48263,
+    "time": 48241,
     "target": "key:x",
     "down": false
    },
@@ -11636,12 +11636,12 @@
     "down": true
    },
    {
-    "time": 48614,
+    "time": 48592,
     "target": "key:c",
     "down": false
    },
    {
-    "time": 48621,
+    "time": 48593,
     "target": "mouse:left",
     "down": true
    },
@@ -11651,17 +11651,17 @@
     "down": true
    },
    {
-    "time": 48849,
+    "time": 48827,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 49558,
+    "time": 49530,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 49558,
+    "time": 49530,
     "target": "mouse:right",
     "down": true
    },
@@ -11671,7 +11671,7 @@
     "down": true
    },
    {
-    "time": 49786,
+    "time": 49764,
     "target": "key:comma",
     "down": false
    },
@@ -11681,17 +11681,17 @@
     "down": true
    },
    {
-    "time": 50255,
+    "time": 50233,
     "target": "key:c",
     "down": false
    },
    {
-    "time": 50261,
+    "time": 50233,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 50261,
+    "time": 50233,
     "target": "mouse:middle",
     "down": true
    },
@@ -11701,17 +11701,17 @@
     "down": true
    },
    {
-    "time": 50372,
+    "time": 50350,
     "target": "key:z",
     "down": false
    },
    {
-    "time": 50730,
+    "time": 50702,
     "target": "mouse:middle",
     "down": false
    },
    {
-    "time": 50730,
+    "time": 50702,
     "target": "mouse:left",
     "down": true
    },
@@ -11721,17 +11721,17 @@
     "down": true
    },
    {
-    "time": 50958,
+    "time": 50936,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 51199,
+    "time": 51171,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 51199,
+    "time": 51171,
     "target": "mouse:right",
     "down": true
    },
@@ -11741,17 +11741,17 @@
     "down": true
    },
    {
-    "time": 51427,
+    "time": 51405,
     "target": "key:c",
     "down": false
    },
    {
-    "time": 51433,
+    "time": 51405,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 51433,
+    "time": 51405,
     "target": "mouse:middle",
     "down": true
    },
@@ -11761,12 +11761,12 @@
     "down": true
    },
    {
-    "time": 51544,
+    "time": 51522,
     "target": "key:z",
     "down": false
    },
    {
-    "time": 51668,
+    "time": 51640,
     "target": "mouse:left",
     "down": true
    },
@@ -11776,12 +11776,12 @@
     "down": true
    },
    {
-    "time": 51779,
+    "time": 51757,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 51785,
+    "time": 51757,
     "target": "mouse:left",
     "down": false
    },
@@ -11791,17 +11791,17 @@
     "down": true
    },
    {
-    "time": 52248,
+    "time": 52226,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 52254,
+    "time": 52226,
     "target": "mouse:middle",
     "down": false
    },
    {
-    "time": 52254,
+    "time": 52226,
     "target": "mouse:right",
     "down": true
    },
@@ -11811,17 +11811,17 @@
     "down": true
    },
    {
-    "time": 52482,
+    "time": 52460,
     "target": "key:c",
     "down": false
    },
    {
-    "time": 52488,
+    "time": 52460,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 52488,
+    "time": 52460,
     "target": "mouse:left",
     "down": true
    },
@@ -11831,12 +11831,12 @@
     "down": true
    },
    {
-    "time": 52716,
+    "time": 52694,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 52957,
+    "time": 52929,
     "target": "mouse:left",
     "down": false
    },
@@ -11846,7 +11846,7 @@
     "down": true
    },
    {
-    "time": 53068,
+    "time": 53046,
     "target": "key:v",
     "down": false
    },
@@ -11856,17 +11856,17 @@
     "down": true
    },
    {
-    "time": 53302,
+    "time": 53280,
     "target": "key:z",
     "down": false
    },
    {
-    "time": 53308,
+    "time": 53280,
     "target": "mouse:left",
     "down": true
    },
    {
-    "time": 53308,
+    "time": 53280,
     "target": "mouse:middle",
     "down": true
    },
@@ -11876,17 +11876,17 @@
     "down": true
    },
    {
-    "time": 53419,
+    "time": 53397,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 53543,
+    "time": 53515,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 53543,
+    "time": 53515,
     "target": "mouse:middle",
     "down": false
    },
@@ -11896,12 +11896,12 @@
     "down": true
    },
    {
-    "time": 53654,
+    "time": 53632,
     "target": "key:m",
     "down": false
    },
    {
-    "time": 54129,
+    "time": 54101,
     "target": "mouse:left",
     "down": true
    },
@@ -11911,17 +11911,17 @@
     "down": true
    },
    {
-    "time": 54357,
+    "time": 54335,
     "target": "key:c",
     "down": false
    },
    {
-    "time": 54363,
+    "time": 54335,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 54363,
+    "time": 54335,
     "target": "mouse:right",
     "down": true
    },
@@ -11931,12 +11931,12 @@
     "down": true
    },
    {
-    "time": 54591,
+    "time": 54569,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 54597,
+    "time": 54569,
     "target": "mouse:middle",
     "down": true
    },
@@ -11946,7 +11946,7 @@
     "down": true
    },
    {
-    "time": 54826,
+    "time": 54804,
     "target": "key:v",
     "down": false
    },
@@ -11956,12 +11956,12 @@
     "down": true
    },
    {
-    "time": 54943,
+    "time": 54921,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 55066,
+    "time": 55038,
     "target": "mouse:middle",
     "down": false
    },
@@ -11971,7 +11971,7 @@
     "down": true
    },
    {
-    "time": 55177,
+    "time": 55155,
     "target": "key:v",
     "down": false
    },
@@ -11981,12 +11981,12 @@
     "down": true
    },
    {
-    "time": 55294,
+    "time": 55272,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 55418,
+    "time": 55390,
     "target": "mouse:right",
     "down": false
    },
@@ -11996,7 +11996,7 @@
     "down": true
    },
    {
-    "time": 55529,
+    "time": 55507,
     "target": "key:c",
     "down": false
    },
@@ -12006,12 +12006,12 @@
     "down": true
    },
    {
-    "time": 55998,
+    "time": 55976,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 56004,
+    "time": 55976,
     "target": "mouse:right",
     "down": true
    },
@@ -12021,12 +12021,12 @@
     "down": true
    },
    {
-    "time": 56232,
+    "time": 56210,
     "target": "key:c",
     "down": false
    },
    {
-    "time": 56238,
+    "time": 56210,
     "target": "mouse:right",
     "down": false
    },
@@ -12036,12 +12036,12 @@
     "down": true
    },
    {
-    "time": 56349,
+    "time": 56327,
     "target": "key:m",
     "down": false
    },
    {
-    "time": 56355,
+    "time": 56327,
     "target": "mouse:middle",
     "down": true
    },
@@ -12051,17 +12051,17 @@
     "down": true
    },
    {
-    "time": 56466,
+    "time": 56444,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 56472,
+    "time": 56444,
     "target": "mouse:middle",
     "down": false
    },
    {
-    "time": 56472,
+    "time": 56444,
     "target": "mouse:left",
     "down": true
    },
@@ -12071,12 +12071,12 @@
     "down": true
    },
    {
-    "time": 56700,
+    "time": 56678,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 56707,
+    "time": 56679,
     "target": "mouse:middle",
     "down": true
    },
@@ -12086,12 +12086,12 @@
     "down": true
    },
    {
-    "time": 56935,
+    "time": 56913,
     "target": "key:comma",
     "down": false
    },
    {
-    "time": 56941,
+    "time": 56913,
     "target": "mouse:middle",
     "down": false
    },
@@ -12101,17 +12101,17 @@
     "down": true
    },
    {
-    "time": 57170,
+    "time": 57148,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 57176,
+    "time": 57148,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 57176,
+    "time": 57148,
     "target": "mouse:right",
     "down": true
    },
@@ -12121,7 +12121,7 @@
     "down": true
    },
    {
-    "time": 57522,
+    "time": 57500,
     "target": "key:n",
     "down": false
    },
@@ -12131,17 +12131,17 @@
     "down": true
    },
    {
-    "time": 58341,
+    "time": 58319,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 58347,
+    "time": 58319,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 58347,
+    "time": 58319,
     "target": "mouse:middle",
     "down": true
    },
@@ -12151,12 +12151,12 @@
     "down": true
    },
    {
-    "time": 58575,
+    "time": 58553,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 58699,
+    "time": 58671,
     "target": "mouse:left",
     "down": true
    },
@@ -12166,17 +12166,17 @@
     "down": true
    },
    {
-    "time": 58810,
+    "time": 58788,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 59168,
+    "time": 59140,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 59168,
+    "time": 59140,
     "target": "mouse:right",
     "down": true
    },
@@ -12186,12 +12186,12 @@
     "down": true
    },
    {
-    "time": 59396,
+    "time": 59374,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 59402,
+    "time": 59374,
     "target": "mouse:middle",
     "down": false
    },
@@ -12201,12 +12201,12 @@
     "down": true
    },
    {
-    "time": 59630,
+    "time": 59608,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 59636,
+    "time": 59608,
     "target": "mouse:right",
     "down": false
    },
@@ -12216,12 +12216,12 @@
     "down": true
    },
    {
-    "time": 59864,
+    "time": 59842,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 59871,
+    "time": 59843,
     "target": "mouse:right",
     "down": true
    },
@@ -12231,12 +12231,12 @@
     "down": true
    },
    {
-    "time": 59982,
+    "time": 59960,
     "target": "key:m",
     "down": false
    },
    {
-    "time": 60340,
+    "time": 60312,
     "target": "mouse:right",
     "down": false
    },
@@ -12246,12 +12246,12 @@
     "down": true
    },
    {
-    "time": 60451,
+    "time": 60429,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 60808,
+    "time": 60780,
     "target": "mouse:right",
     "down": true
    },
@@ -12261,22 +12261,22 @@
     "down": true
    },
    {
-    "time": 61036,
+    "time": 61014,
     "target": "key:m",
     "down": false
    },
    {
-    "time": 61043,
+    "time": 61015,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 61043,
+    "time": 61015,
     "target": "mouse:left",
     "down": true
    },
    {
-    "time": 61043,
+    "time": 61015,
     "target": "mouse:middle",
     "down": true
    },
@@ -12286,17 +12286,17 @@
     "down": true
    },
    {
-    "time": 61271,
+    "time": 61249,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 61277,
+    "time": 61249,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 61277,
+    "time": 61249,
     "target": "mouse:middle",
     "down": false
    },
@@ -12306,12 +12306,12 @@
     "down": true
    },
    {
-    "time": 61505,
+    "time": 61483,
     "target": "key:z",
     "down": false
    },
    {
-    "time": 61511,
+    "time": 61483,
     "target": "mouse:right",
     "down": true
    },
@@ -12321,17 +12321,17 @@
     "down": true
    },
    {
-    "time": 61739,
+    "time": 61717,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 61980,
+    "time": 61952,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 61980,
+    "time": 61952,
     "target": "mouse:left",
     "down": true
    },
@@ -12341,22 +12341,22 @@
     "down": true
    },
    {
-    "time": 62091,
+    "time": 62069,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 62097,
+    "time": 62069,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 62097,
+    "time": 62069,
     "target": "mouse:right",
     "down": true
    },
    {
-    "time": 62097,
+    "time": 62069,
     "target": "mouse:middle",
     "down": true
    },
@@ -12366,22 +12366,22 @@
     "down": true
    },
    {
-    "time": 62560,
+    "time": 62538,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 62801,
+    "time": 62773,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 62801,
+    "time": 62773,
     "target": "mouse:middle",
     "down": false
    },
    {
-    "time": 62801,
+    "time": 62773,
     "target": "mouse:left",
     "down": true
    },
@@ -12391,12 +12391,12 @@
     "down": true
    },
    {
-    "time": 62912,
+    "time": 62890,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 63035,
+    "time": 63007,
     "target": "mouse:left",
     "down": false
    },
@@ -12406,12 +12406,12 @@
     "down": true
    },
    {
-    "time": 63263,
+    "time": 63241,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 63386,
+    "time": 63358,
     "target": "mouse:middle",
     "down": true
    },
@@ -12421,12 +12421,12 @@
     "down": true
    },
    {
-    "time": 63497,
+    "time": 63475,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 63621,
+    "time": 63593,
     "target": "mouse:middle",
     "down": false
    },
@@ -12436,17 +12436,17 @@
     "down": true
    },
    {
-    "time": 63732,
+    "time": 63710,
     "target": "key:z",
     "down": false
    },
    {
-    "time": 64676,
+    "time": 64648,
     "target": "mouse:right",
     "down": true
    },
    {
-    "time": 64676,
+    "time": 64648,
     "target": "mouse:middle",
     "down": true
    },
@@ -12456,22 +12456,22 @@
     "down": true
    },
    {
-    "time": 64787,
+    "time": 64765,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 64793,
+    "time": 64765,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 64793,
+    "time": 64765,
     "target": "mouse:middle",
     "down": false
    },
    {
-    "time": 64793,
+    "time": 64765,
     "target": "mouse:left",
     "down": true
    },
@@ -12481,22 +12481,22 @@
     "down": true
    },
    {
-    "time": 64904,
+    "time": 64882,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 65965,
+    "time": 65937,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 65965,
+    "time": 65937,
     "target": "mouse:right",
     "down": true
    },
    {
-    "time": 65965,
+    "time": 65937,
     "target": "mouse:middle",
     "down": true
    },
@@ -12506,17 +12506,17 @@
     "down": true
    },
    {
-    "time": 66193,
+    "time": 66171,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 66199,
+    "time": 66171,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 66199,
+    "time": 66171,
     "target": "mouse:left",
     "down": true
    },
@@ -12526,17 +12526,17 @@
     "down": true
    },
    {
-    "time": 66310,
+    "time": 66288,
     "target": "key:c",
     "down": false
    },
    {
-    "time": 66668,
+    "time": 66640,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 66668,
+    "time": 66640,
     "target": "mouse:right",
     "down": true
    },
@@ -12546,22 +12546,22 @@
     "down": true
    },
    {
-    "time": 67130,
+    "time": 67108,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 67136,
+    "time": 67108,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 67136,
+    "time": 67108,
     "target": "mouse:middle",
     "down": false
    },
    {
-    "time": 67136,
+    "time": 67108,
     "target": "mouse:left",
     "down": true
    },
@@ -12571,17 +12571,17 @@
     "down": true
    },
    {
-    "time": 67365,
+    "time": 67343,
     "target": "key:c",
     "down": false
    },
    {
-    "time": 67371,
+    "time": 67343,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 67371,
+    "time": 67343,
     "target": "mouse:right",
     "down": true
    },
@@ -12591,17 +12591,17 @@
     "down": true
    },
    {
-    "time": 67482,
+    "time": 67460,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 67488,
+    "time": 67460,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 67488,
+    "time": 67460,
     "target": "mouse:left",
     "down": true
    },
@@ -12611,22 +12611,22 @@
     "down": true
    },
    {
-    "time": 67951,
+    "time": 67929,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 67957,
+    "time": 67929,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 67957,
+    "time": 67929,
     "target": "mouse:right",
     "down": true
    },
    {
-    "time": 67957,
+    "time": 67929,
     "target": "mouse:middle",
     "down": true
    },
@@ -12636,17 +12636,17 @@
     "down": true
    },
    {
-    "time": 68068,
+    "time": 68046,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 68074,
+    "time": 68046,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 68074,
+    "time": 68046,
     "target": "mouse:left",
     "down": true
    },
@@ -12656,12 +12656,12 @@
     "down": true
    },
    {
-    "time": 68302,
+    "time": 68280,
     "target": "key:c",
     "down": false
    },
    {
-    "time": 68308,
+    "time": 68280,
     "target": "mouse:left",
     "down": false
    },
@@ -12671,12 +12671,12 @@
     "down": true
    },
    {
-    "time": 68536,
+    "time": 68514,
     "target": "key:comma",
     "down": false
    },
    {
-    "time": 68543,
+    "time": 68515,
     "target": "mouse:left",
     "down": true
    },
@@ -12686,17 +12686,17 @@
     "down": true
    },
    {
-    "time": 68771,
+    "time": 68749,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 69011,
+    "time": 68983,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 69011,
+    "time": 68983,
     "target": "mouse:right",
     "down": true
    },
@@ -12706,17 +12706,17 @@
     "down": true
    },
    {
-    "time": 69123,
+    "time": 69101,
     "target": "key:c",
     "down": false
    },
    {
-    "time": 69480,
+    "time": 69452,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 69480,
+    "time": 69452,
     "target": "mouse:left",
     "down": true
    },
@@ -12726,22 +12726,22 @@
     "down": true
    },
    {
-    "time": 69591,
+    "time": 69569,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 69597,
+    "time": 69569,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 69597,
+    "time": 69569,
     "target": "mouse:middle",
     "down": false
    },
    {
-    "time": 69597,
+    "time": 69569,
     "target": "mouse:right",
     "down": true
    },
@@ -12751,12 +12751,12 @@
     "down": true
    },
    {
-    "time": 69708,
+    "time": 69686,
     "target": "key:comma",
     "down": false
    },
    {
-    "time": 69832,
+    "time": 69804,
     "target": "mouse:right",
     "down": false
    },
@@ -12766,12 +12766,12 @@
     "down": true
    },
    {
-    "time": 70060,
+    "time": 70038,
     "target": "key:m",
     "down": false
    },
    {
-    "time": 70066,
+    "time": 70038,
     "target": "mouse:right",
     "down": true
    },
@@ -12781,22 +12781,22 @@
     "down": true
    },
    {
-    "time": 70295,
+    "time": 70273,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 70301,
+    "time": 70273,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 70301,
+    "time": 70273,
     "target": "mouse:left",
     "down": true
    },
    {
-    "time": 70301,
+    "time": 70273,
     "target": "mouse:middle",
     "down": true
    },
@@ -12806,17 +12806,17 @@
     "down": true
    },
    {
-    "time": 70412,
+    "time": 70390,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 70418,
+    "time": 70390,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 70418,
+    "time": 70390,
     "target": "mouse:right",
     "down": true
    },
@@ -12826,17 +12826,17 @@
     "down": true
    },
    {
-    "time": 70529,
+    "time": 70507,
     "target": "key:c",
     "down": false
    },
    {
-    "time": 71004,
+    "time": 70976,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 71004,
+    "time": 70976,
     "target": "mouse:left",
     "down": true
    },
@@ -12846,7 +12846,7 @@
     "down": true
    },
    {
-    "time": 71115,
+    "time": 71093,
     "target": "key:v",
     "down": false
    },
@@ -12856,12 +12856,12 @@
     "down": true
    },
    {
-    "time": 71232,
+    "time": 71210,
     "target": "key:m",
     "down": false
    },
    {
-    "time": 71238,
+    "time": 71210,
     "target": "mouse:left",
     "down": false
    },
@@ -12871,12 +12871,12 @@
     "down": true
    },
    {
-    "time": 71349,
+    "time": 71327,
     "target": "key:m",
     "down": false
    },
    {
-    "time": 71355,
+    "time": 71327,
     "target": "mouse:right",
     "down": true
    },
@@ -12886,12 +12886,12 @@
     "down": true
    },
    {
-    "time": 71466,
+    "time": 71444,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 71941,
+    "time": 71913,
     "target": "mouse:middle",
     "down": false
    },
@@ -12901,12 +12901,12 @@
     "down": true
    },
    {
-    "time": 72170,
+    "time": 72148,
     "target": "key:comma",
     "down": false
    },
    {
-    "time": 72644,
+    "time": 72616,
     "target": "mouse:right",
     "down": false
    },
@@ -12916,7 +12916,7 @@
     "down": true
    },
    {
-    "time": 72872,
+    "time": 72850,
     "target": "key:comma",
     "down": false
    },
@@ -12926,7 +12926,7 @@
     "down": true
    },
    {
-    "time": 73575,
+    "time": 73553,
     "target": "key:c",
     "down": false
    },
@@ -12936,12 +12936,12 @@
     "down": true
    },
    {
-    "time": 73810,
+    "time": 73788,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 73816,
+    "time": 73788,
     "target": "mouse:middle",
     "down": true
    },
@@ -12951,17 +12951,17 @@
     "down": true
    },
    {
-    "time": 74044,
+    "time": 74022,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 74519,
+    "time": 74491,
     "target": "mouse:middle",
     "down": false
    },
    {
-    "time": 74519,
+    "time": 74491,
     "target": "mouse:left",
     "down": true
    },
@@ -12971,7 +12971,7 @@
     "down": true
    },
    {
-    "time": 74748,
+    "time": 74726,
     "target": "key:n",
     "down": false
    },
@@ -12981,7 +12981,7 @@
     "down": true
    },
    {
-    "time": 74982,
+    "time": 74960,
     "target": "key:x",
     "down": false
    },
@@ -12991,22 +12991,22 @@
     "down": true
    },
    {
-    "time": 75099,
+    "time": 75077,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 75222,
+    "time": 75194,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 75222,
+    "time": 75194,
     "target": "mouse:right",
     "down": true
    },
    {
-    "time": 75222,
+    "time": 75194,
     "target": "mouse:middle",
     "down": true
    },
@@ -13016,12 +13016,12 @@
     "down": true
    },
    {
-    "time": 75451,
+    "time": 75429,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 75457,
+    "time": 75429,
     "target": "mouse:middle",
     "down": false
    },
@@ -13031,7 +13031,7 @@
     "down": true
    },
    {
-    "time": 75685,
+    "time": 75663,
     "target": "key:m",
     "down": false
    },
@@ -13041,12 +13041,12 @@
     "down": true
    },
    {
-    "time": 76154,
+    "time": 76132,
     "target": "key:z",
     "down": false
    },
    {
-    "time": 76160,
+    "time": 76132,
     "target": "mouse:middle",
     "down": true
    },
@@ -13056,17 +13056,17 @@
     "down": true
    },
    {
-    "time": 76506,
+    "time": 76484,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 76629,
+    "time": 76601,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 76629,
+    "time": 76601,
     "target": "mouse:middle",
     "down": false
    },
@@ -13076,17 +13076,17 @@
     "down": true
    },
    {
-    "time": 76857,
+    "time": 76835,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 77566,
+    "time": 77538,
     "target": "mouse:left",
     "down": true
    },
    {
-    "time": 77566,
+    "time": 77538,
     "target": "mouse:middle",
     "down": true
    },
@@ -13096,17 +13096,17 @@
     "down": true
    },
    {
-    "time": 77677,
+    "time": 77655,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 77683,
+    "time": 77655,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 77683,
+    "time": 77655,
     "target": "mouse:right",
     "down": true
    },
@@ -13116,22 +13116,22 @@
     "down": true
    },
    {
-    "time": 77912,
+    "time": 77890,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 77918,
+    "time": 77890,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 77918,
+    "time": 77890,
     "target": "mouse:middle",
     "down": false
    },
    {
-    "time": 77918,
+    "time": 77890,
     "target": "mouse:left",
     "down": true
    },
@@ -13141,17 +13141,17 @@
     "down": true
    },
    {
-    "time": 78380,
+    "time": 78358,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 78386,
+    "time": 78358,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 78386,
+    "time": 78358,
     "target": "mouse:right",
     "down": true
    },
@@ -13161,12 +13161,12 @@
     "down": true
    },
    {
-    "time": 78614,
+    "time": 78592,
     "target": "key:comma",
     "down": false
    },
    {
-    "time": 78621,
+    "time": 78593,
     "target": "mouse:right",
     "down": false
    },
@@ -13176,12 +13176,12 @@
     "down": true
    },
    {
-    "time": 78849,
+    "time": 78827,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 78855,
+    "time": 78827,
     "target": "mouse:middle",
     "down": true
    },
@@ -13191,12 +13191,12 @@
     "down": true
    },
    {
-    "time": 79084,
+    "time": 79062,
     "target": "key:comma",
     "down": false
    },
    {
-    "time": 79090,
+    "time": 79062,
     "target": "mouse:left",
     "down": true
    },
@@ -13206,7 +13206,7 @@
     "down": true
    },
    {
-    "time": 79201,
+    "time": 79179,
     "target": "key:x",
     "down": false
    },
@@ -13216,12 +13216,12 @@
     "down": true
    },
    {
-    "time": 79553,
+    "time": 79531,
     "target": "key:comma",
     "down": false
    },
    {
-    "time": 79676,
+    "time": 79648,
     "target": "mouse:middle",
     "down": false
    },
@@ -13231,12 +13231,12 @@
     "down": true
    },
    {
-    "time": 79904,
+    "time": 79882,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 80144,
+    "time": 80116,
     "target": "mouse:middle",
     "down": true
    },
@@ -13246,7 +13246,7 @@
     "down": true
    },
    {
-    "time": 80255,
+    "time": 80233,
     "target": "key:comma",
     "down": false
    },
@@ -13256,17 +13256,17 @@
     "down": true
    },
    {
-    "time": 80959,
+    "time": 80937,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 81082,
+    "time": 81054,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 81082,
+    "time": 81054,
     "target": "mouse:middle",
     "down": false
    },
@@ -13276,7 +13276,7 @@
     "down": true
    },
    {
-    "time": 81193,
+    "time": 81171,
     "target": "key:v",
     "down": false
    },
@@ -13286,7 +13286,7 @@
     "down": true
    },
    {
-    "time": 81427,
+    "time": 81405,
     "target": "key:v",
     "down": false
    },
@@ -13296,7 +13296,7 @@
     "down": true
    },
    {
-    "time": 81661,
+    "time": 81639,
     "target": "key:z",
     "down": false
    },
@@ -13306,12 +13306,12 @@
     "down": true
    },
    {
-    "time": 81779,
+    "time": 81757,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 81785,
+    "time": 81757,
     "target": "mouse:left",
     "down": true
    },
@@ -13321,17 +13321,17 @@
     "down": true
    },
    {
-    "time": 82013,
+    "time": 81991,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 82019,
+    "time": 81991,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 82019,
+    "time": 81991,
     "target": "mouse:right",
     "down": true
    },
@@ -13341,17 +13341,17 @@
     "down": true
    },
    {
-    "time": 82130,
+    "time": 82108,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 82488,
+    "time": 82460,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 82488,
+    "time": 82460,
     "target": "mouse:middle",
     "down": true
    },
@@ -13361,12 +13361,12 @@
     "down": true
    },
    {
-    "time": 82716,
+    "time": 82694,
     "target": "key:z",
     "down": false
    },
    {
-    "time": 82722,
+    "time": 82694,
     "target": "mouse:middle",
     "down": false
    },
@@ -13376,7 +13376,7 @@
     "down": true
    },
    {
-    "time": 83185,
+    "time": 83163,
     "target": "key:b",
     "down": false
    },
@@ -13386,7 +13386,7 @@
     "down": true
    },
    {
-    "time": 83420,
+    "time": 83398,
     "target": "key:c",
     "down": false
    },
@@ -13396,12 +13396,12 @@
     "down": true
    },
    {
-    "time": 83888,
+    "time": 83866,
     "target": "key:c",
     "down": false
    },
    {
-    "time": 84129,
+    "time": 84101,
     "target": "mouse:left",
     "down": true
    },
@@ -13411,22 +13411,22 @@
     "down": true
    },
    {
-    "time": 84240,
+    "time": 84218,
     "target": "key:c",
     "down": false
    },
    {
-    "time": 85066,
+    "time": 85038,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 85066,
+    "time": 85038,
     "target": "mouse:right",
     "down": true
    },
    {
-    "time": 85066,
+    "time": 85038,
     "target": "mouse:middle",
     "down": true
    },
@@ -13436,12 +13436,12 @@
     "down": true
    },
    {
-    "time": 85295,
+    "time": 85273,
     "target": "key:comma",
     "down": false
    },
    {
-    "time": 85301,
+    "time": 85273,
     "target": "mouse:right",
     "down": false
    },
@@ -13451,17 +13451,17 @@
     "down": true
    },
    {
-    "time": 85529,
+    "time": 85507,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 85535,
+    "time": 85507,
     "target": "mouse:middle",
     "down": false
    },
    {
-    "time": 85535,
+    "time": 85507,
     "target": "mouse:left",
     "down": true
    },
@@ -13471,7 +13471,7 @@
     "down": true
    },
    {
-    "time": 85646,
+    "time": 85624,
     "target": "key:m",
     "down": false
    },
@@ -13481,7 +13481,7 @@
     "down": true
    },
    {
-    "time": 85880,
+    "time": 85858,
     "target": "key:c",
     "down": false
    },
@@ -13491,12 +13491,12 @@
     "down": true
    },
    {
-    "time": 86232,
+    "time": 86210,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 86238,
+    "time": 86210,
     "target": "mouse:middle",
     "down": true
    },
@@ -13506,12 +13506,12 @@
     "down": true
    },
    {
-    "time": 86466,
+    "time": 86444,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 86472,
+    "time": 86444,
     "target": "mouse:middle",
     "down": false
    },
@@ -13521,17 +13521,17 @@
     "down": true
    },
    {
-    "time": 86583,
+    "time": 86561,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 86707,
+    "time": 86679,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 86707,
+    "time": 86679,
     "target": "mouse:right",
     "down": true
    },
@@ -13541,17 +13541,17 @@
     "down": true
    },
    {
-    "time": 86935,
+    "time": 86913,
     "target": "key:m",
     "down": false
    },
    {
-    "time": 86941,
+    "time": 86913,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 86941,
+    "time": 86913,
     "target": "mouse:middle",
     "down": true
    },
@@ -13561,17 +13561,17 @@
     "down": true
    },
    {
-    "time": 87170,
+    "time": 87148,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 87176,
+    "time": 87148,
     "target": "mouse:middle",
     "down": false
    },
    {
-    "time": 87176,
+    "time": 87148,
     "target": "mouse:right",
     "down": true
    },
@@ -13581,12 +13581,12 @@
     "down": true
    },
    {
-    "time": 87404,
+    "time": 87382,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 87410,
+    "time": 87382,
     "target": "mouse:middle",
     "down": true
    },
@@ -13596,17 +13596,17 @@
     "down": true
    },
    {
-    "time": 87521,
+    "time": 87499,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 87527,
+    "time": 87499,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 87527,
+    "time": 87499,
     "target": "mouse:left",
     "down": true
    },
@@ -13616,7 +13616,7 @@
     "down": true
    },
    {
-    "time": 87755,
+    "time": 87733,
     "target": "key:comma",
     "down": false
    },
@@ -13626,7 +13626,7 @@
     "down": true
    },
    {
-    "time": 87872,
+    "time": 87850,
     "target": "key:b",
     "down": false
    },
@@ -13636,17 +13636,17 @@
     "down": true
    },
    {
-    "time": 88224,
+    "time": 88202,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 88230,
+    "time": 88202,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 88230,
+    "time": 88202,
     "target": "mouse:right",
     "down": true
    },
@@ -13656,22 +13656,22 @@
     "down": true
    },
    {
-    "time": 88458,
+    "time": 88436,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 89168,
+    "time": 89140,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 89168,
+    "time": 89140,
     "target": "mouse:middle",
     "down": false
    },
    {
-    "time": 89168,
+    "time": 89140,
     "target": "mouse:left",
     "down": true
    },
@@ -13681,17 +13681,17 @@
     "down": true
    },
    {
-    "time": 89396,
+    "time": 89374,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 89402,
+    "time": 89374,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 89402,
+    "time": 89374,
     "target": "mouse:right",
     "down": true
    },
@@ -13701,17 +13701,17 @@
     "down": true
    },
    {
-    "time": 89513,
+    "time": 89491,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 89519,
+    "time": 89491,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 89519,
+    "time": 89491,
     "target": "mouse:left",
     "down": true
    },
@@ -13721,7 +13721,7 @@
     "down": true
    },
    {
-    "time": 89630,
+    "time": 89608,
     "target": "key:x",
     "down": false
    },
@@ -13731,7 +13731,7 @@
     "down": true
    },
    {
-    "time": 90099,
+    "time": 90077,
     "target": "key:c",
     "down": false
    },
@@ -13741,22 +13741,22 @@
     "down": true
    },
    {
-    "time": 90216,
+    "time": 90194,
     "target": "key:comma",
     "down": false
    },
    {
-    "time": 90222,
+    "time": 90194,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 90222,
+    "time": 90194,
     "target": "mouse:right",
     "down": true
    },
    {
-    "time": 90222,
+    "time": 90194,
     "target": "mouse:middle",
     "down": true
    },
@@ -13766,12 +13766,12 @@
     "down": true
    },
    {
-    "time": 90334,
+    "time": 90312,
     "target": "key:comma",
     "down": false
    },
    {
-    "time": 90340,
+    "time": 90312,
     "target": "mouse:right",
     "down": false
    },
@@ -13781,12 +13781,12 @@
     "down": true
    },
    {
-    "time": 90802,
+    "time": 90780,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 91043,
+    "time": 91015,
     "target": "mouse:left",
     "down": true
    },
@@ -13796,12 +13796,12 @@
     "down": true
    },
    {
-    "time": 91154,
+    "time": 91132,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 91277,
+    "time": 91249,
     "target": "mouse:left",
     "down": false
    },
@@ -13811,17 +13811,17 @@
     "down": true
    },
    {
-    "time": 91505,
+    "time": 91483,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 91511,
+    "time": 91483,
     "target": "mouse:middle",
     "down": false
    },
    {
-    "time": 91511,
+    "time": 91483,
     "target": "mouse:right",
     "down": true
    },
@@ -13831,12 +13831,12 @@
     "down": true
    },
    {
-    "time": 91740,
+    "time": 91718,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 91746,
+    "time": 91718,
     "target": "mouse:right",
     "down": false
    },
@@ -13846,17 +13846,17 @@
     "down": true
    },
    {
-    "time": 91974,
+    "time": 91952,
     "target": "key:c",
     "down": false
    },
    {
-    "time": 92215,
+    "time": 92187,
     "target": "mouse:right",
     "down": true
    },
    {
-    "time": 92215,
+    "time": 92187,
     "target": "mouse:middle",
     "down": true
    },
@@ -13866,7 +13866,7 @@
     "down": true
    },
    {
-    "time": 92561,
+    "time": 92539,
     "target": "key:comma",
     "down": false
    },
@@ -13876,12 +13876,12 @@
     "down": true
    },
    {
-    "time": 92912,
+    "time": 92890,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 92918,
+    "time": 92890,
     "target": "mouse:middle",
     "down": false
    },
@@ -13891,17 +13891,17 @@
     "down": true
    },
    {
-    "time": 93146,
+    "time": 93124,
     "target": "key:m",
     "down": false
    },
    {
-    "time": 93269,
+    "time": 93241,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 93269,
+    "time": 93241,
     "target": "mouse:left",
     "down": true
    },
@@ -13911,7 +13911,7 @@
     "down": true
    },
    {
-    "time": 93498,
+    "time": 93476,
     "target": "key:m",
     "down": false
    },
@@ -13921,22 +13921,22 @@
     "down": true
    },
    {
-    "time": 93732,
+    "time": 93710,
     "target": "key:m",
     "down": false
    },
    {
-    "time": 93738,
+    "time": 93710,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 93738,
+    "time": 93710,
     "target": "mouse:right",
     "down": true
    },
    {
-    "time": 93738,
+    "time": 93710,
     "target": "mouse:middle",
     "down": true
    },
@@ -13946,12 +13946,12 @@
     "down": true
    },
    {
-    "time": 93966,
+    "time": 93944,
     "target": "key:comma",
     "down": false
    },
    {
-    "time": 94324,
+    "time": 94296,
     "target": "mouse:right",
     "down": false
    },
@@ -13961,7 +13961,7 @@
     "down": true
    },
    {
-    "time": 94552,
+    "time": 94530,
     "target": "key:v",
     "down": false
    },
@@ -13971,12 +13971,12 @@
     "down": true
    },
    {
-    "time": 94786,
+    "time": 94764,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 95847,
+    "time": 95819,
     "target": "mouse:middle",
     "down": false
    },
@@ -13986,17 +13986,17 @@
     "down": true
    },
    {
-    "time": 96076,
+    "time": 96054,
     "target": "key:z",
     "down": false
    },
    {
-    "time": 96082,
+    "time": 96054,
     "target": "mouse:right",
     "down": true
    },
    {
-    "time": 96082,
+    "time": 96054,
     "target": "mouse:middle",
     "down": true
    },
@@ -14006,22 +14006,22 @@
     "down": true
    },
    {
-    "time": 96310,
+    "time": 96288,
     "target": "key:comma",
     "down": false
    },
    {
-    "time": 96316,
+    "time": 96288,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 96316,
+    "time": 96288,
     "target": "mouse:middle",
     "down": false
    },
    {
-    "time": 96316,
+    "time": 96288,
     "target": "mouse:left",
     "down": true
    },
@@ -14031,17 +14031,17 @@
     "down": true
    },
    {
-    "time": 96427,
+    "time": 96405,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 96668,
+    "time": 96640,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 96668,
+    "time": 96640,
     "target": "mouse:middle",
     "down": true
    },
@@ -14051,17 +14051,17 @@
     "down": true
    },
    {
-    "time": 96896,
+    "time": 96874,
     "target": "key:comma",
     "down": false
    },
    {
-    "time": 96902,
+    "time": 96874,
     "target": "mouse:middle",
     "down": false
    },
    {
-    "time": 96902,
+    "time": 96874,
     "target": "mouse:right",
     "down": true
    },
@@ -14071,22 +14071,22 @@
     "down": true
    },
    {
-    "time": 97130,
+    "time": 97108,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 97136,
+    "time": 97108,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 97136,
+    "time": 97108,
     "target": "mouse:left",
     "down": true
    },
    {
-    "time": 97136,
+    "time": 97108,
     "target": "mouse:middle",
     "down": true
    },
@@ -14096,17 +14096,17 @@
     "down": true
    },
    {
-    "time": 97364,
+    "time": 97342,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 97371,
+    "time": 97343,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 97371,
+    "time": 97343,
     "target": "mouse:right",
     "down": true
    },
@@ -14116,12 +14116,12 @@
     "down": true
    },
    {
-    "time": 97482,
+    "time": 97460,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 97488,
+    "time": 97460,
     "target": "mouse:right",
     "down": false
    },
@@ -14131,17 +14131,17 @@
     "down": true
    },
    {
-    "time": 97716,
+    "time": 97694,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 97722,
+    "time": 97694,
     "target": "mouse:middle",
     "down": false
    },
    {
-    "time": 97722,
+    "time": 97694,
     "target": "mouse:left",
     "down": true
    },
@@ -14151,17 +14151,17 @@
     "down": true
    },
    {
-    "time": 97834,
+    "time": 97812,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 97840,
+    "time": 97812,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 97840,
+    "time": 97812,
     "target": "mouse:right",
     "down": true
    },
@@ -14171,12 +14171,12 @@
     "down": true
    },
    {
-    "time": 98068,
+    "time": 98046,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 98308,
+    "time": 98280,
     "target": "mouse:middle",
     "down": true
    },
@@ -14186,7 +14186,7 @@
     "down": true
    },
    {
-    "time": 98419,
+    "time": 98397,
     "target": "key:n",
     "down": false
    },
@@ -14196,17 +14196,17 @@
     "down": true
    },
    {
-    "time": 99005,
+    "time": 98983,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 99011,
+    "time": 98983,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 99011,
+    "time": 98983,
     "target": "mouse:middle",
     "down": false
    },
@@ -14216,12 +14216,12 @@
     "down": true
    },
    {
-    "time": 99357,
+    "time": 99335,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 99480,
+    "time": 99452,
     "target": "mouse:left",
     "down": true
    },
@@ -14231,7 +14231,7 @@
     "down": true
    },
    {
-    "time": 99591,
+    "time": 99569,
     "target": "key:v",
     "down": false
    },
@@ -14241,17 +14241,17 @@
     "down": true
    },
    {
-    "time": 99943,
+    "time": 99921,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 100301,
+    "time": 100273,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 100301,
+    "time": 100273,
     "target": "mouse:middle",
     "down": true
    },
@@ -14261,17 +14261,17 @@
     "down": true
    },
    {
-    "time": 100412,
+    "time": 100390,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 100535,
+    "time": 100507,
     "target": "mouse:middle",
     "down": false
    },
    {
-    "time": 100535,
+    "time": 100507,
     "target": "mouse:left",
     "down": true
    },
@@ -14281,22 +14281,22 @@
     "down": true
    },
    {
-    "time": 100646,
+    "time": 100624,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 100652,
+    "time": 100624,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 100652,
+    "time": 100624,
     "target": "mouse:right",
     "down": true
    },
    {
-    "time": 100652,
+    "time": 100624,
     "target": "mouse:middle",
     "down": true
    },
@@ -14306,17 +14306,17 @@
     "down": true
    },
    {
-    "time": 100880,
+    "time": 100858,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 101121,
+    "time": 101093,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 101121,
+    "time": 101093,
     "target": "mouse:middle",
     "down": false
    },
@@ -14326,12 +14326,12 @@
     "down": true
    },
    {
-    "time": 101232,
+    "time": 101210,
     "target": "key:c",
     "down": false
    },
    {
-    "time": 101238,
+    "time": 101210,
     "target": "mouse:right",
     "down": true
    },
@@ -14341,22 +14341,22 @@
     "down": true
    },
    {
-    "time": 101466,
+    "time": 101444,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 101472,
+    "time": 101444,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 101472,
+    "time": 101444,
     "target": "mouse:left",
     "down": true
    },
    {
-    "time": 101472,
+    "time": 101444,
     "target": "mouse:middle",
     "down": true
    },
@@ -14366,7 +14366,7 @@
     "down": true
    },
    {
-    "time": 101584,
+    "time": 101562,
     "target": "key:x",
     "down": false
    },
@@ -14376,12 +14376,12 @@
     "down": true
    },
    {
-    "time": 101701,
+    "time": 101679,
     "target": "key:m",
     "down": false
    },
    {
-    "time": 101707,
+    "time": 101679,
     "target": "mouse:left",
     "down": false
    },
@@ -14391,17 +14391,17 @@
     "down": true
    },
    {
-    "time": 101818,
+    "time": 101796,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 102176,
+    "time": 102148,
     "target": "mouse:middle",
     "down": false
    },
    {
-    "time": 102176,
+    "time": 102148,
     "target": "mouse:left",
     "down": true
    },
@@ -14411,22 +14411,22 @@
     "down": true
    },
    {
-    "time": 102287,
+    "time": 102265,
     "target": "key:c",
     "down": false
    },
    {
-    "time": 102293,
+    "time": 102265,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 102293,
+    "time": 102265,
     "target": "mouse:right",
     "down": true
    },
    {
-    "time": 102293,
+    "time": 102265,
     "target": "mouse:middle",
     "down": true
    },
@@ -14436,7 +14436,7 @@
     "down": true
    },
    {
-    "time": 102404,
+    "time": 102382,
     "target": "key:v",
     "down": false
    },
@@ -14446,17 +14446,17 @@
     "down": true
    },
    {
-    "time": 102755,
+    "time": 102733,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 102761,
+    "time": 102733,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 102761,
+    "time": 102733,
     "target": "mouse:left",
     "down": true
    },
@@ -14466,17 +14466,17 @@
     "down": true
    },
    {
-    "time": 102873,
+    "time": 102851,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 102879,
+    "time": 102851,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 102879,
+    "time": 102851,
     "target": "mouse:middle",
     "down": false
    },
@@ -14486,12 +14486,12 @@
     "down": true
    },
    {
-    "time": 103341,
+    "time": 103319,
     "target": "key:comma",
     "down": false
    },
    {
-    "time": 103347,
+    "time": 103319,
     "target": "mouse:left",
     "down": true
    },
@@ -14501,12 +14501,12 @@
     "down": true
    },
    {
-    "time": 103576,
+    "time": 103554,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 103582,
+    "time": 103554,
     "target": "mouse:left",
     "down": false
    },
@@ -14516,12 +14516,12 @@
     "down": true
    },
    {
-    "time": 103810,
+    "time": 103788,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 103816,
+    "time": 103788,
     "target": "mouse:middle",
     "down": true
    },
@@ -14531,12 +14531,12 @@
     "down": true
    },
    {
-    "time": 104044,
+    "time": 104022,
     "target": "key:z",
     "down": false
    },
    {
-    "time": 104285,
+    "time": 104257,
     "target": "mouse:right",
     "down": true
    },
@@ -14546,12 +14546,12 @@
     "down": true
    },
    {
-    "time": 104396,
+    "time": 104374,
     "target": "key:comma",
     "down": false
    },
    {
-    "time": 104402,
+    "time": 104374,
     "target": "mouse:middle",
     "down": false
    },
@@ -14561,12 +14561,12 @@
     "down": true
    },
    {
-    "time": 104630,
+    "time": 104608,
     "target": "key:m",
     "down": false
    },
    {
-    "time": 104636,
+    "time": 104608,
     "target": "mouse:right",
     "down": false
    },
@@ -14576,17 +14576,17 @@
     "down": true
    },
    {
-    "time": 104864,
+    "time": 104842,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 104871,
+    "time": 104843,
     "target": "mouse:right",
     "down": true
    },
    {
-    "time": 104871,
+    "time": 104843,
     "target": "mouse:middle",
     "down": true
    },
@@ -14596,12 +14596,12 @@
     "down": true
    },
    {
-    "time": 104982,
+    "time": 104960,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 104988,
+    "time": 104960,
     "target": "mouse:middle",
     "down": false
    },
@@ -14611,17 +14611,17 @@
     "down": true
    },
    {
-    "time": 105099,
+    "time": 105077,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 105105,
+    "time": 105077,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 105105,
+    "time": 105077,
     "target": "mouse:left",
     "down": true
    },
@@ -14631,12 +14631,12 @@
     "down": true
    },
    {
-    "time": 105216,
+    "time": 105194,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 105457,
+    "time": 105429,
     "target": "mouse:middle",
     "down": true
    },
@@ -14646,22 +14646,22 @@
     "down": true
    },
    {
-    "time": 105568,
+    "time": 105546,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 105568,
+    "time": 105546,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 105568,
+    "time": 105546,
     "target": "mouse:middle",
     "down": false
    }
   ],
-  "durationMs": 105568,
+  "durationMs": 105546,
   "noteCount": 315,
   "droppedChordNotes": 0,
   "truncatedNotes": 0,

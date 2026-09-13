@@ -64,7 +64,17 @@ dotnet publish DFH.Desktop -c Release -r win-x64 --self-contained -p:PublishSing
 
 发布产物是单个 `DeltaForceHarmonica.exe`。未签名的提权程序会触发 SmartScreen 提示，正式分发建议代码签名。
 
-设置保存在 `%LocalAppData%\DeltaForceHarmonica\settings.json`：热键、倒计时、按键时序三个毫秒参数、曲库地址。默认时序与网页宏导出相同（修饰键提前 12 ms、松键间隔 18 ms、最短按住 30 ms）。
+设置保存在 `%LocalAppData%\DeltaForceHarmonica\settings.json`：热键、倒计时、按键时序档位、曲库地址。
+
+按键时序分三档，与网页导出面板同名同值（`src/export/timing.ts` 与 `DFH.Core/Export/KeySequence.cs` 里的 `TimingTiers` 必须同步改）：
+
+| 档位 | 修饰键提前 | 松键到下一次按下 | 最短按住 | 适用 |
+| --- | --- | --- | --- | --- |
+| 稳健 | 70 ms | 70 ms | 80 ms | 30 fps、卡顿机器 |
+| 标准（默认） | 40 ms | 40 ms | 45 ms | 60 fps |
+| 极限 | 20 ms | 18 ms | 22 ms | 高帧率、快歌 |
+
+这三项是硬下限而不是目标值：游戏按帧采样，修饰键与音键落在同一帧会出错音，松键与下一次按下落在同一帧会漏音。密集乐段里编排器会推迟音符来保住间隔，而不是把它们挤进同一帧。「自定义」档解锁三个毫秒输入框。旧版 settings.json 没有档位字段，读入后按标准档处理。
 
 ## 风险说明
 

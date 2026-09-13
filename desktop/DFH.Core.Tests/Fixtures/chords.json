@@ -225,7 +225,7 @@
     "down": true
    },
    {
-    "time": 992,
+    "time": 970,
     "target": "key:b",
     "down": false
    },
@@ -235,7 +235,7 @@
     "down": true
    },
    {
-    "time": 1382,
+    "time": 1360,
     "target": "key:comma",
     "down": false
    },
@@ -245,7 +245,7 @@
     "down": true
    },
    {
-    "time": 1782,
+    "time": 1760,
     "target": "key:v",
     "down": false
    },
@@ -255,12 +255,12 @@
     "down": true
    },
    {
-    "time": 2082,
+    "time": 2060,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 2203,
+    "time": 2175,
     "target": "mouse:right",
     "down": true
    },
@@ -270,17 +270,17 @@
     "down": true
    },
    {
-    "time": 2597,
+    "time": 2575,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 3988,
+    "time": 3960,
     "target": "mouse:right",
     "down": false
    },
    {
-    "time": 3988,
+    "time": 3960,
     "target": "mouse:left",
     "down": true
    },
@@ -290,17 +290,17 @@
     "down": true
    },
    {
-    "time": 4482,
+    "time": 4460,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 4482,
+    "time": 4460,
     "target": "mouse:left",
     "down": false
    }
   ],
-  "durationMs": 4482,
+  "durationMs": 4460,
   "noteCount": 6,
   "droppedChordNotes": 0,
   "truncatedNotes": 0,

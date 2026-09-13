@@ -12,6 +12,7 @@ import {
   type TriggerSource
 } from "../export/logitech";
 import { toRazerXml } from "../export/razer";
+import { TIMING_TIERS, loadTimingTier, saveTimingTier, timingTier, type TimingTierId } from "../export/timing";
 import { toTabText } from "../export/tab";
 import type { GameNote, TimeSignatureEvent } from "../music/types";
 import type { ScoreSnapshotInput } from "../persistence/scoreCodec";
@@ -45,15 +46,21 @@ export default function ExportPanel({ title, notes, unplayableCount, bpm, timeSi
   const [triggerSource, setTriggerSource] = useState<TriggerSource>(() => loadLogitechSettings().trigger.source);
   const [triggerValue, setTriggerValue] = useState(() => loadLogitechSettings().trigger.value);
   const [stopLock, setStopLock] = useState<StopLock>(() => loadLogitechSettings().stopLock);
+  const [timingTierId, setTimingTierId] = useState<TimingTierId>(() => loadTimingTier());
   const [error, setError] = useState("");
 
   const maxTrigger = TRIGGER_MAX[triggerSource];
-  const keySequence = useMemo(() => buildKeySequence(notes, { binding: GAME_BINDING }), [notes]);
+  const timing = timingTier(timingTierId);
+  const keySequence = useMemo(() => buildKeySequence(notes, { binding: GAME_BINDING, ...timing.timing }), [notes, timing]);
   const empty = notes.length === 0;
 
   useEffect(() => {
     saveLogitechSettings({ trigger: { source: triggerSource, value: triggerValue }, stopLock });
   }, [triggerSource, triggerValue, stopLock]);
+
+  useEffect(() => {
+    saveTimingTier(timingTierId);
+  }, [timingTierId]);
 
   function changeTriggerSource(source: TriggerSource) {
     setTriggerSource(source);
@@ -172,11 +179,23 @@ export default function ExportPanel({ title, notes, unplayableCount, bpm, timeSi
             {STOP_LOCKS.map((lock) => <option key={lock.id} value={lock.id}>{lock.label}</option>)}
           </select>
         </label>
+        <label className="field">
+          <span>按键时序</span>
+          <select value={timingTierId} onChange={(event) => setTimingTierId(event.target.value as TimingTierId)}>
+            {TIMING_TIERS.map((tier) => <option key={tier.id} value={tier.id}>{tier.label} · {tier.hint}</option>)}
+          </select>
+        </label>
       </div>
+
+      <p className="preview-limit">
+        游戏按帧采样输入，宏里的间隔要留够整帧：当前档位修饰键提前 {timing.timing.modifierLeadMs} ms 按下、
+        松键后 {timing.timing.releaseGapMs} ms 再按下一键、每个音至少按住 {timing.timing.minNoteMs} ms。
+        漏音换「稳健」，跟快歌换「极限」；密集乐段会为保住间隔而推迟音符。桌面版设置里的同名档位数值相同。
+      </p>
 
       {keySequence.droppedChordNotes + keySequence.truncatedNotes > 0 && (
         <p className="preview-limit">
-          按键编排阶段又收紧了 {keySequence.truncatedNotes} 个音符的长度（为了留出 18 ms 松键间隔）
+          按键编排阶段又收紧了 {keySequence.truncatedNotes} 个音符的长度（为了留出 {timing.timing.releaseGapMs} ms 松键间隔）
           {keySequence.droppedChordNotes > 0 && <>，并丢弃了 {keySequence.droppedChordNotes} 个同时发声的音符</>}
           。谱面已经是单音，这里是最后一道兜底。
         </p>

@@ -973,12 +973,12 @@
     "down": true
    },
    {
-    "time": 482,
+    "time": 460,
     "target": "key:c",
     "down": false
    },
    {
-    "time": 488,
+    "time": 460,
     "target": "mouse:middle",
     "down": true
    },
@@ -988,7 +988,7 @@
     "down": true
    },
    {
-    "time": 982,
+    "time": 960,
     "target": "key:v",
     "down": false
    },
@@ -998,12 +998,12 @@
     "down": true
    },
    {
-    "time": 1482,
+    "time": 1460,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 1488,
+    "time": 1460,
     "target": "mouse:middle",
     "down": false
    },
@@ -1013,7 +1013,7 @@
     "down": true
    },
    {
-    "time": 1732,
+    "time": 1710,
     "target": "key:n",
     "down": false
    },
@@ -1023,12 +1023,12 @@
     "down": true
    },
    {
-    "time": 2482,
+    "time": 2460,
     "target": "key:m",
     "down": false
    },
    {
-    "time": 2488,
+    "time": 2460,
     "target": "mouse:middle",
     "down": true
    },
@@ -1038,12 +1038,12 @@
     "down": true
    },
    {
-    "time": 2982,
+    "time": 2960,
     "target": "key:comma",
     "down": false
    },
    {
-    "time": 2988,
+    "time": 2960,
     "target": "mouse:right",
     "down": true
    },
@@ -1053,12 +1053,12 @@
     "down": true
    },
    {
-    "time": 3482,
+    "time": 3460,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 3488,
+    "time": 3460,
     "target": "mouse:middle",
     "down": false
    },
@@ -1068,12 +1068,12 @@
     "down": true
    },
    {
-    "time": 3732,
+    "time": 3710,
     "target": "key:c",
     "down": false
    },
    {
-    "time": 3988,
+    "time": 3960,
     "target": "mouse:middle",
     "down": true
    },
@@ -1083,12 +1083,12 @@
     "down": true
    },
    {
-    "time": 4282,
+    "time": 4260,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 4288,
+    "time": 4260,
     "target": "mouse:right",
     "down": false
    },
@@ -1098,12 +1098,12 @@
     "down": true
    },
    {
-    "time": 4582,
+    "time": 4560,
     "target": "key:comma",
     "down": false
    },
    {
-    "time": 4588,
+    "time": 4560,
     "target": "mouse:middle",
     "down": false
    },
@@ -1113,12 +1113,12 @@
     "down": true
    },
    {
-    "time": 4882,
+    "time": 4860,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 4888,
+    "time": 4860,
     "target": "mouse:middle",
     "down": true
    },
@@ -1128,12 +1128,12 @@
     "down": true
    },
    {
-    "time": 5032,
+    "time": 5010,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 5188,
+    "time": 5160,
     "target": "mouse:middle",
     "down": false
    },
@@ -1143,12 +1143,12 @@
     "down": true
    },
    {
-    "time": 5482,
+    "time": 5460,
     "target": "key:c",
     "down": false
    },
    {
-    "time": 5488,
+    "time": 5460,
     "target": "mouse:middle",
     "down": true
    },
@@ -1158,7 +1158,7 @@
     "down": true
    },
    {
-    "time": 5782,
+    "time": 5760,
     "target": "key:v",
     "down": false
    },
@@ -1168,12 +1168,12 @@
     "down": true
    },
    {
-    "time": 6082,
+    "time": 6060,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 6088,
+    "time": 6060,
     "target": "mouse:middle",
     "down": false
    },
@@ -1183,7 +1183,7 @@
     "down": true
    },
    {
-    "time": 6232,
+    "time": 6210,
     "target": "key:n",
     "down": false
    },
@@ -1193,12 +1193,12 @@
     "down": true
    },
    {
-    "time": 7003,
+    "time": 6981,
     "target": "key:m",
     "down": false
    },
    {
-    "time": 7009,
+    "time": 6981,
     "target": "mouse:middle",
     "down": true
    },
@@ -1208,12 +1208,12 @@
     "down": true
    },
    {
-    "time": 7623,
+    "time": 7601,
     "target": "key:comma",
     "down": false
    },
    {
-    "time": 7629,
+    "time": 7601,
     "target": "mouse:right",
     "down": true
    },
@@ -1223,12 +1223,12 @@
     "down": true
    },
    {
-    "time": 8244,
+    "time": 8222,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 8250,
+    "time": 8222,
     "target": "mouse:middle",
     "down": false
    },
@@ -1238,12 +1238,12 @@
     "down": true
    },
    {
-    "time": 8554,
+    "time": 8532,
     "target": "key:c",
     "down": false
    },
    {
-    "time": 8871,
+    "time": 8843,
     "target": "mouse:middle",
     "down": true
    },
@@ -1253,12 +1253,12 @@
     "down": true
    },
    {
-    "time": 9485,
+    "time": 9463,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 9491,
+    "time": 9463,
     "target": "mouse:right",
     "down": false
    },
@@ -1268,12 +1268,12 @@
     "down": true
    },
    {
-    "time": 10106,
+    "time": 10084,
     "target": "key:comma",
     "down": false
    },
    {
-    "time": 10112,
+    "time": 10084,
     "target": "mouse:middle",
     "down": false
    },
@@ -1283,12 +1283,12 @@
     "down": true
    },
    {
-    "time": 10727,
+    "time": 10705,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 10733,
+    "time": 10705,
     "target": "mouse:middle",
     "down": true
    },
@@ -1298,17 +1298,17 @@
     "down": true
    },
    {
-    "time": 11037,
+    "time": 11015,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 11354,
+    "time": 11326,
     "target": "mouse:middle",
     "down": false
    },
    {
-    "time": 11354,
+    "time": 11326,
     "target": "mouse:left",
     "down": true
    },
@@ -1318,12 +1318,12 @@
     "down": true
    },
    {
-    "time": 11968,
+    "time": 11946,
     "target": "key:c",
     "down": false
    },
    {
-    "time": 11974,
+    "time": 11946,
     "target": "mouse:middle",
     "down": true
    },
@@ -1333,7 +1333,7 @@
     "down": true
    },
    {
-    "time": 12589,
+    "time": 12567,
     "target": "key:v",
     "down": false
    },
@@ -1343,12 +1343,12 @@
     "down": true
    },
    {
-    "time": 13210,
+    "time": 13188,
     "target": "key:b",
     "down": false
    },
    {
-    "time": 13216,
+    "time": 13188,
     "target": "mouse:middle",
     "down": false
    },
@@ -1358,7 +1358,7 @@
     "down": true
    },
    {
-    "time": 13520,
+    "time": 13498,
     "target": "key:n",
     "down": false
    },
@@ -1368,17 +1368,17 @@
     "down": true
    },
    {
-    "time": 14451,
+    "time": 14429,
     "target": "key:m",
     "down": false
    },
    {
-    "time": 14457,
+    "time": 14429,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 14457,
+    "time": 14429,
     "target": "mouse:middle",
     "down": true
    },
@@ -1388,7 +1388,7 @@
     "down": true
    },
    {
-    "time": 15072,
+    "time": 15050,
     "target": "key:z",
     "down": false
    },
@@ -1398,12 +1398,12 @@
     "down": true
    },
    {
-    "time": 15692,
+    "time": 15670,
     "target": "key:x",
     "down": false
    },
    {
-    "time": 15698,
+    "time": 15670,
     "target": "mouse:middle",
     "down": false
    },
@@ -1413,12 +1413,12 @@
     "down": true
    },
    {
-    "time": 16002,
+    "time": 15980,
     "target": "key:c",
     "down": false
    },
    {
-    "time": 16319,
+    "time": 16291,
     "target": "mouse:middle",
     "down": true
    },
@@ -1428,12 +1428,12 @@
     "down": true
    },
    {
-    "time": 16934,
+    "time": 16912,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 16940,
+    "time": 16912,
     "target": "mouse:left",
     "down": true
    },
@@ -1443,12 +1443,12 @@
     "down": true
    },
    {
-    "time": 17554,
+    "time": 17532,
     "target": "key:comma",
     "down": false
    },
    {
-    "time": 17560,
+    "time": 17532,
     "target": "mouse:middle",
     "down": false
    },
@@ -1458,12 +1458,12 @@
     "down": true
    },
    {
-    "time": 18175,
+    "time": 18153,
     "target": "key:n",
     "down": false
    },
    {
-    "time": 18181,
+    "time": 18153,
     "target": "mouse:middle",
     "down": true
    },
@@ -1473,22 +1473,22 @@
     "down": true
    },
    {
-    "time": 18485,
+    "time": 18463,
     "target": "key:v",
     "down": false
    },
    {
-    "time": 18485,
+    "time": 18463,
     "target": "mouse:left",
     "down": false
    },
    {
-    "time": 18485,
+    "time": 18463,
     "target": "mouse:middle",
     "down": false
    }
   ],
-  "durationMs": 18485,
+  "durationMs": 18463,
   "noteCount": 36,
   "droppedChordNotes": 0,
   "truncatedNotes": 0,

@@ -65,14 +65,43 @@ public sealed class InputBinding
 /// <param name="NoteIndex">Index into the game-note list for note key actions, -1 for modifiers. Not part of the web format.</param>
 public sealed record InputAction(double Time, InputTarget Target, bool Down, int NoteIndex);
 
+/// <summary>
+/// Physical-millisecond floors the game needs between inputs; see src/export/timing.ts.
+/// </summary>
+/// <param name="ModifierLeadMs">Modifiers go down this early so the game registers them before the note.</param>
+/// <param name="ReleaseGapMs">A key is released this early, and the next key waits this long after a release.</param>
+/// <param name="MinNoteMs">Shortest hold, so press and release never land in one frame.</param>
+public sealed record KeyTiming(double ModifierLeadMs, double ReleaseGapMs, double MinNoteMs);
+
+public sealed record TimingTier(string Id, string Label, string Hint, KeyTiming Timing);
+
+/// <summary>Mirror of TIMING_TIERS in src/export/timing.ts; the web export panel offers the same three.</summary>
+public static class TimingTiers
+{
+    public static readonly TimingTier Safe = new("safe", "稳健", "30 fps / 卡顿机器", new KeyTiming(70, 70, 80));
+    public static readonly TimingTier Standard = new("standard", "标准", "60 fps，推荐", new KeyTiming(40, 40, 45));
+    public static readonly TimingTier Aggressive = new("aggressive", "极限", "高帧率，跟快歌", new KeyTiming(20, 18, 22));
+
+    public static readonly IReadOnlyList<TimingTier> All = [Safe, Standard, Aggressive];
+
+    public static TimingTier Default => Standard;
+
+    public static TimingTier? Find(string? id) => All.FirstOrDefault(tier => tier.Id == id);
+}
+
 public sealed record KeySequenceOptions
 {
     public InputBinding Binding { get; init; } = InputBinding.Game;
-    /// <summary>Modifiers go down this early so the game registers them before the note.</summary>
-    public double ModifierLeadMs { get; init; } = 12;
-    /// <summary>Notes are released early by this much so a repeated pitch retriggers.</summary>
-    public double ReleaseGapMs { get; init; } = 18;
-    public double MinNoteMs { get; init; } = 30;
+    public double ModifierLeadMs { get; init; } = TimingTiers.Default.Timing.ModifierLeadMs;
+    public double ReleaseGapMs { get; init; } = TimingTiers.Default.Timing.ReleaseGapMs;
+    public double MinNoteMs { get; init; } = TimingTiers.Default.Timing.MinNoteMs;
+
+    public static KeySequenceOptions From(KeyTiming timing) => new()
+    {
+        ModifierLeadMs = timing.ModifierLeadMs,
+        ReleaseGapMs = timing.ReleaseGapMs,
+        MinNoteMs = timing.MinNoteMs
+    };
 }
 
 public sealed class KeySequence
@@ -115,6 +144,9 @@ public static class KeySequenceBuilder
     /// <summary>
     /// Flattens optimized notes into an absolute-time press/release stream.
     /// Modifiers are held across consecutive notes that need the same ones.
+    /// The timing values are hard floors: a note in a dense passage is pushed
+    /// later rather than squeezed into the same frame as a modifier change or
+    /// the previous release.
     /// </summary>
     public static KeySequence Build(IReadOnlyList<GameNote> notes, KeySequenceOptions? options = null)
     {
@@ -158,9 +190,14 @@ public static class KeySequenceBuilder
             var wantedIds = wanted.Select(target => target.Id).ToHashSet();
             var heldIds = held.Select(target => target.Id).ToHashSet();
             var switchTime = Math.Max(lastTime, note.Start - leadMs);
+            var modifiersChanged = false;
             foreach (var target in held)
             {
-                if (!wantedIds.Contains(target.Id)) actions.Add(new InputAction(switchTime, target, false, -1));
+                if (!wantedIds.Contains(target.Id))
+                {
+                    actions.Add(new InputAction(switchTime, target, false, -1));
+                    modifiersChanged = true;
+                }
             }
             foreach (var target in wanted)
             {
@@ -168,12 +205,15 @@ public static class KeySequenceBuilder
                 {
                     actions.Add(new InputAction(switchTime, target, true, -1));
                     modifierPresses++;
+                    modifiersChanged = true;
                 }
             }
             held = wanted;
 
             var noteTarget = binding.Notes[note.Key];
             var down = Math.Max(switchTime, note.Start);
+            if (modifiersChanged) down = Math.Max(down, switchTime + leadMs);
+            if (noteCount > 0) down = Math.Max(down, lastTime + releaseGapMs);
             var up = Math.Max(down + minNoteMs, end - releaseGapMs);
             actions.Add(new InputAction(down, noteTarget, true, sorted[i].Index));
             actions.Add(new InputAction(up, noteTarget, false, sorted[i].Index));

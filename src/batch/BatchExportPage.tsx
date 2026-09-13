@@ -5,6 +5,7 @@ import { RailToggle, useRailCollapsed } from "../components/RailToggle";
 import { STOP_LOCKS, TRIGGER_MAX, type StopLock, type TriggerSource } from "../export/logitech";
 import { loadBatchSettings, prepareBatchSong, saveBatchSettings, toggleBatchSelection, toLogitechBatchLua, type BatchSong } from "../export/logitechBatch";
 import { downloadText } from "../export/files";
+import { loadTimingTier, timingTier } from "../export/timing";
 import { aboutHref, batchHref, converterHref, libraryHref } from "../navigation";
 import "../library/library.css";
 import "./batch.css";
@@ -103,7 +104,7 @@ export default function BatchExportPage() {
         try {
           const record = await readWithTimeout(loadCloudScore(meta.id));
           if (ticket !== operation.current) return;
-          const prepared = prepareBatchSong(record.meta.title, record.snapshot);
+          const prepared = prepareBatchSong(record.meta.title, record.snapshot, timingTier(loadTimingTier()).timing);
           songs.push(prepared.song);
           skipped += prepared.unplayableCount;
         } catch (reason) {
