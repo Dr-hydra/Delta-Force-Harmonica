@@ -1,4 +1,4 @@
-export type AppView = "library" | "about";
+export type AppView = "library" | "about" | "batch";
 
 export function converterHref(href = window.location.href) {
   return new URL(href).pathname;
@@ -14,3 +14,4 @@ export function viewHref(view: AppView, href = window.location.href) {
 
 export const libraryHref = (href?: string) => viewHref("library", href);
 export const aboutHref = (href?: string) => viewHref("about", href);
+export const batchHref = (href?: string) => viewHref("batch", href);

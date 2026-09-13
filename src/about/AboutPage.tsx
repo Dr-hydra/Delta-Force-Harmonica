@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { openBilibiliAuthor, openBilibiliVideo } from "../cloud/toy";
 import { RailToggle, useRailCollapsed } from "../components/RailToggle";
-import { aboutHref, converterHref, libraryHref } from "../navigation";
+import { aboutHref, batchHref, converterHref, libraryHref } from "../navigation";
 import "./about.css";
 
 const GITHUB_URL = "https://github.com/Dr-hydra/Delta-Force-Harmonica";
@@ -25,6 +25,7 @@ export default function AboutPage() {
           <a href={converterHref()} title="乐谱转换"><i>01</i><span>乐谱转换</span></a>
           <a href={libraryHref()} title="云端曲谱库"><i>02</i><span>曲谱库</span></a>
           <a className="active" href={aboutHref()} title="关于项目"><i>03</i><span>关于</span></a>
+          <a href={batchHref()} title="批量导出"><i>04</i><span>批量导出</span></a>
         </nav>
         <RailToggle collapsed={rail.collapsed} onToggle={rail.toggle} />
         <div className="rail-bottom"><b>α</b><span>OPEN SOURCE<br />COMMUNITY TOOL</span></div>

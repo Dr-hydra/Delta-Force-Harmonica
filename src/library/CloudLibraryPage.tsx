@@ -7,7 +7,7 @@ import { PublicScoreMetaForm, PublishArchiveDialog, RenameCloudScoreDialog, Shar
 import ScoreWorkbench from "./ScoreWorkbench";
 import { RailToggle, useRailCollapsed } from "../components/RailToggle";
 import type { LibraryEntry, PublicScore } from "./types";
-import { aboutHref, converterHref, libraryHref } from "../navigation";
+import { aboutHref, batchHref, converterHref, libraryHref } from "../navigation";
 import "./library.css";
 
 function durationLabel(ms: number) {
@@ -510,6 +510,7 @@ export default function CloudLibraryPage() {
           <button title="我的云存档" className={!scoreId && tab === "private" ? "active" : ""} onClick={() => { history.pushState(null, "", libraryHref()); setScoreId(""); setListQuery(""); setTab("private"); }}><i>03</i><span>我的云存档</span></button>
           <button title="我的发布" className={!scoreId && tab === "mine" ? "active" : ""} onClick={() => { history.pushState(null, "", libraryHref()); setScoreId(""); setListQuery(""); setTab("mine"); }}><i>04</i><span>我的发布</span></button>
           <a href={aboutHref()} title="关于项目"><i>05</i><span>关于</span></a>
+          <a href={batchHref()} title="批量导出"><i>06</i><span>批量导出</span></a>
         </nav>
         <RailToggle collapsed={rail.collapsed} onToggle={rail.toggle} />
         <div className="rail-bottom"><b>α</b><span>TOY + CLOUDBASE<br />OBJECT STORAGE</span></div>

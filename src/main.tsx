@@ -2,6 +2,7 @@ import { StrictMode, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import AboutPage from "./about/AboutPage";
+import BatchExportPage from "./batch/BatchExportPage";
 import ConverterCloudPanel from "./cloud/ConverterCloudPanel";
 import CloudLibraryPage from "./library/CloudLibraryPage";
 import "./styles.css";
@@ -42,6 +43,7 @@ function ConverterLibraryNavigation() {
 }
 
 function Root() {
+  if (params.get("view") === "batch") return <BatchExportPage />;
   if (aboutView) return <AboutPage />;
   if (cloudView) return <CloudLibraryPage />;
   return (

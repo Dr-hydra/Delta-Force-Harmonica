@@ -1,0 +1,27 @@
+.batch-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 380px); gap: 18px; align-items: start; }
+.batch-archive, .batch-sidebar { display: grid; gap: 14px; min-width: 0; }
+.batch-search { flex-wrap: wrap; gap: 12px; padding: 20px; }
+.batch-search-label { flex: 1 1 180px; }
+.batch-search input { width: 100%; box-sizing: border-box; }
+.batch-search-label .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.batch-row { grid-template-columns: minmax(0, 1fr) auto; gap: 12px; }
+.batch-row.batch-selected { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 5%, var(--panel)); }
+.batch-choice { display: flex; gap: 14px; align-items: center; cursor: pointer; min-width: 0; }
+.batch-choice input { width: 19px; height: 19px; flex: 0 0 auto; accent-color: var(--accent); }
+.batch-choice strong { display: block; margin: 5px 0; font-size: 18px; overflow-wrap: anywhere; }
+.batch-meta { color: var(--muted); font-size: 12px; }
+.batch-row .library-row-stats { grid-template-columns: repeat(2, auto); }
+.batch-panel { padding: 22px; min-width: 0; }
+.batch-panel h2 { margin: 5px 0 12px; }
+.batch-panel-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.batch-hint { color: var(--muted); line-height: 1.7; font-size: 13px; }
+.batch-order { list-style: none; padding: 0; margin: 14px 0 0; display: grid; gap: 8px; }
+.batch-order li { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid var(--line); }
+.batch-number { color: var(--accent); font: bold 18px Consolas, monospace; min-width: 24px; }
+.batch-song-name { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.batch-settings { border: 0; padding: 0; margin: 0; min-width: 0; }
+.batch-settings .export-fields { grid-template-columns: 1fr; }
+.batch-download { width: 100%; }
+@media (max-width: 1100px) { .batch-layout { grid-template-columns: 1fr; } .batch-sidebar { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; } }
+@media (max-width: 900px) { .batch-search-label { flex: 0 1 auto; width: 100%; } }
+@media (max-width: 640px) { .batch-sidebar { grid-template-columns: 1fr; } .batch-row { grid-template-columns: 1fr; } .batch-panel { padding: 18px; } }
