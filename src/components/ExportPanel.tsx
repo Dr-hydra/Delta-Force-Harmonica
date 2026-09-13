@@ -16,6 +16,8 @@ import { toTabText } from "../export/tab";
 import type { GameNote, TimeSignatureEvent } from "../music/types";
 import type { ScoreSnapshotInput } from "../persistence/scoreCodec";
 
+const DESKTOP_RELEASE_URL = "https://github.com/Dr-hydra/Delta-Force-Harmonica/releases/latest";
+
 export interface ExportPanelProps {
   title: string;
   /** Harmony-optimized notes — the same list the on-screen preview renders. */
@@ -35,7 +37,7 @@ export interface ExportPanelProps {
 
 /**
  * The converter export panel, reused by the score library so a cloud score can
- * produce the same three artifacts without opening it in the editor. The macro
+ * produce the same export choices without opening it in the editor. The macro
  * trigger/stop key live in localStorage because they describe the user's own
  * mouse and keyboard, not one score.
  */
@@ -124,6 +126,15 @@ export default function ExportPanel({ title, notes, unplayableCount, bpm, timeSi
       <div className="export-stack">
         <button className="button primary" disabled={empty} onClick={exportTab}>人可演奏版 · 文本谱 .txt</button>
         <button className="button" disabled={empty} onClick={exportMidi}>标准 MIDI .mid</button>
+        <a
+          className="button"
+          href={DESKTOP_RELEASE_URL}
+          target="_blank"
+          rel="noreferrer"
+          style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "inherit", textDecoration: "none" }}
+        >
+          下载自动演奏软件 · Windows ↗
+        </a>
         <button className="button" disabled={empty} onClick={exportLogitech}>宏 · 罗技 G HUB .lua</button>
         <button className="button" disabled={empty} onClick={exportRazer}>宏 · 雷蛇 Synapse 3 .xml（未验证）</button>
       </div>
