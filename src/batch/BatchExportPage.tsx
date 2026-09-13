@@ -9,6 +9,8 @@ import { aboutHref, batchHref, converterHref, libraryHref } from "../navigation"
 import "../library/library.css";
 import "./batch.css";
 
+const DESKTOP_RELEASE_URL = "https://github.com/Dr-hydra/Delta-Force-Harmonica/releases/latest";
+
 async function readWithTimeout<T>(request: Promise<T>): Promise<T> {
   let timer: ReturnType<typeof setTimeout> | undefined;
   try {
@@ -179,7 +181,18 @@ export default function BatchExportPage() {
               </fieldset>
               <p className="batch-hint">连按开始键 N 次选第 N 首，{autoPlay ? "最后松开后停按 700 毫秒自动播放" : "最后松开后停按至少 700 毫秒，再按一次开始键播放"}。按住只算一次，超过歌单数量则取消。</p>
               <p className="batch-hint">选歌或播放期间，切换停止键即可取消。开始键范围与单首导出一致，设置单独保存。</p>
-              <button className="button primary batch-download" disabled={busy || !available || !selected.length} onClick={() => void exportBatch()}>{exporting ? "正在生成脚本…" : `导出 ${selected.length} 首 · 罗技 G HUB .lua`}</button>
+              <div className="export-stack">
+                <button className="button primary batch-download" disabled={busy || !available || !selected.length} onClick={() => void exportBatch()}>{exporting ? "正在生成脚本…" : `导出 ${selected.length} 首 · 罗技 G HUB .lua`}</button>
+                <a
+                  className="button"
+                  href={DESKTOP_RELEASE_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "inherit", textDecoration: "none" }}
+                >
+                  下载自动演奏软件 · Windows ↗
+                </a>
+              </div>
               <div aria-live="polite">{progress && <p className="library-message">{progress}</p>}{message && <p className="library-message">{message}</p>}{error && <p className="error-note" role="alert">{error}</p>}</div>
               <p className="batch-hint">在 G HUB 配置文件的脚本编辑器中粘贴导出内容并保存。文件开头附有编号歌单。</p>
               <p className="export-alert">如果升降调不能正常使用，请使用管理员权限启动你的外设管理软件。</p>
