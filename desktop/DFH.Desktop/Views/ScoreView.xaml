@@ -1,0 +1,82 @@
+<UserControl x:Class="DFH.Desktop.Views.ScoreView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:DFH.Desktop.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=vm:ScoreViewModel}">
+    <UserControl.Resources>
+        <DataTemplate x:Key="NoteChip" DataType="{x:Type vm:NoteViewModel}">
+            <Border Margin="2" Padding="7,4" CornerRadius="5" BorderThickness="1" ToolTip="{Binding Tooltip}"
+                    BorderBrush="{StaticResource DfhChipBorderBrush}">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Background" Value="{StaticResource DfhChipBrush}" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsCurrent}" Value="True">
+                                <Setter Property="Background" Value="{StaticResource DfhAccentBrush}" />
+                                <Setter Property="BorderBrush" Value="{StaticResource DfhAccentBrush}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <StackPanel>
+                    <StackPanel.Style>
+                        <Style TargetType="StackPanel">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsCurrent}" Value="True">
+                                    <Setter Property="TextElement.Foreground" Value="{StaticResource DfhAccentTextBrush}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+                    <TextBlock Text="{Binding DotsAbove}" FontSize="9" Height="10" LineHeight="10" LineStackingStrategy="BlockLineHeight" HorizontalAlignment="Center" />
+                    <TextBlock Text="{Binding Digit}" FontSize="20" FontWeight="SemiBold" HorizontalAlignment="Center" />
+                    <TextBlock Text="{Binding DotsBelow}" FontSize="9" Height="10" LineHeight="10" LineStackingStrategy="BlockLineHeight" HorizontalAlignment="Center" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="{Binding Key}" Style="{StaticResource Mono}" FontSize="12" />
+                        <TextBlock Text="{Binding Modifier}" FontSize="12" FontWeight="Bold" />
+                    </StackPanel>
+                    <TextBlock Text="{Binding Duration}" FontSize="10" HorizontalAlignment="Center" Opacity="0.7" />
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+
+        <DataTemplate x:Key="MeasureCard" DataType="{x:Type vm:MeasureViewModel}">
+            <Border Margin="0,0,10,10" Padding="8,6" CornerRadius="6" BorderThickness="1" BorderBrush="{StaticResource DfhChipBorderBrush}">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                        <TextBlock Text="{Binding Number}" FontWeight="SemiBold" Opacity="0.75" />
+                        <TextBlock Text="{Binding Signature}" Margin="6,0,0,0" Opacity="0.5" FontSize="11" VerticalAlignment="Bottom" />
+                    </StackPanel>
+                    <ItemsControl ItemsSource="{Binding Notes}" ItemTemplate="{StaticResource NoteChip}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid>
+        <ScrollViewer x:Name="Scroller" VerticalScrollBarVisibility="Auto">
+            <ItemsControl x:Name="MeasureList" ItemsSource="{Binding Measures}" ItemTemplate="{StaticResource MeasureCard}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </ScrollViewer>
+        <TextBlock Style="{StaticResource Muted}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15"
+                   Text="谱面会显示在这里：数字简谱 + 键位，演奏时高亮当前音">
+            <TextBlock.Visibility>
+                <Binding Path="HasScore" Converter="{StaticResource InverseBoolToVisibility}" />
+            </TextBlock.Visibility>
+        </TextBlock>
+    </Grid>
+</UserControl>

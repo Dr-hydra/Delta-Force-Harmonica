@@ -14,6 +14,7 @@ import {
 import { toRazerXml } from "../export/razer";
 import { toTabText } from "../export/tab";
 import type { GameNote, TimeSignatureEvent } from "../music/types";
+import type { ScoreSnapshotInput } from "../persistence/scoreCodec";
 
 export interface ExportPanelProps {
   title: string;
@@ -24,6 +25,12 @@ export interface ExportPanelProps {
   timeSignatures: TimeSignatureEvent[];
   measureStarts: number[];
   transpose: number;
+  /**
+   * The pre-fingering score (collapsed notes plus transpose) behind `notes`.
+   * Embedded into the MIDI export so the desktop player rebuilds the same
+   * fingering; the file is still a plain MIDI without it.
+   */
+  snapshot?: ScoreSnapshotInput;
 }
 
 /**
@@ -32,7 +39,7 @@ export interface ExportPanelProps {
  * trigger/stop key live in localStorage because they describe the user's own
  * mouse and keyboard, not one score.
  */
-export default function ExportPanel({ title, notes, unplayableCount, bpm, timeSignatures, measureStarts, transpose }: ExportPanelProps) {
+export default function ExportPanel({ title, notes, unplayableCount, bpm, timeSignatures, measureStarts, transpose, snapshot }: ExportPanelProps) {
   const [triggerSource, setTriggerSource] = useState<TriggerSource>(() => loadLogitechSettings().trigger.source);
   const [triggerValue, setTriggerValue] = useState(() => loadLogitechSettings().trigger.value);
   const [stopLock, setStopLock] = useState<StopLock>(() => loadLogitechSettings().stopLock);
@@ -86,7 +93,7 @@ export default function ExportPanel({ title, notes, unplayableCount, bpm, timeSi
     try {
       downloadBytes(
         `${safeFileName(title)}.mid`,
-        toMidiFile(notes, { bpm, timeSignatures }),
+        toMidiFile(notes, { bpm, timeSignatures, snapshot }),
         "audio/midi"
       );
     } catch (reason) {
@@ -125,7 +132,8 @@ export default function ExportPanel({ title, notes, unplayableCount, bpm, timeSi
 
       <p className="preview-limit">
         <strong>MIDI 导出的是转换后的谱面本身</strong>：音高是移调后游戏里实际发出的音，时值和拍号跟着谱面，
-        Tempo 用当前 BPM，单轨输出。文件里<strong>不含键位与修饰键</strong>，要 1:1 复现按键请用下面的宏导出。
+        Tempo 用当前 BPM，单轨输出。音符数据里<strong>不含键位与修饰键</strong>，要 1:1 复现按键请用下面的宏导出。
+        文件同时附带一份谱面快照，<strong>桌面版自动演奏器只接受这里导出的 MIDI</strong>，用它打开即可得到和网页一致的按键。
       </p>
 
       <div className="export-fields">

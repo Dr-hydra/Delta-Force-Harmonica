@@ -2,6 +2,8 @@ node_modules/
 dist/
 .vite/
 coverage/
+.playwright-cli/
+output/playwright/
 public/basic-pitch/
 *.local
 .DS_Store
@@ -15,3 +17,9 @@ Thumbs.db
 cloudbase/.tcb/
 cloudbase/cloudbaserc.json
 cloudbase/functions/*/node_modules/
+
+# .NET desktop build output
+desktop/**/bin/
+desktop/**/obj/
+desktop/publish/
+desktop/.vs/

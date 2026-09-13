@@ -1,0 +1,122 @@
+<Window x:Class="DFH.Desktop.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:views="clr-namespace:DFH.Desktop.Views"
+        xmlns:vm="clr-namespace:DFH.Desktop.ViewModels"
+        mc:Ignorable="d"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
+        Title="三角洲口琴自动演奏器"
+        Width="1180" Height="760" MinWidth="900" MinHeight="560"
+        WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="440" MinWidth="360" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="0" Margin="12,12,6,6">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
+                    <RadioButton Style="{StaticResource NavButton}" Content="本地 MIDI" GroupName="nav"
+                                 IsChecked="{Binding SelectedTab, Converter={StaticResource TabSelected}, ConverterParameter=0, Mode=TwoWay}" />
+                    <RadioButton Style="{StaticResource NavButton}" Content="曲库" GroupName="nav"
+                                 IsChecked="{Binding SelectedTab, Converter={StaticResource TabSelected}, ConverterParameter=1, Mode=TwoWay}" />
+                    <RadioButton Style="{StaticResource NavButton}" Content="设置" GroupName="nav"
+                                 IsChecked="{Binding SelectedTab, Converter={StaticResource TabSelected}, ConverterParameter=2, Mode=TwoWay}" />
+                </StackPanel>
+                <Border Grid.Row="1" CornerRadius="8" Background="{StaticResource DfhChipBrush}">
+                    <Grid>
+                        <views:LocalPage Visibility="{Binding SelectedTab, Converter={StaticResource TabVisibility}, ConverterParameter=0}" />
+                        <views:LibraryPage DataContext="{Binding Library}"
+                                           Visibility="{Binding DataContext.SelectedTab, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource TabVisibility}, ConverterParameter=1}" />
+                        <views:SettingsPage DataContext="{Binding Settings}"
+                                            Visibility="{Binding DataContext.SelectedTab, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource TabVisibility}, ConverterParameter=2}" />
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <Border Grid.Column="1" Margin="6,12,12,6" Padding="16" CornerRadius="8"
+                    Background="{StaticResource DfhChipBrush}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0" Orientation="Horizontal">
+                        <TextBlock Text="{Binding Title}" FontSize="22" FontWeight="SemiBold" VerticalAlignment="Center" />
+                        <Border Margin="12,0,0,0" Padding="8,2" CornerRadius="4" VerticalAlignment="Center"
+                                Background="{StaticResource DfhWarnBrush}"
+                                Visibility="{Binding IsLegacy, Converter={StaticResource BoolToVisibility}}">
+                            <TextBlock Text="旧版导出" FontSize="12" Foreground="{StaticResource DfhAccentTextBrush}" />
+                        </Border>
+                    </StackPanel>
+                    <TextBlock Grid.Row="1" Style="{StaticResource Muted}" Margin="0,4,0,10" Text="{Binding Score.Summary}" />
+                    <views:ScoreView Grid.Row="2" DataContext="{Binding Score}" />
+                </Grid>
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="1" Margin="12,6,12,12" Padding="16,12" CornerRadius="8" Background="{StaticResource DfhChipBrush}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
+                    <Border Padding="8,2" CornerRadius="4" Background="{StaticResource DfhAccentBrush}" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding StateLabel}" Foreground="{StaticResource DfhAccentTextBrush}" FontWeight="SemiBold" />
+                    </Border>
+                    <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Text="{Binding StatusMessage}" TextTrimming="CharacterEllipsis" MaxWidth="700" />
+                </StackPanel>
+
+                <StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0,0,0">
+                    <Button MinWidth="150" Height="40" Padding="14,0" Command="{Binding StartCommand}" Content="{Binding StartButtonLabel}"
+                            Style="{DynamicResource AccentButtonStyle}" FontWeight="SemiBold" />
+                    <Button MinWidth="110" Height="40" Padding="14,0" Margin="8,0,0,0" Command="{Binding StopCommand}" Content="{Binding StopButtonLabel}" />
+                </StackPanel>
+
+                <Grid Grid.Row="1" Grid.Column="0" Margin="0,10,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <ProgressBar Grid.Column="0" Height="8" Minimum="0" Maximum="1" Value="{Binding Progress, Mode=OneWay}" VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="1" Margin="12,0,0,0" Style="{StaticResource Mono}" Text="{Binding ElapsedLabel}" VerticalAlignment="Center" />
+                </Grid>
+
+                <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,8,0,0">
+                    <TextBlock Text="{Binding PreflightLine}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource Muted}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding PreflightOk}" Value="False">
+                                        <Setter Property="Foreground" Value="{StaticResource DfhWarnBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                    <TextBlock Style="{StaticResource Muted}" Margin="0,2,0,0" Text="{Binding HotkeyHint}" />
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

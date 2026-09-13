@@ -107,6 +107,7 @@ export default function ScoreWorkbench({ title, snapshot, archiveId, publicId, o
         timeSignatures={snapshot.timeSignatures}
         measureStarts={snapshot.measureStarts}
         transpose={snapshot.transpose}
+        snapshot={{ ...snapshot, notes: mono.notes }}
       />
 
       <CloudActions

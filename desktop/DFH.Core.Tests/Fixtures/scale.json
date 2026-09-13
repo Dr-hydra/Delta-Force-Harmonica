@@ -1,0 +1,581 @@
+{
+ "name": "scale",
+ "snapshotBase64Url": "c3HzCGZ8wMzAyHAnn5GBhYWFoYEfBPkZvjHZPGD-xmQHIhxAhCOIcAYRriDCHUR4wFlgMbAsWB1YB1ivDQA",
+ "midiBase64": "TVRoZAAAAAYAAQACAeBNVHJrAAAAiQD/AxVEZWx0YSBGb3JjZSBIYXJtb25pY2EA/wFZREZIUzEgYzNIekNHWjh3TXpBeUhBbm41R0JoWVdGb1lFZkJQa1p2akhaUEdELXhtUUhJaHhBaENPSWNBWVJyaURDSFVSNHdGbGdNYkFzV0IxWUIxaXZEUUEA/1EDBmb8AP9YBAQCGAgA/y8ATVRyawAAAJsA/wMJREZIIFNDT1JFAMAAAJA8X4J2gDwAapA+X4J3gD4AaZBAX4J2gEAAapBBX4J2gEEAapBDX4J2gEMAapBFX4J2gEUAaZBHX4J3gEcAapBIX4J2gEgAapBHX4J2gEcAapBFX4J2gEUAapBDX4J2gEMAapBBX4J2gEEAapBAX4J2gEAAa5A+X4J2gD4AaZA8X4J2gDwAAP8vAA==",
+ "decoded": {
+  "ppq": 480,
+  "transpose": 0,
+  "tempos": [
+   {
+    "beat": 0,
+    "bpm": 143,
+    "time": 0
+   }
+  ],
+  "timeSignatures": [
+   {
+    "beat": 0,
+    "numerator": 4,
+    "denominator": 4
+   }
+  ],
+  "measureStarts": [
+   0,
+   4,
+   8,
+   12
+  ],
+  "notes": [
+   {
+    "pitch": 60,
+    "start": 0,
+    "duration": 327,
+    "beat": 0,
+    "durationBeats": 0.7791666666666667
+   },
+   {
+    "pitch": 62,
+    "start": 420,
+    "duration": 327,
+    "beat": 1,
+    "durationBeats": 0.7791666666666667
+   },
+   {
+    "pitch": 64,
+    "start": 839,
+    "duration": 327,
+    "beat": 2,
+    "durationBeats": 0.7791666666666667
+   },
+   {
+    "pitch": 65,
+    "start": 1259,
+    "duration": 327,
+    "beat": 3,
+    "durationBeats": 0.7791666666666667
+   },
+   {
+    "pitch": 67,
+    "start": 1678,
+    "duration": 327,
+    "beat": 4,
+    "durationBeats": 0.7791666666666667
+   },
+   {
+    "pitch": 69,
+    "start": 2098,
+    "duration": 327,
+    "beat": 5,
+    "durationBeats": 0.7791666666666667
+   },
+   {
+    "pitch": 71,
+    "start": 2517,
+    "duration": 327,
+    "beat": 6,
+    "durationBeats": 0.7791666666666667
+   },
+   {
+    "pitch": 72,
+    "start": 2937,
+    "duration": 327,
+    "beat": 7,
+    "durationBeats": 0.7791666666666667
+   },
+   {
+    "pitch": 71,
+    "start": 3357,
+    "duration": 327,
+    "beat": 8,
+    "durationBeats": 0.7791666666666667
+   },
+   {
+    "pitch": 69,
+    "start": 3776,
+    "duration": 327,
+    "beat": 9,
+    "durationBeats": 0.7791666666666667
+   },
+   {
+    "pitch": 67,
+    "start": 4196,
+    "duration": 327,
+    "beat": 10,
+    "durationBeats": 0.7791666666666667
+   },
+   {
+    "pitch": 65,
+    "start": 4615,
+    "duration": 327,
+    "beat": 11,
+    "durationBeats": 0.7791666666666667
+   },
+   {
+    "pitch": 64,
+    "start": 5035,
+    "duration": 327,
+    "beat": 12,
+    "durationBeats": 0.7791666666666667
+   },
+   {
+    "pitch": 62,
+    "start": 5455,
+    "duration": 327,
+    "beat": 13,
+    "durationBeats": 0.7791666666666667
+   },
+   {
+    "pitch": 60,
+    "start": 5874,
+    "duration": 327,
+    "beat": 14,
+    "durationBeats": 0.7791666666666667
+   }
+  ]
+ },
+ "mono": {
+  "notes": [
+   {
+    "pitch": 60,
+    "start": 0,
+    "duration": 327,
+    "beat": 0,
+    "durationBeats": 0.7791666666666667
+   },
+   {
+    "pitch": 62,
+    "start": 420,
+    "duration": 327,
+    "beat": 1,
+    "durationBeats": 0.7791666666666667
+   },
+   {
+    "pitch": 64,
+    "start": 839,
+    "duration": 327,
+    "beat": 2,
+    "durationBeats": 0.7791666666666667
+   },
+   {
+    "pitch": 65,
+    "start": 1259,
+    "duration": 327,
+    "beat": 3,
+    "durationBeats": 0.7791666666666667
+   },
+   {
+    "pitch": 67,
+    "start": 1678,
+    "duration": 327,
+    "beat": 4,
+    "durationBeats": 0.7791666666666667
+   },
+   {
+    "pitch": 69,
+    "start": 2098,
+    "duration": 327,
+    "beat": 5,
+    "durationBeats": 0.7791666666666667
+   },
+   {
+    "pitch": 71,
+    "start": 2517,
+    "duration": 327,
+    "beat": 6,
+    "durationBeats": 0.7791666666666667
+   },
+   {
+    "pitch": 72,
+    "start": 2937,
+    "duration": 327,
+    "beat": 7,
+    "durationBeats": 0.7791666666666667
+   },
+   {
+    "pitch": 71,
+    "start": 3357,
+    "duration": 327,
+    "beat": 8,
+    "durationBeats": 0.7791666666666667
+   },
+   {
+    "pitch": 69,
+    "start": 3776,
+    "duration": 327,
+    "beat": 9,
+    "durationBeats": 0.7791666666666667
+   },
+   {
+    "pitch": 67,
+    "start": 4196,
+    "duration": 327,
+    "beat": 10,
+    "durationBeats": 0.7791666666666667
+   },
+   {
+    "pitch": 65,
+    "start": 4615,
+    "duration": 327,
+    "beat": 11,
+    "durationBeats": 0.7791666666666667
+   },
+   {
+    "pitch": 64,
+    "start": 5035,
+    "duration": 327,
+    "beat": 12,
+    "durationBeats": 0.7791666666666667
+   },
+   {
+    "pitch": 62,
+    "start": 5455,
+    "duration": 327,
+    "beat": 13,
+    "durationBeats": 0.7791666666666667
+   },
+   {
+    "pitch": 60,
+    "start": 5874,
+    "duration": 327,
+    "beat": 14,
+    "durationBeats": 0.7791666666666667
+   }
+  ],
+  "sourceIndices": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14
+  ],
+  "collapsedChordNotes": 0,
+  "truncatedNotes": 0
+ },
+ "conversion": {
+  "notes": [
+   {
+    "pitch": 60,
+    "start": 0,
+    "duration": 327,
+    "key": "Z",
+    "degree": 1,
+    "octaveModifier": 0,
+    "sharp": false,
+    "sourceIndex": 0
+   },
+   {
+    "pitch": 62,
+    "start": 420,
+    "duration": 327,
+    "key": "X",
+    "degree": 2,
+    "octaveModifier": 0,
+    "sharp": false,
+    "sourceIndex": 1
+   },
+   {
+    "pitch": 64,
+    "start": 839,
+    "duration": 327,
+    "key": "C",
+    "degree": 3,
+    "octaveModifier": 0,
+    "sharp": false,
+    "sourceIndex": 2
+   },
+   {
+    "pitch": 65,
+    "start": 1259,
+    "duration": 327,
+    "key": "V",
+    "degree": 4,
+    "octaveModifier": 0,
+    "sharp": false,
+    "sourceIndex": 3
+   },
+   {
+    "pitch": 67,
+    "start": 1678,
+    "duration": 327,
+    "key": "B",
+    "degree": 5,
+    "octaveModifier": 0,
+    "sharp": false,
+    "sourceIndex": 4
+   },
+   {
+    "pitch": 69,
+    "start": 2098,
+    "duration": 327,
+    "key": "N",
+    "degree": 6,
+    "octaveModifier": 0,
+    "sharp": false,
+    "sourceIndex": 5
+   },
+   {
+    "pitch": 71,
+    "start": 2517,
+    "duration": 327,
+    "key": "M",
+    "degree": 7,
+    "octaveModifier": 0,
+    "sharp": false,
+    "sourceIndex": 6
+   },
+   {
+    "pitch": 72,
+    "start": 2937,
+    "duration": 327,
+    "key": ",",
+    "degree": 1,
+    "octaveModifier": 0,
+    "sharp": false,
+    "sourceIndex": 7
+   },
+   {
+    "pitch": 71,
+    "start": 3357,
+    "duration": 327,
+    "key": "M",
+    "degree": 7,
+    "octaveModifier": 0,
+    "sharp": false,
+    "sourceIndex": 8
+   },
+   {
+    "pitch": 69,
+    "start": 3776,
+    "duration": 327,
+    "key": "N",
+    "degree": 6,
+    "octaveModifier": 0,
+    "sharp": false,
+    "sourceIndex": 9
+   },
+   {
+    "pitch": 67,
+    "start": 4196,
+    "duration": 327,
+    "key": "B",
+    "degree": 5,
+    "octaveModifier": 0,
+    "sharp": false,
+    "sourceIndex": 10
+   },
+   {
+    "pitch": 65,
+    "start": 4615,
+    "duration": 327,
+    "key": "V",
+    "degree": 4,
+    "octaveModifier": 0,
+    "sharp": false,
+    "sourceIndex": 11
+   },
+   {
+    "pitch": 64,
+    "start": 5035,
+    "duration": 327,
+    "key": "C",
+    "degree": 3,
+    "octaveModifier": 0,
+    "sharp": false,
+    "sourceIndex": 12
+   },
+   {
+    "pitch": 62,
+    "start": 5455,
+    "duration": 327,
+    "key": "X",
+    "degree": 2,
+    "octaveModifier": 0,
+    "sharp": false,
+    "sourceIndex": 13
+   },
+   {
+    "pitch": 60,
+    "start": 5874,
+    "duration": 327,
+    "key": "Z",
+    "degree": 1,
+    "octaveModifier": 0,
+    "sharp": false,
+    "sourceIndex": 14
+   }
+  ],
+  "unplayableCount": 0,
+  "cost": 2.2399999999999998,
+  "modifierChanges": 0
+ },
+ "bestTranspose": 0,
+ "keySequence": {
+  "actions": [
+   {
+    "time": 0,
+    "target": "key:z",
+    "down": true
+   },
+   {
+    "time": 309,
+    "target": "key:z",
+    "down": false
+   },
+   {
+    "time": 420,
+    "target": "key:x",
+    "down": true
+   },
+   {
+    "time": 729,
+    "target": "key:x",
+    "down": false
+   },
+   {
+    "time": 839,
+    "target": "key:c",
+    "down": true
+   },
+   {
+    "time": 1148,
+    "target": "key:c",
+    "down": false
+   },
+   {
+    "time": 1259,
+    "target": "key:v",
+    "down": true
+   },
+   {
+    "time": 1568,
+    "target": "key:v",
+    "down": false
+   },
+   {
+    "time": 1678,
+    "target": "key:b",
+    "down": true
+   },
+   {
+    "time": 1987,
+    "target": "key:b",
+    "down": false
+   },
+   {
+    "time": 2098,
+    "target": "key:n",
+    "down": true
+   },
+   {
+    "time": 2407,
+    "target": "key:n",
+    "down": false
+   },
+   {
+    "time": 2517,
+    "target": "key:m",
+    "down": true
+   },
+   {
+    "time": 2826,
+    "target": "key:m",
+    "down": false
+   },
+   {
+    "time": 2937,
+    "target": "key:comma",
+    "down": true
+   },
+   {
+    "time": 3246,
+    "target": "key:comma",
+    "down": false
+   },
+   {
+    "time": 3357,
+    "target": "key:m",
+    "down": true
+   },
+   {
+    "time": 3666,
+    "target": "key:m",
+    "down": false
+   },
+   {
+    "time": 3776,
+    "target": "key:n",
+    "down": true
+   },
+   {
+    "time": 4085,
+    "target": "key:n",
+    "down": false
+   },
+   {
+    "time": 4196,
+    "target": "key:b",
+    "down": true
+   },
+   {
+    "time": 4505,
+    "target": "key:b",
+    "down": false
+   },
+   {
+    "time": 4615,
+    "target": "key:v",
+    "down": true
+   },
+   {
+    "time": 4924,
+    "target": "key:v",
+    "down": false
+   },
+   {
+    "time": 5035,
+    "target": "key:c",
+    "down": true
+   },
+   {
+    "time": 5344,
+    "target": "key:c",
+    "down": false
+   },
+   {
+    "time": 5455,
+    "target": "key:x",
+    "down": true
+   },
+   {
+    "time": 5764,
+    "target": "key:x",
+    "down": false
+   },
+   {
+    "time": 5874,
+    "target": "key:z",
+    "down": true
+   },
+   {
+    "time": 6183,
+    "target": "key:z",
+    "down": false
+   }
+  ],
+  "durationMs": 6183,
+  "noteCount": 15,
+  "droppedChordNotes": 0,
+  "truncatedNotes": 0,
+  "modifierPresses": 0
+ }
+}

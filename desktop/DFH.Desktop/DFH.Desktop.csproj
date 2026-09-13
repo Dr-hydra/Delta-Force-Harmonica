@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>DFH.Desktop</RootNamespace>
+    <AssemblyName>DeltaForceHarmonica</AssemblyName>
+    <Product>三角洲口琴自动演奏器</Product>
+    <Description>打开本站导出的 MIDI 或曲库谱面，向《三角洲行动》发送口琴按键。</Description>
+    <!-- Simulated input is subject to UIPI: the game runs elevated, so must we. -->
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <!-- dotnet build -p:DfhNoAdmin=true: run without UAC for UI smoke tests; keys will not reach an elevated game. -->
+    <ApplicationManifest Condition="'$(DfhNoAdmin)' == 'true'">app.dev.manifest</ApplicationManifest>
+    <!-- ThemeMode (Fluent) is still marked experimental in .NET 9. -->
+    <NoWarn>$(NoWarn);WPF0001</NoWarn>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <InvariantGlobalization>false</InvariantGlobalization>
+    <DebugType>embedded</DebugType>
+    <SelfContained Condition="'$(SelfContained)' == ''">false</SelfContained>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DFH.Core\DFH.Core.csproj" />
+  </ItemGroup>
+
+  <!-- DryWetMidi ships a macOS native library next to the exe and the Core pdb leaks out of the bundle; neither belongs in a release folder. -->
+  <Target Name="DfhTidyPublish" AfterTargets="Publish">
+    <ItemGroup>
+      <DfhPublishClutter Include="$(PublishDir)**\*.dylib;$(PublishDir)**\*.pdb" />
+    </ItemGroup>
+    <Delete Files="@(DfhPublishClutter)" />
+  </Target>
+
+</Project>

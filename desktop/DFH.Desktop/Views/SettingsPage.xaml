@@ -1,0 +1,46 @@
+<UserControl x:Class="DFH.Desktop.Views.SettingsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:DFH.Desktop.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=vm:SettingsViewModel}">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="12">
+            <TextBlock Style="{StaticResource SectionTitle}" Text="热键" />
+            <TextBlock Style="{StaticResource FieldLabel}" Text="开始 / 停止" />
+            <ComboBox ItemsSource="{Binding HotkeyOptions}" SelectedItem="{Binding StartHotkey}" DisplayMemberPath="Label" />
+            <TextBlock Style="{StaticResource FieldLabel}" Text="仅停止" />
+            <ComboBox ItemsSource="{Binding HotkeyOptions}" SelectedItem="{Binding StopHotkey}" DisplayMemberPath="Label" />
+            <TextBlock Style="{StaticResource Muted}" Margin="0,6,0,0" Text="热键通过全局键盘钩子监听，游戏在前台时也有效，并且不会吞掉按键。" />
+
+            <TextBlock Style="{StaticResource SectionTitle}" Margin="0,22,0,8" Text="播放" />
+            <TextBlock Style="{StaticResource FieldLabel}" Text="开始前倒计时（秒）" />
+            <TextBox Text="{Binding CountdownSeconds, UpdateSourceTrigger=PropertyChanged}" />
+            <CheckBox Margin="0,12,0,0" IsChecked="{Binding StopWhenForegroundChanges}" Content="前台窗口切换时自动停止（防止按键发到别的程序）" />
+            <CheckBox Margin="0,8,0,0" IsChecked="{Binding MinimizeOnPlay}" Content="开始演奏时最小化本窗口" />
+
+            <TextBlock Style="{StaticResource SectionTitle}" Margin="0,22,0,8" Text="按键时序（毫秒）" />
+            <TextBlock Style="{StaticResource Muted}" Text="默认值与网页宏导出一致。游戏按帧采样输入，漏音时可以把三项都调大。" />
+            <TextBlock Style="{StaticResource FieldLabel}" Text="修饰键提前按下" />
+            <TextBox Text="{Binding ModifierLeadMs, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock Style="{StaticResource FieldLabel}" Text="音键提前松开（同音重触发间隔）" />
+            <TextBox Text="{Binding ReleaseGapMs, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock Style="{StaticResource FieldLabel}" Text="音键最短按住" />
+            <TextBox Text="{Binding MinNoteMs, UpdateSourceTrigger=PropertyChanged}" />
+
+            <TextBlock Style="{StaticResource SectionTitle}" Margin="0,22,0,8" Text="曲库" />
+            <TextBlock Style="{StaticResource FieldLabel}" Text="公开曲库地址" />
+            <TextBox Text="{Binding StorageBase, UpdateSourceTrigger=PropertyChanged}" />
+
+            <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                <Button MinWidth="110" Height="36" Content="保存" Command="{Binding SaveCommand}" FontWeight="SemiBold"
+                        Style="{DynamicResource AccentButtonStyle}" />
+                <Button MinWidth="110" Height="36" Margin="8,0,0,0" Content="恢复默认" Command="{Binding ResetCommand}" />
+                <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Text="{Binding Status}" />
+            </StackPanel>
+            <TextBlock Style="{StaticResource Muted}" Margin="0,10,0,0" Text="{Binding SettingsPath}" />
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

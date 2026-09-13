@@ -1,0 +1,35 @@
+name: Desktop
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "desktop/**"
+      - ".github/workflows/desktop.yml"
+  pull_request:
+    paths:
+      - "desktop/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+      - name: Test
+        run: dotnet test desktop/DFH.Core.Tests/DFH.Core.Tests.csproj -c Release
+      - name: Publish single-file exe
+        run: >
+          dotnet publish desktop/DFH.Desktop/DFH.Desktop.csproj -c Release -r win-x64 --self-contained
+          -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o desktop/publish
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DeltaForceHarmonica-win-x64
+          path: desktop/publish/DeltaForceHarmonica.exe

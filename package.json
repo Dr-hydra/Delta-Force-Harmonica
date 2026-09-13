@@ -9,7 +9,8 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "check": "tsc -b --pretty false",
-    "test": "vitest run"
+    "test": "vitest run",
+    "fixtures:desktop": "vite-node scripts/desktop-fixtures.ts"
   },
   "dependencies": {
     "@spotify/basic-pitch": "^1.0.1",
@@ -23,6 +24,7 @@
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
     "@vitejs/plugin-react": "^5.0.2",
+    "fengari": "^0.1.5",
     "typescript": "^5.9.2",
     "vite": "^7.1.3",
     "vitest": "^3.2.4"

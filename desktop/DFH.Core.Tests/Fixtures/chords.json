@@ -1,0 +1,309 @@
+{
+ "name": "chords",
+ "snapshotBase64Url": "c3HzCGZ8wMzAyPAglpGBhYWBi-EAuw0QOwgfYHdey36A0YPrAIvHN6YHbI4NzAuYXBuYOdz5Gpi9NvE-YDYHAA",
+ "midiBase64": "TVRoZAAAAAYAAQACAeBNVHJrAAAAjAD/AxVEZWx0YSBGb3JjZSBIYXJtb25pY2EA/wFcREZIUzEgYzNIekNHWjh3TXpBeVBBZ2xwR0JoWVdCaS1FQXV3MFFPd2dmWUhkZXkzNkEwWVByQUl2SE42WUhiSTROekF1WVhCdVlPZHo1R3BpOU52RS1ZRFlIQUEA/1EDB6EgAP9YBAQCGAgA/y8ATVRyawAAAEsA/wMJREZIIFNDT1JFAMAAE5BDX4c3gEMAAJBIX4J2gEgAAJBBX4MAgEEAAJBFX4IggEUAbpBKX4MAgEoAijKQN1+DYIA3AAD/LwA=",
+ "decoded": {
+  "ppq": 480,
+  "transpose": 0,
+  "tempos": [
+   {
+    "beat": 0,
+    "bpm": 120,
+    "time": 0
+   }
+  ],
+  "timeSignatures": [
+   {
+    "beat": 0,
+    "numerator": 4,
+    "denominator": 4
+   }
+  ],
+  "measureStarts": [],
+  "notes": [
+   {
+    "pitch": 60,
+    "start": 0,
+    "duration": 1000,
+    "beat": 0,
+    "durationBeats": 2
+   },
+   {
+    "pitch": 64,
+    "start": 0,
+    "duration": 1000,
+    "beat": 0,
+    "durationBeats": 2
+   },
+   {
+    "pitch": 67,
+    "start": 20,
+    "duration": 1000,
+    "beat": 0.03958333333333333,
+    "durationBeats": 2
+   },
+   {
+    "pitch": 72,
+    "start": 1000,
+    "duration": 200,
+    "beat": 2,
+    "durationBeats": 0.4
+   },
+   {
+    "pitch": 72,
+    "start": 1010,
+    "duration": 600,
+    "beat": 2.0208333333333335,
+    "durationBeats": 1.2
+   },
+   {
+    "pitch": 65,
+    "start": 1400,
+    "duration": 900,
+    "beat": 2.8,
+    "durationBeats": 1.8
+   },
+   {
+    "pitch": 69,
+    "start": 1800,
+    "duration": 300,
+    "beat": 3.6,
+    "durationBeats": 0.6
+   },
+   {
+    "pitch": 71,
+    "start": 2200,
+    "duration": 8,
+    "beat": 4.4,
+    "durationBeats": 0.016666666666666666
+   },
+   {
+    "pitch": 74,
+    "start": 2215,
+    "duration": 400,
+    "beat": 4.429166666666666,
+    "durationBeats": 0.8
+   },
+   {
+    "pitch": 55,
+    "start": 4000,
+    "duration": 500,
+    "beat": 8,
+    "durationBeats": 1
+   }
+  ]
+ },
+ "mono": {
+  "notes": [
+   {
+    "pitch": 67,
+    "start": 20,
+    "duration": 990,
+    "beat": 0.03958333333333333,
+    "durationBeats": 1.9812500000000002
+   },
+   {
+    "pitch": 72,
+    "start": 1010,
+    "duration": 390,
+    "beat": 2.0208333333333335,
+    "durationBeats": 0.7791666666666663
+   },
+   {
+    "pitch": 65,
+    "start": 1400,
+    "duration": 400,
+    "beat": 2.8,
+    "durationBeats": 0.8000000000000003
+   },
+   {
+    "pitch": 69,
+    "start": 1800,
+    "duration": 300,
+    "beat": 3.6,
+    "durationBeats": 0.6
+   },
+   {
+    "pitch": 74,
+    "start": 2215,
+    "duration": 400,
+    "beat": 4.429166666666666,
+    "durationBeats": 0.8
+   },
+   {
+    "pitch": 55,
+    "start": 4000,
+    "duration": 500,
+    "beat": 8,
+    "durationBeats": 1
+   }
+  ],
+  "sourceIndices": [
+   2,
+   4,
+   5,
+   6,
+   8,
+   9
+  ],
+  "collapsedChordNotes": 4,
+  "truncatedNotes": 3
+ },
+ "conversion": {
+  "notes": [
+   {
+    "pitch": 67,
+    "start": 20,
+    "duration": 990,
+    "key": "B",
+    "degree": 5,
+    "octaveModifier": 0,
+    "sharp": false,
+    "sourceIndex": 0
+   },
+   {
+    "pitch": 72,
+    "start": 1010,
+    "duration": 390,
+    "key": ",",
+    "degree": 1,
+    "octaveModifier": 0,
+    "sharp": false,
+    "sourceIndex": 1
+   },
+   {
+    "pitch": 65,
+    "start": 1400,
+    "duration": 400,
+    "key": "V",
+    "degree": 4,
+    "octaveModifier": 0,
+    "sharp": false,
+    "sourceIndex": 2
+   },
+   {
+    "pitch": 69,
+    "start": 1800,
+    "duration": 300,
+    "key": "N",
+    "degree": 6,
+    "octaveModifier": 0,
+    "sharp": false,
+    "sourceIndex": 3
+   },
+   {
+    "pitch": 74,
+    "start": 2215,
+    "duration": 400,
+    "key": "X",
+    "degree": 2,
+    "octaveModifier": 1,
+    "sharp": false,
+    "sourceIndex": 4
+   },
+   {
+    "pitch": 55,
+    "start": 4000,
+    "duration": 500,
+    "key": "B",
+    "degree": 5,
+    "octaveModifier": -1,
+    "sharp": false,
+    "sourceIndex": 5
+   }
+  ],
+  "unplayableCount": 0,
+  "cost": 10.500000000000002,
+  "modifierChanges": 2
+ },
+ "bestTranspose": -5,
+ "keySequence": {
+  "actions": [
+   {
+    "time": 20,
+    "target": "key:b",
+    "down": true
+   },
+   {
+    "time": 992,
+    "target": "key:b",
+    "down": false
+   },
+   {
+    "time": 1010,
+    "target": "key:comma",
+    "down": true
+   },
+   {
+    "time": 1382,
+    "target": "key:comma",
+    "down": false
+   },
+   {
+    "time": 1400,
+    "target": "key:v",
+    "down": true
+   },
+   {
+    "time": 1782,
+    "target": "key:v",
+    "down": false
+   },
+   {
+    "time": 1800,
+    "target": "key:n",
+    "down": true
+   },
+   {
+    "time": 2082,
+    "target": "key:n",
+    "down": false
+   },
+   {
+    "time": 2203,
+    "target": "mouse:right",
+    "down": true
+   },
+   {
+    "time": 2215,
+    "target": "key:x",
+    "down": true
+   },
+   {
+    "time": 2597,
+    "target": "key:x",
+    "down": false
+   },
+   {
+    "time": 3988,
+    "target": "mouse:right",
+    "down": false
+   },
+   {
+    "time": 3988,
+    "target": "mouse:left",
+    "down": true
+   },
+   {
+    "time": 4000,
+    "target": "key:b",
+    "down": true
+   },
+   {
+    "time": 4482,
+    "target": "key:b",
+    "down": false
+   },
+   {
+    "time": 4482,
+    "target": "mouse:left",
+    "down": false
+   }
+  ],
+  "durationMs": 4482,
+  "noteCount": 6,
+  "droppedChordNotes": 0,
+  "truncatedNotes": 0,
+  "modifierPresses": 2
+ }
+}

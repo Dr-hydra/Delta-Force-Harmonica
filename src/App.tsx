@@ -14,7 +14,8 @@ import { RailToggle, useRailCollapsed } from "./components/RailToggle";
 import { useScoreEdits } from "./score/useScoreEdits";
 import { moveNote, moveNotes, resizeNote } from "./score/editNotes";
 import type { NoteEvent, ParsedSong, TimeSignatureEvent } from "./music/types";
-import { aboutHref } from "./navigation";
+import { DEFAULT_SCORE_PPQ, type ScoreSnapshotInput } from "./persistence/scoreCodec";
+import { aboutHref, batchHref } from "./navigation";
 
 const DEMO_BPM = 143;
 const DEMO_SIGNATURES: TimeSignatureEvent[] = [{ beat: 0, numerator: 4, denominator: 4 }];
@@ -176,6 +177,17 @@ export default function App() {
     : song?.duration ?? 0;
   const timeSignatures = usingDemo ? DEMO_SIGNATURES : song?.timeSignatures ?? DEMO_SIGNATURES;
   const measureStarts = usingDemo ? DEMO_MEASURE_STARTS : song?.measureStarts ?? [];
+
+  // What the MIDI export embeds for the desktop player: the same collapsed
+  // notes and transpose the fingering ran on, with the source tempo map.
+  const exportSnapshot = useMemo<ScoreSnapshotInput>(() => ({
+    ppq: (!usingDemo && song?.ppq) || DEFAULT_SCORE_PPQ,
+    transpose,
+    tempos: !usingDemo && song?.tempos?.length ? song.tempos : [{ beat: 0, time: 0, bpm: bpm || 120 }],
+    timeSignatures,
+    measureStarts,
+    notes: mono.notes
+  }), [usingDemo, song, transpose, bpm, timeSignatures, measureStarts, mono.notes]);
   const formatLabel = sourceFormatLabel(song, usingDemo);
   const busyPercent = parseProgress ? Math.round(parseProgress.value * 100) : null;
   const audioStats = audioAnalysis?.stats;
@@ -192,6 +204,7 @@ export default function App() {
           <button className="active" title="乐谱转换"><i>01</i><span>乐谱转换</span></button>
           <button disabled title="云端乐谱"><i>02</i><span>云端乐谱</span><em>SOON</em></button>
           <button className="nav-available" title="关于项目" onClick={() => window.location.assign(aboutHref())}><i>03</i><span>关于</span></button>
+          <button className="nav-available" title="批量导出" onClick={() => window.location.assign(batchHref())}><i>04</i><span>批量导出</span></button>
         </nav>
         <RailToggle collapsed={rail.collapsed} onToggle={rail.toggle} />
         <div className="rail-bottom">
@@ -449,6 +462,7 @@ export default function App() {
           timeSignatures={timeSignatures}
           measureStarts={measureStarts}
           transpose={transpose}
+          snapshot={exportSnapshot}
         />
 
         <section className="assumption-strip">

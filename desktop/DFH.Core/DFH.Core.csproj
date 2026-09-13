@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <RootNamespace>DFH.Core</RootNamespace>
+    <Description>Score pipeline shared with the web app: DFHS1 codec, monophonic collapse, harmonica fingering, key sequence, library client.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Melanchall.DryWetMidi" Version="7.2.0" />
+  </ItemGroup>
+
+</Project>

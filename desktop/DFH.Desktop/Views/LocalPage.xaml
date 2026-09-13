@@ -1,0 +1,41 @@
+<UserControl x:Class="DFH.Desktop.Views.LocalPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:DFH.Desktop.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=vm:MainViewModel}">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="12">
+            <TextBlock Style="{StaticResource SectionTitle}" Text="打开本站导出的 MIDI" />
+            <TextBlock Style="{StaticResource Muted}"
+                       Text="只接受网页版转换器或曲库里「标准 MIDI .mid」按钮导出的文件。文件里带有谱面快照，桌面端据此还原出和网页完全一致的键位与修饰键。" />
+
+            <Button Margin="0,14,0,0" Height="44" HorizontalAlignment="Stretch" Command="{Binding OpenMidiCommand}" Content="选择 MIDI 文件…" FontWeight="SemiBold" />
+            <Border Margin="0,10,0,0" Padding="14" CornerRadius="6" BorderThickness="1" BorderBrush="{StaticResource DfhChipBorderBrush}">
+                <TextBlock Style="{StaticResource Muted}" TextAlignment="Center" Text="也可以把 .mid 文件直接拖到这个窗口里" />
+            </Border>
+
+            <StackPanel Visibility="{Binding HasDocument, Converter={StaticResource BoolToVisibility}}" Margin="0,18,0,0">
+                <TextBlock Style="{StaticResource SectionTitle}" Text="当前谱面" />
+                <TextBlock FontSize="16" FontWeight="SemiBold" Text="{Binding Title}" TextWrapping="Wrap" />
+                <TextBlock Style="{StaticResource Muted}" Margin="0,4,0,0" Text="{Binding SourceLabel}" />
+                <TextBlock Style="{StaticResource Muted}" Margin="0,4,0,0" Text="{Binding Score.Summary}" />
+                <TextBlock Margin="0,8,0,0" TextWrapping="Wrap" Foreground="{StaticResource DfhWarnBrush}"
+                           Visibility="{Binding IsLegacy, Converter={StaticResource BoolToVisibility}}"
+                           Text="旧版导出没有谱面快照，指法按音高重新推算。建议在网页上重新导出一次。" />
+            </StackPanel>
+
+            <TextBlock Style="{StaticResource SectionTitle}" Margin="0,22,0,8" Text="演奏前检查" />
+            <TextBlock Style="{StaticResource Muted}" Text="1. 游戏用窗口化或无边框窗口化，全屏独占收不到模拟按键。" />
+            <TextBlock Style="{StaticResource Muted}" Text="2. 前台输入法切到英文，中文输入法会截走按键。" />
+            <TextBlock Style="{StaticResource Muted}" Text="3. 本程序以管理员身份运行，否则按键到不了以管理员运行的游戏。" />
+            <TextBlock Style="{StaticResource Muted}" Text="4. 点开始后有倒计时，期间切回游戏并打开口琴；演奏中不要动 WASD，键盘按键冲突会漏音。" />
+
+            <Border Margin="0,18,0,0" Padding="12" CornerRadius="6" Background="#22D9534F">
+                <TextBlock TextWrapping="Wrap" Text="在线对局使用自动输入违反游戏协议，有封号风险。请只在练习、自定义房间等不影响他人的场景使用，后果自负。" />
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
