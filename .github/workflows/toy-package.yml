@@ -1,0 +1,61 @@
+name: Build Toy package
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "public/**"
+      - "scripts/**"
+      - "index.html"
+      - "package.json"
+      - "package-lock.json"
+      - "vite.config.*"
+      - "tsconfig*.json"
+      - ".github/workflows/toy-package.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    env:
+      # Public browser-visible endpoints. No CloudBase secret is stored here.
+      VITE_SCORE_STORAGE: https://656e-endfield-d3gdy9wg4afba9d16-1474357318.tcb.qcloud.la/harmonica
+      VITE_CLOUDBASE_API: https://endfield-d3gdy9wg4afba9d16-1474357318.ap-shanghai.app.tcloudbase.com/score
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install
+      - run: npm run check
+      - run: npm test
+      - run: npm run build
+      - name: Prepare Toy upload ZIP
+        run: |
+          find dist -type f -name '*.map' -delete
+          python - <<'PY'
+          from pathlib import Path
+          import zipfile
+
+          root = Path('dist')
+          target = Path('Delta-Force-Harmonica-Toy.zip')
+          with zipfile.ZipFile(target, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
+              for path in sorted(root.rglob('*')):
+                  if path.is_file():
+                      archive.write(path, path.relative_to(root).as_posix())
+          size = target.stat().st_size
+          print(f'Toy ZIP: {size / 1024 / 1024:.2f} MiB')
+          if size > 140 * 1024 * 1024:
+              raise SystemExit('Toy ZIP exceeds the 140 MiB package limit')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Delta-Force-Harmonica-Toy
+          path: Delta-Force-Harmonica-Toy.zip
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
