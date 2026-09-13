@@ -41,6 +41,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         OpenMidiCommand = new RelayCommand(OpenMidiDialog, () => !_player.IsBusy);
         StartCommand = new RelayCommand(Start, () => _document is { Notes.Count: > 0 } && !_player.IsBusy);
         StopCommand = new RelayCommand(Stop, () => _player.IsBusy);
+        OpenWebsiteCommand = new RelayCommand(() => Links.Open(Links.WebApp));
 
         _player.StateChanged += state => Post(() => OnPlayerState(state));
         _player.Message += message => Post(() => StatusMessage = message);
@@ -64,6 +65,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     public RelayCommand OpenMidiCommand { get; }
     public RelayCommand StartCommand { get; }
     public RelayCommand StopCommand { get; }
+    public RelayCommand OpenWebsiteCommand { get; }
 
     public string Title => _document?.Title ?? "未载入谱面";
     public bool HasDocument => _document != null;

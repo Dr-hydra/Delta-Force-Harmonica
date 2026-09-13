@@ -50,6 +50,8 @@ cd desktop && dotnet test
 
 提权窗口收不到资源管理器的 OLE 拖放，`DropFiles` 用 `ChangeWindowMessageFilterEx` 放行 `WM_DROPFILES` 实现拖文件。
 
+「打开网页版」按钮通过 `explorer.exe <url>` 打开链接：提权进程直接 ShellExecute 可能拉起一个带管理员权限的浏览器实例，交给已在运行的非提权资源管理器转发可以避免。地址常量在 `Services/Links.cs`。
+
 ## 构建与发布
 
 ```bash

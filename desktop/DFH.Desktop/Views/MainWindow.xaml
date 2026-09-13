@@ -54,14 +54,23 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    <StackPanel Grid.Row="0" Orientation="Horizontal">
-                        <TextBlock Text="{Binding Title}" FontSize="22" FontWeight="SemiBold" VerticalAlignment="Center" />
-                        <Border Margin="12,0,0,0" Padding="8,2" CornerRadius="4" VerticalAlignment="Center"
-                                Background="{StaticResource DfhWarnBrush}"
-                                Visibility="{Binding IsLegacy, Converter={StaticResource BoolToVisibility}}">
-                            <TextBlock Text="旧版导出" FontSize="12" Foreground="{StaticResource DfhAccentTextBrush}" />
-                        </Border>
-                    </StackPanel>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Orientation="Horizontal">
+                            <TextBlock Text="{Binding Title}" FontSize="22" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                            <Border Margin="12,0,0,0" Padding="8,2" CornerRadius="4" VerticalAlignment="Center"
+                                    Background="{StaticResource DfhWarnBrush}"
+                                    Visibility="{Binding IsLegacy, Converter={StaticResource BoolToVisibility}}">
+                                <TextBlock Text="旧版导出" FontSize="12" Foreground="{StaticResource DfhAccentTextBrush}" />
+                            </Border>
+                        </StackPanel>
+                        <Button Grid.Column="1" Margin="12,0,0,0" Padding="12,4" VerticalAlignment="Center"
+                                Command="{Binding OpenWebsiteCommand}" Content="打开网页版 ↗"
+                                ToolTip="在浏览器中打开网页版：转换、编辑、曲库与 MIDI 导出" />
+                    </Grid>
                     <TextBlock Grid.Row="1" Style="{StaticResource Muted}" Margin="0,4,0,10" Text="{Binding Score.Summary}" />
                     <views:ScoreView Grid.Row="2" DataContext="{Binding Score}" />
                 </Grid>
