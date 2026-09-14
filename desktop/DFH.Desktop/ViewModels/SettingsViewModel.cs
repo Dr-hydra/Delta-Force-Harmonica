@@ -101,7 +101,7 @@ public sealed class SettingsViewModel : ObservableObject
     {
         if (_draft.StartHotkey == _draft.StopHotkey)
         {
-            Status = "开始键和停止键不能相同";
+            Status = "开始 / 结束键和悬浮窗显示键不能相同";
             return;
         }
         try

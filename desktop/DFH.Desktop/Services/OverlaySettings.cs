@@ -12,6 +12,18 @@ public sealed class OverlaySettings
     public double Height { get; set; } = 460;
     public bool ManualMode { get; set; } = true;
     public bool ShowKeyLabels { get; set; } = true;
+    private double _backgroundTransparency = 25;
+    private double _flowSpeed = 1;
+    public double BackgroundTransparency
+    {
+        get => _backgroundTransparency;
+        set => _backgroundTransparency = Math.Clamp(double.IsFinite(value) ? value : 25, 0, 100);
+    }
+    public double FlowSpeed
+    {
+        get => _flowSpeed;
+        set => _flowSpeed = Math.Clamp(double.IsFinite(value) ? value : 1, 0.5, 3);
+    }
     public static string Path => System.IO.Path.Combine(System.IO.Path.GetDirectoryName(AppSettings.Path)!, "overlay.json");
 
     public static OverlaySettings Load()

@@ -15,6 +15,7 @@ public sealed class AppSettings
     public int CountdownSeconds { get; set; } = 3;
     /// <summary>Virtual key codes; F5 / F6 by default.</summary>
     public int StartHotkey { get; set; } = 0x74;
+    // Legacy JSON name retained for saved preferences; now toggles overlay visibility.
     public int StopHotkey { get; set; } = 0x75;
     /// <summary>A <see cref="TimingTiers"/> id, or <see cref="CustomTimingTier"/>. Unknown values fall back to the default tier.</summary>
     public string TimingTier { get; set; } = TimingTiers.Default.Id;

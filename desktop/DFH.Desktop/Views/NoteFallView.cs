@@ -20,6 +20,8 @@ public sealed class NoteFallView : FrameworkElement
     private double[] _prefixEnds = [];
     public double TimeMs { get; set; } = -LookAheadMs;
     public bool ShowKeyLabels { get; set; } = true;
+    public double FlowSpeed { get; set; } = 1;
+    public double BackgroundOpacity { get; set; } = 0.75;
 
     public void Load(IReadOnlyList<GameNote> notes)
     {
@@ -38,8 +40,11 @@ public sealed class NoteFallView : FrameworkElement
         if (width < 8 || height < 60) return;
         var lane = width / 8;
         var line = height - (ShowKeyLabels ? 48 : 8);
-        var scale = line / LookAheadMs;
+        var lookAhead = LookAheadMs / Math.Clamp(FlowSpeed, 0.5, 3);
+        var scale = line / lookAhead;
+        dc.PushOpacity(BackgroundOpacity);
         dc.DrawRectangle(TrackBackground, null, new Rect(0, 0, width, height));
+        dc.Pop();
         for (var i = 1; i < 8; i++) dc.DrawLine(new Pen(GridBrush, 1), new Point(i * lane, 0), new Point(i * lane, height));
         dc.DrawLine(new Pen(Brushes.White, 2), new Point(0, line), new Point(width, line));
 
@@ -53,7 +58,7 @@ public sealed class NoteFallView : FrameworkElement
             else high = mid;
         }
         dc.PushClip(new RectangleGeometry(new Rect(0, 0, width, line)));
-        for (var i = low; i < _notes.Count && _notes[i].Start <= TimeMs + LookAheadMs; i++)
+        for (var i = low; i < _notes.Count && _notes[i].Start <= TimeMs + lookAhead; i++)
         {
             var note = _notes[i];
             if (note.Start + note.Duration <= TimeMs) continue;

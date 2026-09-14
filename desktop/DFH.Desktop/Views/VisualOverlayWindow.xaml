@@ -5,11 +5,11 @@
         Title="口琴 · 可视化悬浮窗" WindowStyle="None" AllowsTransparency="True"
         Background="Transparent" Topmost="True" ShowActivated="False" ShowInTaskbar="False"
         ResizeMode="CanResizeWithGrip" MinWidth="440" MinHeight="260" Width="640" Height="460">
-    <Border Background="#C018252E" BorderBrush="#8295A9B6" BorderThickness="1" CornerRadius="9" Padding="10">
+    <Border x:Name="OverlayBackground" Background="#C018252E" BorderBrush="#8295A9B6" BorderThickness="1" CornerRadius="9" Padding="10">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/><RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/><RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <DockPanel Background="Transparent" MouseLeftButtonDown="DragHeader">
                 <Button DockPanel.Dock="Right" Content="×" Click="CloseOverlay" Padding="9,0" ToolTip="关闭悬浮窗"/>
@@ -23,8 +23,8 @@
                 <TextBlock Text="● ↑ 升调  " Foreground="#FFB969"/>
                 <TextBlock Text="▣ # 半音（粉边）" Foreground="#F58AE2"/>
             </WrapPanel>
-            <local:NoteFallView x:Name="NotesView" Grid.Row="2"/>
-            <TextBlock x:Name="Hint" Grid.Row="3" Margin="0,8,16,0" Foreground="#DEE8F0" FontSize="12" TextWrapping="Wrap"/>
+            <TextBlock x:Name="Hint" Grid.Row="2" Margin="0,0,0,8" Foreground="#DEE8F0" FontSize="12" TextWrapping="Wrap"/>
+            <local:NoteFallView x:Name="NotesView" Grid.Row="3"/>
             <Thumb x:Name="ResizeThumb" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Bottom"
                    Width="18" Height="18" Cursor="SizeNWSE" DragDelta="ResizeOverlay" ToolTip="拖动调整大小">
                 <Thumb.Template><ControlTemplate TargetType="Thumb"><TextBlock Text="◢" Foreground="#A8BAC7" Background="Transparent"/></ControlTemplate></Thumb.Template>

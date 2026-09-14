@@ -48,6 +48,7 @@ public partial class VisualOverlayWindow : Window
         _hotkeyHint = hotkeyHint;
         KeyLabelsToggle.IsChecked = settings.ShowKeyLabels;
         NotesView.ShowKeyLabels = settings.ShowKeyLabels;
+        ApplyAppearance();
         Width = FiniteClamp(settings.Width, 440, Math.Max(440, SystemParameters.VirtualScreenWidth), 640);
         Height = FiniteClamp(settings.Height, 260, Math.Max(260, SystemParameters.VirtualScreenHeight), 460);
         Left = FiniteClamp(settings.Left, SystemParameters.VirtualScreenLeft, SystemParameters.VirtualScreenLeft + SystemParameters.VirtualScreenWidth - Width, SystemParameters.WorkArea.Left);
@@ -79,11 +80,21 @@ public partial class VisualOverlayWindow : Window
 
     public void Reload() { NotesView.Load(_notes()); UpdateHeading(); }
 
+    public void ApplyAppearance()
+    {
+        var opacity = 1 - _settings.BackgroundTransparency / 100;
+        OverlayBackground.Background = new SolidColorBrush(Color.FromArgb((byte)Math.Round(255 * opacity), 24, 37, 46));
+        NotesView.BackgroundOpacity = opacity;
+        NotesView.FlowSpeed = _settings.FlowSpeed;
+        NotesView.InvalidateVisual();
+    }
+
     private void UpdateHeading() => Heading.Text = (_manualMode() ? "手动可视化" : "自动演奏 · 可视化")
         + (_locked ? " · 已锁定" : " · 拖动这里移动");
 
     private void RenderFrame(object? sender, EventArgs e)
     {
+        if (!IsVisible) return;
         if (_locked != _isBusy()) SetInputMode(_isBusy());
         var elapsed = _elapsed();
         NotesView.TimeMs = elapsed;

@@ -107,7 +107,7 @@
                                          IsChecked="{Binding PlaybackMode, Converter={StaticResource TabSelected}, ConverterParameter=1, Mode=TwoWay}"/>
                         </UniformGrid>
                     </Border>
-                    <Button Content="打开悬浮窗" Command="{Binding ShowOverlayCommand}" Margin="0,0,0,8" Padding="8,3"/>
+                    <Button Content="隐藏 / 显示悬浮窗" Command="{Binding ShowOverlayCommand}" Margin="0,0,0,8" Padding="8,3"/>
                     <StackPanel Orientation="Horizontal">
                     <Button MinWidth="150" Height="40" Padding="14,0" Command="{Binding StartCommand}" Content="{Binding StartButtonLabel}"
                             Style="{DynamicResource AccentButtonStyle}" FontWeight="SemiBold" />
@@ -125,6 +125,21 @@
                 </Grid>
 
                 <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,8,0,0">
+                    <Grid Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                        <StackPanel Margin="0,0,16,0">
+                            <TextBlock Style="{StaticResource Muted}" Text="{Binding OverlayBackgroundTransparency, StringFormat=悬浮窗背景透明度 · {0:0}%}"/>
+                            <Slider Minimum="0" Maximum="100" TickFrequency="1" IsSnapToTickEnabled="True"
+                                    Value="{Binding OverlayBackgroundTransparency, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    AutomationProperties.Name="悬浮窗背景透明度" ToolTip="0% 为不透明，100% 为完全透明；音符和文字保持清晰"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Style="{StaticResource Muted}" Text="{Binding OverlayFlowSpeed, StringFormat=音符流速 · {0:0.0}×}"/>
+                            <Slider Minimum="0.5" Maximum="3" TickFrequency="0.1" IsSnapToTickEnabled="True"
+                                    Value="{Binding OverlayFlowSpeed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    AutomationProperties.Name="音符流速" ToolTip="调整音符下落速度，保持歌曲节奏和到线时刻不变"/>
+                        </StackPanel>
+                    </Grid>
                     <TextBlock Text="{Binding PreflightLine}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock" BasedOn="{StaticResource Muted}">

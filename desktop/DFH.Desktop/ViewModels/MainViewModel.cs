@@ -49,7 +49,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         OpenMidiCommand = new RelayCommand(OpenMidiDialog, () => !IsPlaying);
         StartCommand = new RelayCommand(Start, () => _document is { Notes.Count: > 0 } && !IsPlaying);
         StopCommand = new RelayCommand(Stop, () => IsPlaying);
-        ShowOverlayCommand = new RelayCommand(ShowOverlay);
+        ShowOverlayCommand = new RelayCommand(ToggleOverlay);
         OpenWebsiteCommand = new RelayCommand(() => Links.Open(Links.WebApp));
 
         _player.StateChanged += state => Post(() => OnPlayerState(state));
@@ -107,6 +107,36 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         catch (Exception reason) { StatusMessage = $"悬浮窗设置保存失败：{reason.Message}"; }
     }
 
+    public double OverlayBackgroundTransparency
+    {
+        get => _overlaySettings.BackgroundTransparency;
+        set
+        {
+            _overlaySettings.BackgroundTransparency = value;
+            Raise();
+            _overlay?.ApplyAppearance();
+            SaveOverlaySettings();
+        }
+    }
+
+    public double OverlayFlowSpeed
+    {
+        get => _overlaySettings.FlowSpeed;
+        set
+        {
+            _overlaySettings.FlowSpeed = value;
+            Raise();
+            _overlay?.ApplyAppearance();
+            SaveOverlaySettings();
+        }
+    }
+
+    private void ToggleOverlay()
+    {
+        if (_overlay?.IsVisible == true) _overlay.Hide();
+        else ShowOverlay();
+    }
+
     private void ShowOverlay()
     {
         if (_overlay != null) { _overlay.Show(); return; }
@@ -142,7 +172,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     }
 
     public string StartButtonLabel => $"{(ManualMode ? "开始下落" : "开始演奏")} ({GlobalHotkeys.KeyName(_settings.StartHotkey)})";
-    public string StopButtonLabel => $"停止 ({GlobalHotkeys.KeyName(_settings.StopHotkey)})";
+    public string StopButtonLabel => $"停止 ({GlobalHotkeys.KeyName(_settings.StartHotkey)})";
 
     private void Post(Action action)
     {
@@ -265,7 +295,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     {
         if (vk == _settings.StopHotkey)
         {
-            if (IsPlaying) Stop();
+            ToggleOverlay();
         }
         else if (vk == _settings.StartHotkey)
         {
@@ -369,7 +399,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
 
     private void UpdateHotkeyHint()
     {
-        HotkeyHint = $"{GlobalHotkeys.KeyName(_settings.StartHotkey)} 开始 / 停止 · {GlobalHotkeys.KeyName(_settings.StopHotkey)} 停止 · 游戏内也能按";
+        HotkeyHint = $"{GlobalHotkeys.KeyName(_settings.StartHotkey)} 开始 / 结束 · {GlobalHotkeys.KeyName(_settings.StopHotkey)} 隐藏 / 显示悬浮窗 · 游戏内也能按";
         Raise(nameof(StartButtonLabel));
         Raise(nameof(StopButtonLabel));
     }

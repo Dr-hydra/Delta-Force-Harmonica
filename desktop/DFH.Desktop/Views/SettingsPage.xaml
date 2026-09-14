@@ -11,7 +11,7 @@
             <TextBlock Style="{StaticResource SectionTitle}" Text="热键" />
             <TextBlock Style="{StaticResource FieldLabel}" Text="开始 / 停止" />
             <ComboBox ItemsSource="{Binding HotkeyOptions}" SelectedItem="{Binding StartHotkey}" DisplayMemberPath="Label" />
-            <TextBlock Style="{StaticResource FieldLabel}" Text="仅停止" />
+            <TextBlock Style="{StaticResource FieldLabel}" Text="隐藏 / 显示悬浮窗" />
             <ComboBox ItemsSource="{Binding HotkeyOptions}" SelectedItem="{Binding StopHotkey}" DisplayMemberPath="Label" />
             <TextBlock Style="{StaticResource Muted}" Margin="0,6,0,0" Text="热键通过全局键盘钩子监听，游戏在前台时也有效，并且不会吞掉按键。" />
 
