@@ -13,6 +13,9 @@ public sealed class GlobalHotkeys : IDisposable
     private const int WH_KEYBOARD_LL = 13;
     private const int WM_KEYDOWN = 0x0100;
     private const int WM_SYSKEYDOWN = 0x0104;
+    private const int WM_KEYUP = 0x0101;
+    private const int WM_SYSKEYUP = 0x0105;
+    private readonly HashSet<uint> _heldKeys = [];
     private const uint WM_QUIT = 0x0012;
     private const uint LLKHF_INJECTED = 0x10;
 
@@ -92,13 +95,17 @@ public sealed class GlobalHotkeys : IDisposable
 
     private IntPtr Callback(int nCode, IntPtr wParam, IntPtr lParam)
     {
-        if (nCode >= 0 && (wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN))
+        if (nCode >= 0 && (wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN || wParam == WM_KEYUP || wParam == WM_SYSKEYUP))
         {
             var data = Marshal.PtrToStructure<KBDLLHOOKSTRUCT>(lParam);
             if ((data.flags & LLKHF_INJECTED) == 0)
             {
-                var handler = KeyDown;
-                if (handler != null) ThreadPool.QueueUserWorkItem(_ => handler((int)data.vkCode));
+                if (wParam == WM_KEYUP || wParam == WM_SYSKEYUP) _heldKeys.Remove(data.vkCode);
+                else if (_heldKeys.Add(data.vkCode))
+                {
+                    var handler = KeyDown;
+                    if (handler != null) ThreadPool.QueueUserWorkItem(_ => handler((int)data.vkCode));
+                }
             }
         }
         return CallNextHookEx(_hook, nCode, wParam, lParam);

@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <Deterministic>true</Deterministic>
-    <Version>0.1.1</Version>
+    <Version>0.2.0</Version>
     <Authors>Dr-hydra</Authors>
     <Product>Delta Force Harmonica Desktop</Product>
   </PropertyGroup>

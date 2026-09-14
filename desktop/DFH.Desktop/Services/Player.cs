@@ -42,6 +42,7 @@ public sealed class Player : IDisposable
     private volatile PlayerState _state = PlayerState.Idle;
     private double _elapsedMs;
     private double _durationMs;
+    private double _countdownElapsedMs;
 
     public event Action<PlayerState>? StateChanged;
     /// <summary>Index of the game note whose key just went down.</summary>
@@ -51,6 +52,7 @@ public sealed class Player : IDisposable
 
     public PlayerState State => _state;
     public double ElapsedMs => Volatile.Read(ref _elapsedMs);
+    public double VisualElapsedMs => State == PlayerState.Countdown ? Volatile.Read(ref _countdownElapsedMs) : ElapsedMs;
     public double DurationMs => _durationMs;
     public bool IsBusy => _state != PlayerState.Idle;
 
@@ -62,6 +64,7 @@ public sealed class Player : IDisposable
             _stop.Reset();
             _elapsedMs = 0;
             _durationMs = sequence.DurationMs;
+            _countdownElapsedMs = -Math.Max(0, options.CountdownSeconds) * 1000d;
             _thread = new Thread(() => Worker(sequence, options))
             {
                 IsBackground = true,
@@ -90,13 +93,19 @@ public sealed class Player : IDisposable
         try
         {
             SetState(PlayerState.Countdown);
+            var countdownClock = Stopwatch.StartNew();
             for (var remaining = options.CountdownSeconds; remaining > 0; remaining--)
             {
                 Message?.Invoke($"{remaining} 秒后开始，请切换到游戏窗口");
-                if (_stop.Wait(1000))
+                var deadline = (options.CountdownSeconds - remaining + 1) * 1000d;
+                while (countdownClock.Elapsed.TotalMilliseconds < deadline)
                 {
-                    stoppedEarly = true;
-                    return;
+                    Volatile.Write(ref _countdownElapsedMs, countdownClock.Elapsed.TotalMilliseconds - options.CountdownSeconds * 1000d);
+                    if (_stop.Wait(10))
+                    {
+                        stoppedEarly = true;
+                        return;
+                    }
                 }
             }
 

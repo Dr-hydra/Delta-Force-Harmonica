@@ -6,8 +6,8 @@
     <UseWPF>true</UseWPF>
     <RootNamespace>DFH.Desktop</RootNamespace>
     <AssemblyName>DeltaForceHarmonica</AssemblyName>
-    <Product>三角洲口琴自动演奏器</Product>
-    <Description>打开本站导出的 MIDI 或曲库谱面，向《三角洲行动》发送口琴按键。</Description>
+    <Product>三角洲口琴自动演奏 / 可视化演奏器</Product>
+    <Description>打开本站导出的 MIDI 或曲库谱面，自动演奏或通过下落音符悬浮窗手动演奏。</Description>
     <!-- Simulated input is subject to UIPI: the game runs elevated, so must we. -->
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <!-- dotnet build -p:DfhNoAdmin=true: run without UAC for UI smoke tests; keys will not reach an elevated game. -->

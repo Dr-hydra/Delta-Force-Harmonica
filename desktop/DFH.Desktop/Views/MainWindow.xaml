@@ -7,7 +7,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
-        Title="三角洲口琴自动演奏器"
+        Title="三角洲口琴 · 自动演奏 / 手动可视化"
         Width="1180" Height="760" MinWidth="900" MinHeight="560"
         WindowStartupLocation="CenterScreen">
     <Grid>
@@ -96,10 +96,23 @@
                     <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Text="{Binding StatusMessage}" TextTrimming="CharacterEllipsis" MaxWidth="700" />
                 </StackPanel>
 
-                <StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0,0,0">
+                <StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" VerticalAlignment="Center" Margin="16,0,0,0">
+                    <Border BorderBrush="{StaticResource DfhChipBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="4" Margin="0,0,0,8">
+                        <UniformGrid Columns="2" IsEnabled="{Binding CanChangeMode}">
+                            <RadioButton Content="手动演奏" GroupName="playbackMode" Style="{StaticResource NavButton}" Margin="0,0,3,0"
+                                         ToolTip="仅显示下落音符；开始时自动打开悬浮窗"
+                                         IsChecked="{Binding PlaybackMode, Converter={StaticResource TabSelected}, ConverterParameter=0, Mode=TwoWay}"/>
+                            <RadioButton Content="自动演奏" GroupName="playbackMode" Style="{StaticResource NavButton}" Margin="3,0,0,0"
+                                         ToolTip="自动发送按键；也可同时打开悬浮窗"
+                                         IsChecked="{Binding PlaybackMode, Converter={StaticResource TabSelected}, ConverterParameter=1, Mode=TwoWay}"/>
+                        </UniformGrid>
+                    </Border>
+                    <Button Content="打开悬浮窗" Command="{Binding ShowOverlayCommand}" Margin="0,0,0,8" Padding="8,3"/>
+                    <StackPanel Orientation="Horizontal">
                     <Button MinWidth="150" Height="40" Padding="14,0" Command="{Binding StartCommand}" Content="{Binding StartButtonLabel}"
                             Style="{DynamicResource AccentButtonStyle}" FontWeight="SemiBold" />
                     <Button MinWidth="110" Height="40" Padding="14,0" Margin="8,0,0,0" Command="{Binding StopCommand}" Content="{Binding StopButtonLabel}" />
+                    </StackPanel>
                 </StackPanel>
 
                 <Grid Grid.Row="1" Grid.Column="0" Margin="0,10,0,0">
