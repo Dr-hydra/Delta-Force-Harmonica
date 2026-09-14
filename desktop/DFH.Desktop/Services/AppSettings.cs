@@ -25,6 +25,10 @@ public sealed class AppSettings
     public bool StopWhenForegroundChanges { get; set; } = true;
     public bool MinimizeOnPlay { get; set; } = false;
     public string LastMidiDirectory { get; set; } = "";
+    public string LocalLibraryDirectory { get; set; } = DefaultLocalLibraryDirectory;
+
+    public static string DefaultLocalLibraryDirectory => System.IO.Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.MyMusic), "Delta Force Harmonica");
 
     public bool IsCustomTiming => TimingTier == CustomTimingTier;
 

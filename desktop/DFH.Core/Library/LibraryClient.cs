@@ -36,7 +36,7 @@ public sealed record LibraryEntry(
     public override string ToString() => Title;
 }
 
-public sealed record PublicScore(LibraryEntry Entry, ScoreSnapshot Snapshot);
+public sealed record PublicScore(LibraryEntry Entry, ScoreSnapshot Snapshot, string SnapshotBase64Url);
 
 public sealed record LibraryIndex(int Version, int Count, long UpdatedAt, IReadOnlyDictionary<string, int> Shards);
 
@@ -198,7 +198,7 @@ public sealed partial class LibraryClient(HttpClient http, string storageBase)
             Num(Prop("l")),
             (int)Num(Prop("n")),
             (long)Num(Prop("m")));
-        return new PublicScore(entry, snapshot);
+        return new PublicScore(entry, snapshot, payload);
     }
 
     /// <summary>Same substring search as the web: title, composer, uploader and tags, all lower-cased.</summary>

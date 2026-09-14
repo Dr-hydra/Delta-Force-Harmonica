@@ -87,6 +87,8 @@ public sealed class SettingsViewModel : ObservableObject
 
     public string SettingsPath => AppSettings.Path;
 
+    public void SetLocalLibraryDirectory(string directory) => _draft.LocalLibraryDirectory = directory;
+
     private void RaiseTiming()
     {
         foreach (var name in new[] { nameof(SelectedTimingTier), nameof(IsCustomTiming), nameof(ModifierLeadMs), nameof(ReleaseGapMs), nameof(MinNoteMs) })

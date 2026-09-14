@@ -35,7 +35,8 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         _settings = AppSettings.Load();
 
         Score = new ScoreViewModel();
-        Library = new LibraryViewModel(() => _settings.StorageBase, OpenPublicScoreAsync);
+        LocalLibrary = new LocalLibraryViewModel(dispatcher, _settings.LocalLibraryDirectory, LoadFile, SaveLocalLibraryDirectory);
+        Library = new LibraryViewModel(() => _settings.StorageBase, () => _settings.LocalLibraryDirectory, LocalLibrary.Refresh, OpenPublicScoreAsync);
         Settings = new SettingsViewModel(_settings, ApplySettings);
 
         OpenMidiCommand = new RelayCommand(OpenMidiDialog, () => !_player.IsBusy);
@@ -59,6 +60,7 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     }
 
     public ScoreViewModel Score { get; }
+    public LocalLibraryViewModel LocalLibrary { get; }
     public LibraryViewModel Library { get; }
     public SettingsViewModel Settings { get; }
 
@@ -252,12 +254,21 @@ public sealed class MainViewModel : ObservableObject, IDisposable
     private void ApplySettings(AppSettings settings)
     {
         _settings = settings;
+        LocalLibrary.SetDirectory(settings.LocalLibraryDirectory);
         UpdateHotkeyHint();
         if (_document != null && !_player.IsBusy)
         {
             SetDocument(_document.WithOptions(settings.ToKeySequenceOptions()));
             StatusMessage = "设置已生效，按键时序已按新参数重新生成。";
         }
+    }
+
+    private void SaveLocalLibraryDirectory(string directory)
+    {
+        _settings.LocalLibraryDirectory = directory;
+        Settings.SetLocalLibraryDirectory(directory);
+        try { _settings.Save(); }
+        catch (Exception reason) { StatusMessage = $"曲库目录已切换，但保存设置失败：{reason.Message}"; }
     }
 
     private void UpdateHotkeyHint()
@@ -272,5 +283,6 @@ public sealed class MainViewModel : ObservableObject, IDisposable
         _ticker.Stop();
         _player.Dispose();
         _hotkeys.Dispose();
+        LocalLibrary.Dispose();
     }
 }

@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.IO;
 
 namespace DFH.Desktop.Services;
 
@@ -22,5 +23,17 @@ public static class Links
         {
             Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
         }
+    }
+
+    /// <summary>
+    /// Ask the existing Windows shell to open a directory. Explorer brokers the
+    /// request back to the normal desktop shell even though this app is elevated.
+    /// </summary>
+    public static void OpenFolder(string directory)
+    {
+        Directory.CreateDirectory(directory);
+        var start = new ProcessStartInfo("explorer.exe") { UseShellExecute = false };
+        start.ArgumentList.Add(directory);
+        Process.Start(start);
     }
 }

@@ -1,6 +1,9 @@
 using System.Net.Http;
 using System.Collections.ObjectModel;
+using System.IO;
+using DFH.Core;
 using DFH.Core.Library;
+using DFH.Core.Midi;
 using DFH.Desktop.Infrastructure;
 
 namespace DFH.Desktop.ViewModels;
@@ -9,6 +12,8 @@ namespace DFH.Desktop.ViewModels;
 public sealed class LibraryViewModel : ObservableObject
 {
     private readonly Func<string> _storageBase;
+    private readonly Func<string> _localLibraryDirectory;
+    private readonly Action _localLibraryChanged;
     private readonly Func<PublicScore, Task> _open;
     private readonly HttpClient _http = new() { Timeout = TimeSpan.FromSeconds(15) };
     private List<LibraryEntry> _all = [];
@@ -18,12 +23,15 @@ public sealed class LibraryViewModel : ObservableObject
     private bool _busy;
     private LibraryEntry? _selected;
 
-    public LibraryViewModel(Func<string> storageBase, Func<PublicScore, Task> open)
+    public LibraryViewModel(Func<string> storageBase, Func<string> localLibraryDirectory, Action localLibraryChanged, Func<PublicScore, Task> open)
     {
         _storageBase = storageBase;
+        _localLibraryDirectory = localLibraryDirectory;
+        _localLibraryChanged = localLibraryChanged;
         _open = open;
         RefreshCommand = new RelayCommand(() => _ = RefreshAsync(), () => !Busy);
         OpenSelectedCommand = new RelayCommand(() => _ = OpenAsync(Selected), () => Selected != null && !Busy);
+        DownloadSelectedCommand = new RelayCommand(() => _ = DownloadAsync(Selected), () => Selected != null && !Busy);
         OpenShortIdCommand = new RelayCommand(() => _ = OpenShortIdAsync(), () => !Busy && ShortId.Trim().Length > 0);
     }
 
@@ -31,6 +39,7 @@ public sealed class LibraryViewModel : ObservableObject
 
     public RelayCommand RefreshCommand { get; }
     public RelayCommand OpenSelectedCommand { get; }
+    public RelayCommand DownloadSelectedCommand { get; }
     public RelayCommand OpenShortIdCommand { get; }
 
     public string Query
@@ -65,6 +74,7 @@ public sealed class LibraryViewModel : ObservableObject
             if (!Set(ref _busy, value)) return;
             RefreshCommand.RaiseCanExecuteChanged();
             OpenSelectedCommand.RaiseCanExecuteChanged();
+            DownloadSelectedCommand.RaiseCanExecuteChanged();
             OpenShortIdCommand.RaiseCanExecuteChanged();
         }
     }
@@ -74,7 +84,11 @@ public sealed class LibraryViewModel : ObservableObject
         get => _selected;
         set
         {
-            if (Set(ref _selected, value)) OpenSelectedCommand.RaiseCanExecuteChanged();
+            if (Set(ref _selected, value))
+            {
+                OpenSelectedCommand.RaiseCanExecuteChanged();
+                DownloadSelectedCommand.RaiseCanExecuteChanged();
+            }
         }
     }
 
@@ -121,6 +135,54 @@ public sealed class LibraryViewModel : ObservableObject
     {
         if (entry == null || Busy) return;
         await OpenIdAsync(entry.Id, entry.Title);
+    }
+
+    public async Task DownloadAsync(LibraryEntry? entry)
+    {
+        if (entry == null || Busy) return;
+        Busy = true;
+        Status = $"正在下载「{entry.Title}」…";
+        try
+        {
+            var score = await Client().GetPublicScoreAsync(entry.Id);
+            var directory = _localLibraryDirectory();
+            Directory.CreateDirectory(directory);
+            var path = AvailablePath(directory, SafeFileName(score.Entry.Title));
+            var document = ScoreDocument.Build(score.Entry.Title, $"library:{score.Entry.Id}", score.Snapshot);
+            await using (var output = new FileStream(path, FileMode.CreateNew, FileAccess.Write, FileShare.None, 81920, true))
+            {
+                DfhMidiWriter.Write(output, document.Notes, score.Snapshot.Bpm, score.SnapshotBase64Url);
+                await output.FlushAsync();
+            }
+            _localLibraryChanged();
+            Status = $"已下载到本地曲库：{Path.GetFileName(path)}";
+        }
+        catch (Exception reason)
+        {
+            Status = $"下载失败：{reason.Message}";
+        }
+        finally
+        {
+            Busy = false;
+        }
+    }
+
+    private static string SafeFileName(string title)
+    {
+        var invalid = Path.GetInvalidFileNameChars();
+        var name = new string(title.Trim().Select(character => invalid.Contains(character) ? '_' : character).ToArray()).TrimEnd('.', ' ');
+        if (name.Length == 0) name = "曲谱";
+        return name.Length > 100 ? name[..100] : name;
+    }
+
+    private static string AvailablePath(string directory, string name)
+    {
+        for (var index = 1; ; index++)
+        {
+            var suffix = index == 1 ? "" : $" ({index})";
+            var path = Path.Combine(directory, name + suffix + ".mid");
+            if (!File.Exists(path)) return path;
+        }
     }
 
     private async Task OpenShortIdAsync()

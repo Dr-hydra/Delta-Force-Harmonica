@@ -182,6 +182,23 @@ public class FixtureTests
     }
 
     [Fact]
+    public void Desktop_writer_produces_a_snapshot_midi_the_reader_accepts()
+    {
+        var fixture = Load("scale");
+        var snapshot = ScoreCodec.DecodeBase64Url(fixture.SnapshotBase64Url);
+        var document = ScoreDocument.Build("scale", "fixture", snapshot);
+        using var stream = new MemoryStream();
+
+        DfhMidiWriter.Write(stream, document.Notes, snapshot.Bpm, fixture.SnapshotBase64Url);
+        stream.Position = 0;
+        var reopened = DfhMidiReader.Read(stream, "scale");
+
+        Assert.False(reopened.Legacy);
+        Assert.Equal(snapshot.Notes.Count, reopened.Snapshot.Notes.Count);
+        Assert.Equal(snapshot.Transpose, reopened.Snapshot.Transpose);
+    }
+
+    [Fact]
     public void Measures_cover_every_note_once()
     {
         var fixture = Load("tempo-map");

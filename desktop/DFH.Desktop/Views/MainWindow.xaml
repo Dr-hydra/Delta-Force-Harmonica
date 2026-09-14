@@ -28,7 +28,7 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
-                    <RadioButton Style="{StaticResource NavButton}" Content="本地 MIDI" GroupName="nav"
+                    <RadioButton Style="{StaticResource NavButton}" Content="本地曲库" GroupName="nav"
                                  IsChecked="{Binding SelectedTab, Converter={StaticResource TabSelected}, ConverterParameter=0, Mode=TwoWay}" />
                     <RadioButton Style="{StaticResource NavButton}" Content="曲库" GroupName="nav"
                                  IsChecked="{Binding SelectedTab, Converter={StaticResource TabSelected}, ConverterParameter=1, Mode=TwoWay}" />
