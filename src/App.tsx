@@ -5,6 +5,8 @@ import { AUDIO_PRESETS, type AudioTranscriptionPreset } from "./audio/presets";
 import { quantizeToGrid } from "./audio/beats";
 import { enforceMonophonic } from "./music/monophonic";
 import { extractSmartMelody } from "./music/smartMelody";
+import { useOpenSourceMelody } from "./music/useOpenSourceMelody";
+import { selectProbableMelody } from "./music/selectMelody";
 import { findBestTranspose, optimizeHarmonica } from "./harmonica/optimizer";
 import { MAPPING_ASSUMPTIONS } from "./harmonica/mapping";
 import EditPanel from "./components/EditPanel";
@@ -12,7 +14,7 @@ import ExportPanel from "./components/ExportPanel";
 import { ScoreWorkspace } from "./components/ScoreWorkspace";
 import { RailToggle, useRailCollapsed } from "./components/RailToggle";
 import { useScoreEdits } from "./score/useScoreEdits";
-import { moveNote, moveNotes, resizeNote } from "./score/editNotes";
+import { insertNoteAt, moveNote, moveNotes, resizeNote } from "./score/editNotes";
 import type { NoteEvent, ParsedSong, TimeSignatureEvent } from "./music/types";
 import { DEFAULT_SCORE_PPQ, type ScoreSnapshotInput } from "./persistence/scoreCodec";
 import { aboutHref, batchHref } from "./navigation";
@@ -33,7 +35,7 @@ const demoNotes: NoteEvent[] = [60, 62, 64, 65, 67, 69, 71, 72, 71, 69, 67, 65, 
 // The harmonica sounds one note at a time, so every path ends in enforceMonophonic.
 // That makes a separate "skyline / highest note" mode meaningless: it is exactly
 // what enforcement already does to the untouched note list.
-type MelodyMode = "original" | "smart";
+type MelodyMode = "original" | "smart" | "symbolic";
 type AudioStage = "raw" | "clean" | "smart";
 
 function formatDuration(ms: number) {
@@ -59,6 +61,7 @@ export default function App() {
   const [trackId, setTrackId] = useState("");
   const [transpose, setTranspose] = useState(0);
   const [melodyMode, setMelodyMode] = useState<MelodyMode>("original");
+  const [melodyThreshold, setMelodyThreshold] = useState(0.35);
   const [audioPreset, setAudioPreset] = useState<AudioTranscriptionPreset>("balanced");
   const [audioStage, setAudioStage] = useState<AudioStage>("smart");
   const [quantizeDivisions, setQuantizeDivisions] = useState(2);
@@ -77,9 +80,12 @@ export default function App() {
   const isAudio = !usingDemo && song?.sourceFormat === "audio";
   const audioAnalysis = song?.audioAnalysis;
   const baseNotes = usingDemo ? demoNotes : selectedTrack?.notes ?? [];
-  const bpm = usingDemo ? DEMO_BPM : song?.bpm ?? 0;
+  const baseBpm = usingDemo ? DEMO_BPM : song?.bpm ?? 0;
 
   const beatGrid = audioAnalysis?.beatGrid;
+  const openSource = useOpenSourceMelody(baseNotes, baseBpm,
+    !isAudio && melodyMode === "symbolic" ? melodyMode : null);
+
 
   const audioStageNotes = useMemo(() => {
     if (!isAudio || !audioAnalysis) return [];
@@ -87,16 +93,18 @@ export default function App() {
       ? audioAnalysis.rawNotes
       : audioStage === "clean"
         ? audioAnalysis.cleanedNotes
-        : extractSmartMelody(audioAnalysis.cleanedNotes);
+        : extractSmartMelody(audioAnalysis.cleanedNotes, { bpm: beatGrid?.bpm ?? baseBpm });
     if (!beatGrid || quantizeDivisions < 1) return source;
     return quantizeToGrid(source, beatGrid, quantizeDivisions);
-  }, [isAudio, audioAnalysis, audioStage, beatGrid, quantizeDivisions]);
+  }, [isAudio, audioAnalysis, audioStage, beatGrid, quantizeDivisions, baseBpm]);
 
   const derivedNotes = useMemo(() => {
     if (isAudio) return audioStageNotes;
     if (melodyMode === "original") return baseNotes;
-    return extractSmartMelody(baseNotes);
-  }, [isAudio, audioStageNotes, baseNotes, melodyMode]);
+    if (melodyMode === "symbolic") return openSource.result?.probabilities
+      ? selectProbableMelody(baseNotes, openSource.result.probabilities, melodyThreshold) : [];
+    return extractSmartMelody(baseNotes, { bpm: baseBpm });
+  }, [isAudio, audioStageNotes, baseNotes, melodyMode, baseBpm, openSource.result, melodyThreshold]);
 
   // The in-game harmonica sounds one note at a time, so the chord collapse runs
   // before the editor rather than after it: the editor has to work on the notes
@@ -106,7 +114,8 @@ export default function App() {
 
   // Once anything is edited the edited copy wins; until then the score stays a
   // pure function of the import settings, so changing a preset still takes effect.
-  const edits = useScoreEdits(derivedMono.notes, bpm || 120);
+  const edits = useScoreEdits(derivedMono.notes, baseBpm || 120);
+  const bpm = edits.bpm;
   const melodyNotes = edits.notes;
   const editing = edits.editing;
 
@@ -172,7 +181,9 @@ export default function App() {
   }
 
   const title = usingDemo ? "C 大调音阶 Demo" : song?.name ?? "尚未载入乐曲";
-  const duration = usingDemo
+  const duration = editing
+    ? mono.notes.reduce((end, note) => Math.max(end, note.start + note.duration), 0)
+    : usingDemo
     ? demoNotes[demoNotes.length - 1].start + demoNotes[demoNotes.length - 1].duration
     : song?.duration ?? 0;
   const timeSignatures = usingDemo ? DEMO_SIGNATURES : song?.timeSignatures ?? DEMO_SIGNATURES;
@@ -183,11 +194,11 @@ export default function App() {
   const exportSnapshot = useMemo<ScoreSnapshotInput>(() => ({
     ppq: (!usingDemo && song?.ppq) || DEFAULT_SCORE_PPQ,
     transpose,
-    tempos: !usingDemo && song?.tempos?.length ? song.tempos : [{ beat: 0, time: 0, bpm: bpm || 120 }],
+    tempos: !edits.editing && !usingDemo && song?.tempos?.length ? song.tempos : [{ beat: 0, time: 0, bpm: bpm || 120 }],
     timeSignatures,
     measureStarts,
     notes: mono.notes
-  }), [usingDemo, song, transpose, bpm, timeSignatures, measureStarts, mono.notes]);
+  }), [edits.editing, usingDemo, song, transpose, bpm, timeSignatures, measureStarts, mono.notes]);
   const formatLabel = sourceFormatLabel(song, usingDemo);
   const busyPercent = parseProgress ? Math.round(parseProgress.value * 100) : null;
   const audioStats = audioAnalysis?.stats;
@@ -223,7 +234,7 @@ export default function App() {
           <div>
             <span className="eyebrow">DELTA FORCE / HARMONICA COMPILER</span>
             <h1>把乐谱编译成<br /><mark>可演奏</mark>的口琴谱</h1>
-            <p>文件只在浏览器中解析。音频实验版有三档识别强度、弱音与碎音清洗，默认输出「原版」密度；不满意可以切到「精简」只跟一条声部，或切到 RAW 判断问题出在转录还是清洗。</p>
+            <p>文件只在浏览器中处理。MIDI 和 MusicXML 可选择原版、CNN 主旋律识别或自研精简；音频使用 Basic Pitch 转录，可切换分析阶段对比结果。</p>
           </div>
           <div className="hero-code" aria-hidden="true">
             <b>1</b><b>2</b><b>3</b><b>4</b><b>5</b><b>6</b><b>7</b><b>1̇</b>
@@ -307,8 +318,8 @@ export default function App() {
               <label className="field" style={{ marginTop: 18 }}>
                 <span>音频分析阶段</span>
                 <select value={audioStage} onChange={(event) => setAudioStage(event.target.value as AudioStage)}>
-                  <option value="clean">原版 · 清洗后保留全部起音（推荐）</option>
-                  <option value="smart">精简 · Smart Melody Path 只跟一条声部</option>
+                  <option value="clean">原版 · 清洗后保留全部起音</option>
+                  <option value="smart">单音口琴 · 连贯旋律优先（默认）</option>
                   <option value="raw">RAW · Basic Pitch 原始候选（诊断用）</option>
                 </select>
                 <small style={{ color: "var(--muted)", lineHeight: 1.55 }}>
@@ -318,16 +329,41 @@ export default function App() {
                 </small>
               </label>
             ) : (
-              <label className="field" style={{ marginTop: 18 }}>
-                <span>谱面密度</span>
-                <select value={melodyMode} onChange={(event) => setMelodyMode(event.target.value as MelodyMode)}>
-                  <option value="original">原版 · 保留全部起音（默认）</option>
-                  <option value="smart">精简 · Smart Melody Path 只跟一条声部</option>
-                </select>
+              <div className="field" style={{ marginTop: 18 }}>
+                <span id="melody-algorithm-label">旋律算法 · 每次选择一项</span>
+                <div className="melody-options" role="group" aria-labelledby="melody-algorithm-label">
+                  {([
+                    ["original", "原版", "保留起音，和弦取最高音（默认）"],
+                    ["symbolic", "Symbolic CNN", "自动识别主旋律，可调整筛选阈值"],
+                    ["smart", "自研精简", "优先保留连贯旋律"]
+                  ] as const).map(([mode, title, description]) => (
+                    <label key={mode} className={`melody-option${melodyMode === mode ? " selected" : ""}`}>
+                      <input type="checkbox" checked={melodyMode === mode} disabled={editing}
+                        onChange={() => setMelodyMode(mode)} />
+                      <span><b>{title}</b><small>{description}</small></span>
+                    </label>
+                  ))}
+                </div>
                 <small style={{ color: "var(--muted)", lineHeight: 1.55 }}>
-                  原版保留这条轨道上的每一个起音，和弦取最高音；精简会主动丢掉伴奏起音去追一条连续声部，音符更少但可能漏掉旋律音。
+                  {editing ? "当前有手动编辑，请先重置编辑再切换算法。" : "先选主旋律轨道，再比较算法。CNN 可降低筛选阈值保留更多细节。算法在本机运行，首次加载较慢。"}
                 </small>
+              </div>
+            )}
+
+            {!isAudio && melodyMode === "symbolic" && (
+              <label className="field" style={{ marginTop: 12 }}>
+                <span>筛选阈值 {melodyThreshold.toFixed(2)}</span>
+                <input type="range" min="0" max="1" step="0.05" value={melodyThreshold} disabled={editing}
+                  onChange={(event) => setMelodyThreshold(Number(event.target.value))} />
+                <small>调低保留更多音符，调高减少伴奏。修改阈值无需重新运行模型。</small>
               </label>
+            )}
+            {!isAudio && melodyMode === "symbolic" && (
+              <small role="status" style={{ display: "block", marginTop: 10, color: "var(--muted)" }}>
+                {openSource.error ? `运行失败：${openSource.error}。可切回原版继续。`
+                  : openSource.pending ? openSource.progress
+                  : `输入 ${baseNotes.length} 个音符 → 当前 ${derivedMono.notes.length} 个音符`}
+              </small>
             )}
 
             {isAudio && (
@@ -390,12 +426,13 @@ export default function App() {
                 : isAudio ? `${audioStage.toUpperCase()} 当前音符` : "当前谱面音符"}
             </small>
           </article>
-          <article><span>BPM</span><strong>{bpm ? (isAudio ? bpm.toFixed(1) : bpm) : "—"}</strong><small>{isAudio ? (beatGrid ? "music-tempo 估算" : "未估出，回退 120") : "首个 Tempo"}</small></article>
+          <article><span>BPM</span><strong>{bpm ? (isAudio ? bpm.toFixed(1) : bpm) : "—"}</strong><small>{edits.tempoChanged ? "手动设置" : isAudio ? (beatGrid ? "music-tempo 估算" : "未估出，回退 120") : "首个 Tempo"}</small></article>
           <article><span>LENGTH</span><strong>{duration ? formatDuration(duration) : "—"}</strong><small>乐曲时长</small></article>
           <article className="metric-primary"><span>MOD CHANGES</span><strong>{conversion.notes.length ? conversion.modifierChanges : "—"}</strong><small>半音 / 八度状态切换</small></article>
         </section>
 
         <ScoreWorkspace
+          onAppendMeasure={(beat) => edits.applyEdit((notes, tempo) => insertNoteAt(notes, beat, edits.editStep, tempo))}
           notes={conversion.notes}
           unplayableCount={conversion.unplayable.length}
           timeSignatures={timeSignatures}
@@ -423,6 +460,8 @@ export default function App() {
         />
 
         <EditPanel
+          bpm={bpm}
+          onBpmChange={edits.setBpm}
           notes={melodyNotes}
           editing={editing}
           selectedNote={edits.selectedNote}

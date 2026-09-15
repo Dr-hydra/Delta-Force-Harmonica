@@ -1,3 +1,4 @@
+import { withToyLogin } from "../cloud/login";
 import { useEffect, useMemo, useState } from "react";
 import type { ScoreSnapshot } from "../persistence/scoreCodec";
 import { cloudArchiveQuota, deleteCloudScore, listCloudScores, loadCloudScore, saveCloudScore, type CloudScoreMeta } from "../cloud/archive";
@@ -70,7 +71,7 @@ function PublicDetail({ id, favorites, onFavorites }: {
   useEffect(() => {
     if (!libraryPublishConfigured || !hasToyAbility("getCloudStorage")) return;
     let active = true;
-    void ensureOwnerToken()
+    void ensureOwnerToken(false)
       .then((token) => myPublicScores(token))
       .then((rows) => { if (active) setMine(rows.some((row) => row.id === id)); })
       .catch(() => undefined);
@@ -83,10 +84,11 @@ function PublicDetail({ id, favorites, onFavorites }: {
   }
 
   async function toggleFavorite() {
-    const next = favorites.includes(id) ? favorites.filter((item) => item !== id) : [...favorites, id];
     setBusy(true);
     setMessage("");
     try {
+      const stored = await withToyLogin(() => loadFavoriteIds());
+      const next = stored.includes(id) ? stored.filter((item) => item !== id) : [...stored, id];
       await saveFavoriteIds(next);
       onFavorites(next);
       setMessage(next.includes(id) ? "已收藏到 Toy 云存储" : "已取消收藏");
@@ -250,12 +252,12 @@ function PrivateArchive() {
   const available = hasToyAbility("getCloudStorage");
   const canPublish = libraryPublishConfigured && hasToyAbility("getUserProfile");
 
-  async function refresh() {
+  async function refresh(interactive = false) {
     if (!available) return;
     setLoading(true);
     setError("");
     try {
-      const [items, usage] = await Promise.all([listCloudScores(), cloudArchiveQuota()]);
+      const [items, usage] = await (interactive ? withToyLogin(() => Promise.all([listCloudScores(), cloudArchiveQuota()])) : Promise.all([listCloudScores(), cloudArchiveQuota()]));
       setRecords(items);
       setQuota(usage);
     } catch (reason) {
@@ -367,7 +369,7 @@ function PrivateArchive() {
         <div><span className="eyebrow">TOY CLOUD STORAGE</span><h2>我的云存档</h2><p>DFHS 分片写入 Toy CloudStorage；新 revision 全部分片回读通过后才提交索引。</p></div>
         {quota && <div className="library-quota"><b>{quota.usedKeys} / {quota.maxKeys}</b><span>KEYS · {quota.records} SCORES</span></div>}
       </section>
-      {error && <p className="error-note">{error}</p>}
+      {error && <p className="error-note">{error} <button className="button" disabled={loading} onClick={() => void refresh(true)}>登录 / 重试</button></p>}
       {message && <p className="library-message">{message}</p>}
       <section className="library-list">
         {records.map((meta) => (
@@ -405,12 +407,12 @@ function MyPublished() {
   const [loading, setLoading] = useState(false);
   const [pendingRemoval, setPendingRemoval] = useState<string | null>(null);
 
-  async function load() {
+  async function load(interactive = false) {
     if (!libraryPublishConfigured) return;
     setLoading(true);
     setError("");
     try {
-      const token = await ensureOwnerToken();
+      const token = await ensureOwnerToken(interactive);
       setEntries(await myPublicScores(token));
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "我的发布读取失败");
@@ -439,7 +441,7 @@ function MyPublished() {
 
   return (
     <>
-      {error && <p className="error-note">{error}</p>}
+      {error && <p className="error-note">{error} <button className="button" disabled={loading} onClick={() => void load(true)}>登录 / 重试</button></p>}
       {message && <p className="library-message">{message}</p>}
       {editing && (
         <PublicScoreMetaForm

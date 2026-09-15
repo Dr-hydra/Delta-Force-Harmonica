@@ -93,8 +93,22 @@ button, label { -webkit-tap-highlight-color: transparent; }
    reach the game when the peripheral software runs elevated. */
 .export-alert { margin: 16px 0 0; padding: 12px 14px; border: 1px solid color-mix(in srgb, var(--ink), transparent 68%); border-left: 5px solid var(--accent); background: color-mix(in srgb, var(--accent), var(--panel) 84%); color: var(--ink); font-size: 13px; font-weight: 850; line-height: 1.65; }
 .field { display: grid; gap: 8px; }
+.toy-login-dialog { width: min(460px, calc(100vw - 48px)); box-sizing: border-box; padding: 24px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); }
+.toy-login-dialog::backdrop { background: rgb(0 0 0 / 55%); }
+.toy-login-dialog h2 { margin: 0 0 12px; font-size: 20px; }
+.toy-login-dialog p { color: var(--muted); line-height: 1.7; }
+.toy-login-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .field > span { color: var(--muted); font: 10px Consolas, monospace; letter-spacing: .08em; }
 .field > span b { color: var(--ink); }
+.melody-options { display: grid; gap: 8px; }
+.melody-option { display: flex; align-items: center; gap: 12px; min-height: 54px; padding: 10px 12px; border: 1px solid var(--line); background: var(--panel); cursor: pointer; }
+.melody-option.selected { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--panel)); }
+.melody-option input { flex: 0 0 auto; width: 18px; height: 18px; margin: 0; accent-color: var(--accent); }
+.melody-option > span { display: grid; gap: 4px; }
+.melody-option b { font-size: 13px; }
+.melody-option small { color: var(--muted); font-size: 11px; line-height: 1.5; }
+.melody-option:has(input:disabled) { opacity: .6; cursor: default; }
+.melody-option:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
 select { width: 100%; min-height: 44px; padding: 0 12px; border: 1px solid var(--line); border-radius: 0; background: var(--panel); color: var(--ink); }
 .switch-row { margin-top: 18px; min-height: 62px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border: 1px solid var(--line); background: var(--panel-2); }
 .switch-row > span { display: grid; gap: 4px; }

@@ -1,4 +1,4 @@
-import { copyFile, mkdir } from "node:fs/promises";
+import { copyFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -13,9 +13,13 @@ await Promise.all([
   mkdir(targetLicenseDir, { recursive: true })
 ]);
 
+const model = JSON.parse(await readFile(resolve(sourceModelDir, "model.json"), "utf8"));
+for (const group of model.weightsManifest) {
+  group.paths = group.paths.map((path) => path.replace(/\.bin$/, ".data"));
+}
 await Promise.all([
-  copyFile(resolve(sourceModelDir, "model.json"), resolve(targetModelDir, "model.json")),
-  copyFile(resolve(sourceModelDir, "group1-shard1of1.bin"), resolve(targetModelDir, "group1-shard1of1.bin")),
+  writeFile(resolve(targetModelDir, "model.json"), JSON.stringify(model)),
+  copyFile(resolve(sourceModelDir, "group1-shard1of1.bin"), resolve(targetModelDir, "group1-shard1of1.data")),
   copyFile(resolve(packageDir, "LICENSE"), resolve(targetLicenseDir, "spotify-basic-pitch-LICENSE.txt"))
 ]);
 

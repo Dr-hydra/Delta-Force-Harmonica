@@ -11,6 +11,9 @@ import {
 export interface ScoreEdits {
   /** The working copy: the edited notes once anything changed, otherwise the base score. */
   notes: NoteEvent[];
+  bpm: number;
+  tempoChanged: boolean;
+  setBpm: (bpm: number) => void;
   editing: boolean;
   selectedNote: number | null;
   setSelectedNote: (index: number | null) => void;
@@ -41,10 +44,12 @@ export interface ScoreEdits {
  * library. Callers own the base notes; this hook only layers the hand-made copy
  * on top, so changing the import settings keeps working until the first edit.
  */
-export function useScoreEdits(baseNotes: NoteEvent[], bpm: number): ScoreEdits {
+export function useScoreEdits(baseNotes: NoteEvent[], baseBpm: number): ScoreEdits {
+  const [tempoOverride, setTempoOverride] = useState<number | null>(null);
+  const bpm = tempoOverride ?? baseBpm;
   const [editedNotes, setEditedNotes] = useState<NoteEvent[] | null>(null);
-  const [undoStack, setUndoStack] = useState<Array<{ notes: NoteEvent[]; selected: number | null; selectedMany: number[] }>>([]);
-  const [redoStack, setRedoStack] = useState<Array<{ notes: NoteEvent[]; selected: number | null; selectedMany: number[] }>>([]);
+  const [undoStack, setUndoStack] = useState<Array<{ notes: NoteEvent[]; selected: number | null; selectedMany: number[]; tempo: number | null }>>([]);
+  const [redoStack, setRedoStack] = useState<Array<{ notes: NoteEvent[]; selected: number | null; selectedMany: number[]; tempo: number | null }>>([]);
   const [selectedNote, setSelectedNote] = useState<number | null>(null);
   const [selectedNotes, setSelectedNotes] = useState<number[]>([]);
   const [insertionBeat, setInsertionBeatState] = useState<number | null>(null);
@@ -59,38 +64,51 @@ export function useScoreEdits(baseNotes: NoteEvent[], bpm: number): ScoreEdits {
     const result = operation(current, bpm || 120);
     const nextSelected = result.selectedMany ?? (result.selected === null ? [] : [result.selected]);
     if (result.notes === current && result.selected === selectedNote && nextSelected.join(",") === selectedNotes.join(",")) return;
-    setUndoStack((stack) => [...stack.slice(-49), { notes: current, selected: selectedNote, selectedMany: selectedNotes }]);
+    setUndoStack((stack) => [...stack.slice(-49), { notes: current, selected: selectedNote, selectedMany: selectedNotes, tempo: tempoOverride }]);
     setRedoStack([]);
     setEditedNotes(result.notes);
     setSelectedNote(result.selected);
     setSelectedNotes(nextSelected);
     setInsertionBeatState(null);
-  }, [baseNotes, bpm, editedNotes, selectedNote, selectedNotes]);
+  }, [baseNotes, bpm, tempoOverride, editedNotes, selectedNote, selectedNotes]);
+
+  const setBpm = (next: number) => {
+    if (!Number.isFinite(next) || next < 20 || next > 400 || next === bpm) return;
+    applyEdit((list, currentBpm) => ({
+      notes: normalizeNotes(normalizeNotes(list, currentBpm), next),
+      selected: selectedNote,
+      selectedMany: selectedNotes
+    }));
+    setTempoOverride(next);
+  };
 
   const undo = useCallback(() => {
     const previous = undoStack.at(-1);
     if (!previous) return;
     setUndoStack((stack) => stack.slice(0, -1));
-    setRedoStack((stack) => [...stack, { notes: working(), selected: selectedNote, selectedMany: selectedNotes }]);
+    setRedoStack((stack) => [...stack, { notes: working(), selected: selectedNote, selectedMany: selectedNotes, tempo: tempoOverride }]);
     setEditedNotes(previous.notes);
+    setTempoOverride(previous.tempo);
     setSelectedNote(previous.selected);
     setSelectedNotes(previous.selectedMany);
     setInsertionBeatState(null);
-  }, [baseNotes, bpm, editedNotes, selectedNote, selectedNotes, undoStack]);
+  }, [baseNotes, bpm, tempoOverride, editedNotes, selectedNote, selectedNotes, undoStack]);
 
   const redo = useCallback(() => {
     const next = redoStack.at(-1);
     if (!next) return;
     setRedoStack((stack) => stack.slice(0, -1));
-    setUndoStack((stack) => [...stack, { notes: working(), selected: selectedNote, selectedMany: selectedNotes }]);
+    setUndoStack((stack) => [...stack, { notes: working(), selected: selectedNote, selectedMany: selectedNotes, tempo: tempoOverride }]);
     setEditedNotes(next.notes);
+    setTempoOverride(next.tempo);
     setSelectedNote(next.selected);
     setSelectedNotes(next.selectedMany);
     setInsertionBeatState(null);
-  }, [baseNotes, bpm, editedNotes, redoStack, selectedNote, selectedNotes]);
+  }, [baseNotes, bpm, tempoOverride, editedNotes, redoStack, selectedNote, selectedNotes]);
 
   const reset = useCallback(() => {
     setEditedNotes(null);
+    setTempoOverride(null);
     setUndoStack([]);
     setRedoStack([]);
     setSelectedNote(null);
@@ -99,13 +117,13 @@ export function useScoreEdits(baseNotes: NoteEvent[], bpm: number): ScoreEdits {
   }, []);
 
   const startBlank = useCallback(() => {
-    setUndoStack((stack) => [...stack, { notes: working(), selected: selectedNote, selectedMany: selectedNotes }]);
+    setUndoStack((stack) => [...stack, { notes: working(), selected: selectedNote, selectedMany: selectedNotes, tempo: tempoOverride }]);
     setRedoStack([]);
     setEditedNotes([]);
     setSelectedNote(null);
     setSelectedNotes([]);
     setInsertionBeatState(null);
-  }, [baseNotes, bpm, editedNotes, selectedNote, selectedNotes]);
+  }, [baseNotes, bpm, tempoOverride, editedNotes, selectedNote, selectedNotes]);
 
   const selectNote = useCallback((index: number | null) => {
     setSelectedNote(index);
@@ -142,7 +160,7 @@ export function useScoreEdits(baseNotes: NoteEvent[], bpm: number): ScoreEdits {
 
   const copySelection = useCallback(() => {
     setClipboard(copyNoteFragment(working(), selectedNotes, bpm || 120));
-  }, [baseNotes, bpm, editedNotes, selectedNotes]);
+  }, [baseNotes, bpm, tempoOverride, editedNotes, selectedNotes]);
 
   const pasteSelection = useCallback(() => {
     if (clipboard.length === 0) return;
@@ -166,7 +184,7 @@ export function useScoreEdits(baseNotes: NoteEvent[], bpm: number): ScoreEdits {
     setSelectedNotes(all);
     setSelectedNote(all.at(-1) ?? null);
     setInsertionBeatState(null);
-  }, [baseNotes, bpm, editedNotes]);
+  }, [baseNotes, bpm, tempoOverride, editedNotes]);
 
   const clearSelection = useCallback(() => {
     setSelectedNote(null);
@@ -188,10 +206,13 @@ export function useScoreEdits(baseNotes: NoteEvent[], bpm: number): ScoreEdits {
     }
     setSelectedNote(next);
     setInsertionBeatState(null);
-  }, [baseNotes, bpm, editedNotes, selectedNote]);
+  }, [baseNotes, bpm, tempoOverride, editedNotes, selectedNote]);
 
   return {
     notes,
+    bpm,
+    tempoChanged: tempoOverride !== null,
+    setBpm,
     editing: editedNotes !== null,
     selectedNote,
     setSelectedNote: selectNote,

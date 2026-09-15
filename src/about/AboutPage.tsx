@@ -5,6 +5,11 @@ import { aboutHref, batchHref, converterHref, libraryHref } from "../navigation"
 import "./about.css";
 
 const GITHUB_URL = "https://github.com/Dr-hydra/Delta-Force-Harmonica";
+const DOWNLOAD_LINKS = [
+  { name: "GitHub", href: `${GITHUB_URL}/releases/latest`, description: "前往 Releases 下载最新版本。" },
+  { name: "夸克网盘", href: "https://pan.quark.cn/s/1262ac76b183", description: "通过夸克网盘下载软件。" },
+  { name: "百度网盘", href: "https://pan.baidu.com/s/5GWDNIMxJyt5XVg6Zy5QdTQ", description: "通过百度网盘下载软件。" },
+];
 const AUTHOR_MID = "441133155";
 const VIDEO_BVID = "BV1QbYS6GEu7";
 
@@ -41,6 +46,22 @@ export default function AboutPage() {
           <span className="eyebrow">DELTA FORCE / HARMONICA COMPILER</span>
           <h1>关于这个项目</h1>
           <p>三角洲行动口琴谱是一个纯前端社区工具，用于把 MIDI、MusicXML 和伴奏音频转换成游戏内可演奏的简谱，并导出对应宏文件。</p>
+        </section>
+
+        <section aria-labelledby="downloads-heading">
+          <div className="section-heading">
+            <div><span className="eyebrow">DOWNLOAD / WINDOWS</span><h2 id="downloads-heading">自动演奏 / 可视化演奏软件下载</h2></div>
+          </div>
+          <div className="about-links">
+            {DOWNLOAD_LINKS.map((link) => (
+              <a key={link.name} className="panel about-card" href={link.href} target="_blank" rel="noreferrer">
+                <span className="eyebrow">WINDOWS / DOWNLOAD</span>
+                <strong>{link.name}</strong>
+                <p>{link.description}</p>
+                <em>前往下载 ↗</em>
+              </a>
+            ))}
+          </div>
         </section>
 
         <section className="about-links" aria-label="项目链接">

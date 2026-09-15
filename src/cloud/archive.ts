@@ -141,12 +141,12 @@ function parseHead(value: string | undefined): IndexHead {
   return { v: 1, p: 0 };
 }
 
-async function readArchiveState() {
-  const headOnly = await getCloudStorage([INDEX_KEY]);
+async function readArchiveState(interactive = false) {
+  const headOnly = await getCloudStorage([INDEX_KEY], interactive);
   const head = parseHead(headOnly[INDEX_KEY]);
   if (!head.p) return { head, records: [] as CloudScoreMeta[] };
   const keys = Array.from({ length: head.p }, (_, index) => `${INDEX_PREFIX}${index}`);
-  const pages = await getCloudStorage(keys);
+  const pages = await getCloudStorage(keys, interactive);
   const records: CloudScoreMeta[] = [];
   for (const key of keys) {
     try {
@@ -166,7 +166,7 @@ async function commitIndex(records: CloudScoreMeta[], previousPages: number) {
   pages.forEach((page, index) => { writes[`${INDEX_PREFIX}${index}`] = page; });
   await setCloudStorage(writes);
 
-  const verify = await getCloudStorage([INDEX_KEY, ...pages.map((_, index) => `${INDEX_PREFIX}${index}`)]);
+  const verify = await getCloudStorage([INDEX_KEY, ...pages.map((_, index) => `${INDEX_PREFIX}${index}`)], true);
   if (verify[INDEX_KEY] !== writes[INDEX_KEY] || pages.some((page, index) => verify[`${INDEX_PREFIX}${index}`] !== page)) {
     throw new Error("Toy 云存档索引回读校验失败");
   }
@@ -192,11 +192,11 @@ export async function cloudArchiveQuota() {
 }
 
 export async function loadCloudScore(id: string): Promise<CloudScoreRecord> {
-  const { records } = await readArchiveState();
+  const { records } = await readArchiveState(true);
   const meta = records.find((item) => item.id === id);
   if (!meta) throw new Error("云端乐谱不存在");
   const keys = Array.from({ length: meta.parts }, (_, index) => partKey(meta.id, meta.revision, index));
-  const stored = await getCloudStorage(keys);
+  const stored = await getCloudStorage(keys, true);
   const encoded = keys.map((key) => stored[key] || "").join("");
   if (!encoded || keys.some((key) => !stored[key])) throw new Error("云端乐谱分片不完整");
   const bytes = base64UrlToBytes(encoded);
@@ -215,7 +215,7 @@ export interface SaveCloudScoreArgs {
  * written and read back first; only then does the index switch to the new revision.
  */
 export async function saveCloudScore(args: SaveCloudScoreArgs): Promise<CloudScoreMeta> {
-  const { head, records } = await readArchiveState();
+  const { head, records } = await readArchiveState(true);
   const id = args.id && /^[A-Za-z0-9_-]{6,16}$/.test(args.id) ? args.id : randomId();
   const previous = records.find((item) => item.id === id);
   const bytes = encodeScoreSnapshot(args.snapshot);
@@ -268,7 +268,7 @@ export async function saveCloudScore(args: SaveCloudScoreArgs): Promise<CloudSco
 }
 
 export async function deleteCloudScore(id: string) {
-  const { head, records } = await readArchiveState();
+  const { head, records } = await readArchiveState(true);
   const target = records.find((item) => item.id === id);
   if (!target) return;
   const remaining = records.filter((item) => item.id !== id);

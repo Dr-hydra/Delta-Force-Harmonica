@@ -37,7 +37,8 @@ export function ScoreWorkspace({
   onInsertionSelect,
   onNoteMove,
   onNoteResize,
-  onNoteSelect
+  onNoteSelect,
+  onAppendMeasure
 }: {
   notes: GameNote[];
   unplayableCount: number;
@@ -51,6 +52,7 @@ export function ScoreWorkspace({
   onInsertionSelect?: (beat: number) => void;
   onNoteMove?: (index: number, deltaBeats: number) => void;
   onNoteResize?: (index: number, deltaBeats: number) => void;
+  onAppendMeasure?: (beat: number) => void;
   onNoteSelect?: (index: number, mode?: "replace" | "toggle" | "range") => void;
 }) {
   const preview = useScorePreview(notes);
@@ -154,7 +156,8 @@ export function ScoreWorkspace({
           view === "measures" ? (
             <MeasureScore
               measures={measures}
-              activeIndex={preview.activeIndex}
+              activeIndex={preview.playing ? preview.activeIndex : -1}
+              playing={preview.playing}
               selectedIndex={selectedIndex}
               selectedIndices={selectedIndices}
               insertionBeat={insertionBeat}
@@ -173,7 +176,7 @@ export function ScoreWorkspace({
                 {visibleNotes.map((note, index) => (
                   <NoteTile
                     note={note}
-                    active={index === preview.activeIndex}
+                    active={preview.playing ? index === preview.activeIndex : selectedIndices?.includes(index) || index === selectedIndex}
                     onSelect={() => {
                       preview.seek(note.start);
                       onNoteSelect?.(index);
@@ -191,6 +194,8 @@ export function ScoreWorkspace({
             <span>导入 MIDI / MusicXML / MXL，或者先用 Demo 查看当前映射效果。</span>
           </div>
         )}
+
+        {onAppendMeasure && <button className="button primary" onClick={() => onAppendMeasure(measures.at(-1)?.endBeat ?? 0)}>＋ 下一小节插入音符</button>}
 
         {notes.length > 0 && (
           <p className="preview-limit">{notes.length} PLAYABLE / {unplayableCount} OUT OF RANGE · {measures.length} MEASURES</p>

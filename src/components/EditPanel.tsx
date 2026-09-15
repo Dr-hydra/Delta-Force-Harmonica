@@ -60,6 +60,8 @@ function playablePitchLabel(pitch: number) {
  */
 export default function EditPanel({
   notes,
+  bpm,
+  onBpmChange,
   editing,
   selectedNote,
   selectedNotes,
@@ -86,6 +88,8 @@ export default function EditPanel({
   onStartBlank
 }: {
   notes: NoteEvent[];
+  bpm: number;
+  onBpmChange: (bpm: number) => void;
   editing: boolean;
   selectedNote: number | null;
   selectedNotes?: number[];
@@ -115,6 +119,9 @@ export default function EditPanel({
   const selected = selectedNote !== null ? notes[selectedNote] : undefined;
   const selection = selectedNotes?.length ? selectedNotes : (selectedNote === null ? [] : [selectedNote]);
   const multiple = selection.length > 1;
+  const [bpmDraft, setBpmDraft] = useState(String(bpm));
+  useEffect(() => setBpmDraft(String(bpm)), [bpm]);
+  const validBpm = bpmDraft.trim() !== "" && Number.isFinite(Number(bpmDraft)) && Number(bpmDraft) >= 20 && Number(bpmDraft) <= 400;
   const [pitchDraft, setPitchDraft] = useState("");
   const [beatDraft, setBeatDraft] = useState("");
   const [durationDraft, setDurationDraft] = useState("");
@@ -176,13 +183,16 @@ export default function EditPanel({
       } else if (!command && !event.altKey && (event.key === "ArrowLeft" || event.key === "ArrowRight")) {
         event.preventDefault();
         onSelectAdjacent?.(event.key === "ArrowLeft" ? -1 : 1, event.shiftKey);
+      } else if (!command && !event.altKey && event.key === "Insert") {
+        event.preventDefault();
+        onApply((n, b) => insertionBeat != null ? insertNoteAt(n, insertionBeat, editStep, b) : insertNote(n, selectedNote, editStep, b));
       } else if (event.key === "Escape") {
         onClearSelection?.();
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [canPaste, editStep, onApply, onClearSelection, onCopy, onDuplicate, onPaste, onRedo, onSelectAdjacent, onSelectAll, onUndo, selection]);
+  }, [insertionBeat, selectedNote, canPaste, editStep, onApply, onClearSelection, onCopy, onDuplicate, onPaste, onRedo, onSelectAdjacent, onSelectAll, onUndo, selection]);
 
   return (
     <section className="panel control-panel" style={{ marginTop: 18 }}>
@@ -198,6 +208,25 @@ export default function EditPanel({
         编辑出的重叠会被单音收敛截断，谱面上显示的时值可能短于这里的数值。
       </p>
 
+      <form className="edit-toolbar tempo-editor" onSubmit={(event) => { event.preventDefault(); if (validBpm) onBpmChange(Number(bpmDraft)); }}>
+        <label className="field"><span>节拍速度（BPM）</span>
+          <input type="number" min="20" max="400" step="any" value={bpmDraft} onChange={(event) => setBpmDraft(event.target.value)} />
+        </label>
+        <button className="button primary" disabled={!validBpm || Number(bpmDraft) === bpm}>应用速度</button>
+        <p className="preview-limit">20–400 BPM，数值越大越快。应用后全曲使用统一速度，试听、导出及保存同步更新，可撤销。</p>
+      </form>
+      <details className="shortcut-guide" open>
+        <summary>编辑快捷键与操作提示</summary>
+        <div className="shortcut-grid">
+          <span><kbd>← / →</kbd> 选择音符</span><span><kbd>↑ / ↓</kbd> 升降半音</span>
+          <span><kbd>Shift + ← / →</kbd> 扩大选择</span><span><kbd>Alt + ← / →</kbd> 按步长移动</span>
+          <span><kbd>Insert</kbd> 插入音符（可连续续写）</span><span><kbd>Delete / Backspace</kbd> 删除所选</span>
+          <span><kbd>Ctrl / ⌘ + A / C / V / D</kbd> 全选 / 复制 / 粘贴 / 重复</span>
+          <span><kbd>Ctrl / ⌘ + Z</kbd> 撤销 · <kbd>Shift + Z</kbd> 配合 Ctrl / ⌘ 重做</span>
+          <span><kbd>Esc</kbd> 清除选择</span>
+        </div>
+        <p>点击空白处设置插入位置；谱面下方「下一小节插入音符」可直接续写。输入框内保留原有键盘操作。</p>
+      </details>
       <div className="edit-toolbar">
         <label className="field" style={{ minWidth: 150 }}>
           <span>编辑步长</span>

@@ -5,6 +5,7 @@ coverage/
 .playwright-cli/
 output/playwright/
 public/basic-pitch/
+public/melody/python/
 *.local
 .DS_Store
 Thumbs.db

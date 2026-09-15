@@ -1,3 +1,5 @@
+import { withToyLogin } from './login';
+
 export interface ToyProfile {
   avatar: string;
   nickname: string;
@@ -43,22 +45,22 @@ export function toyAccountAvailable(): boolean {
 export async function requestToyProfile(): Promise<ToyProfile> {
   if (!toyAccountAvailable()) throw new Error("手机浏览器里读不到 Toy 账号，请在 B站 App 内打开");
   if (!hasToyAbility("getUserProfile")) throw new Error("当前环境不支持 Toy 登录");
-  return sdk().getUserProfile();
+  return withToyLogin(() => sdk().getUserProfile());
 }
 
-export async function getCloudStorage(keys?: string[]) {
+export async function getCloudStorage(keys?: string[], interactive = false) {
   if (!hasToyAbility("getCloudStorage")) throw new Error("当前环境不支持 Toy 云存档");
-  return sdk().getCloudStorage(keys);
+  return interactive ? withToyLogin(() => sdk().getCloudStorage(keys)) : sdk().getCloudStorage(keys);
 }
 
 export async function setCloudStorage(items: Record<string, string>) {
   if (!hasToyAbility("setCloudStorage")) throw new Error("当前环境不支持 Toy 云存档");
-  return sdk().setCloudStorage(items);
+  return withToyLogin(() => sdk().setCloudStorage(items));
 }
 
 export async function removeCloudStorage(keys: string[]) {
   if (!hasToyAbility("removeCloudStorage")) throw new Error("当前环境不支持 Toy 云存档");
-  return sdk().removeCloudStorage(keys);
+  return withToyLogin(() => sdk().removeCloudStorage(keys));
 }
 
 function randomToken() {
@@ -68,10 +70,16 @@ function randomToken() {
   return btoa(binary).replaceAll("+", "-").replaceAll("/", "_").replace(/=+$/, "");
 }
 
-export async function ensureOwnerToken() {
+export async function ensureOwnerToken(interactive = true): Promise<string> {
+  if (interactive) return withToyLogin(() => getOwnerToken(true));
+  return getOwnerToken(false);
+}
+
+async function getOwnerToken(create: boolean) {
   const stored = await getCloudStorage([OWNER_KEY]);
   const existing = String(stored[OWNER_KEY] || "");
   if (/^[A-Za-z0-9_-]{40,64}$/.test(existing)) return existing;
+  if (!create) return '';
   const token = randomToken();
   await setCloudStorage({ [OWNER_KEY]: token });
   return token;
@@ -92,7 +100,7 @@ export async function saveFavoriteIds(ids: string[]) {
   const unique = [...new Set(ids.filter((id) => /^[A-Za-z0-9_-]{6,32}$/.test(id)))].slice(0, MAX_FAVORITES);
   const value = JSON.stringify(unique);
   if (new TextEncoder().encode(value).byteLength > 1024) throw new Error("收藏列表超过 Toy 云存储单 key 容量");
-  await setCloudStorage({ [FAVORITES_KEY]: value });
+  await withToyLogin(() => setCloudStorage({ [FAVORITES_KEY]: value }));
 }
 
 export function scoreSharePath(shortId: string) {

@@ -1,0 +1,1 @@
+{"shapes": [[32, 16, 1, 21], [32, 16, 21, 21]], "switch": false, "source": "https://github.com/LIMUNIMI/Symbolic-Melody-Identification", "revision": "b114456bcf52d182d7c3ccf7fd617c95ce64ffce", "model": "nn_kernels_pop.pkl"}

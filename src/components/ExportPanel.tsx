@@ -16,8 +16,7 @@ import { TIMING_TIERS, loadTimingTier, saveTimingTier, timingTier, type TimingTi
 import { toTabText } from "../export/tab";
 import type { GameNote, TimeSignatureEvent } from "../music/types";
 import type { ScoreSnapshotInput } from "../persistence/scoreCodec";
-
-const DESKTOP_RELEASE_URL = "https://github.com/Dr-hydra/Delta-Force-Harmonica/releases/latest";
+import { aboutHref } from "../navigation";
 
 export interface ExportPanelProps {
   title: string;
@@ -135,12 +134,10 @@ export default function ExportPanel({ title, notes, unplayableCount, bpm, timeSi
         <button className="button" disabled={empty} onClick={exportMidi}>标准 MIDI .mid</button>
         <a
           className="button"
-          href={DESKTOP_RELEASE_URL}
-          target="_blank"
-          rel="noreferrer"
+          href={aboutHref()}
           style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "inherit", textDecoration: "none" }}
         >
-          下载自动演奏软件 · Windows ↗
+          下载自动演奏/可视化演奏软件 · 关于 →
         </a>
         <button className="button" disabled={empty} onClick={exportLogitech}>宏 · 罗技 G HUB .lua</button>
         <button className="button" disabled={empty} onClick={exportRazer}>宏 · 雷蛇 Synapse 3 .xml（未验证）</button>

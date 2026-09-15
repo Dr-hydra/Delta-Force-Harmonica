@@ -103,3 +103,14 @@
   .measure-degree b { font-size: 19px; }
   .measure-beats { margin: 0 12px 8px; }
 }
+
+.tempo-editor { margin-bottom: 16px; }
+.shortcut-guide { margin: 16px 0; padding: 14px; border: 1px solid var(--line, #8b929c); border-radius: 10px; }
+.shortcut-guide summary { cursor: pointer; font-weight: 700; }
+.shortcut-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; margin-top: 14px; }
+.shortcut-grid kbd { font: inherit; font-weight: 600; }
+.shortcut-guide p { font-size: 13px; line-height: 1.6; }
+
+.measure-pagination { flex-wrap: wrap; }
+.score-row-setting { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.score-row-setting select { padding: 6px 8px; color: var(--text); background: var(--panel); border: 1px solid var(--line); border-radius: 6px; }

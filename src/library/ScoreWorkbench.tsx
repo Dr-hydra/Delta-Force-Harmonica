@@ -7,7 +7,7 @@ import { optimizeHarmonica } from "../harmonica/optimizer";
 import { enforceMonophonic } from "../music/monophonic";
 import type { ScoreSnapshot } from "../persistence/scoreCodec";
 import { useScoreEdits } from "../score/useScoreEdits";
-import { moveNote, moveNotes, resizeNote } from "../score/editNotes";
+import { insertNoteAt, moveNote, moveNotes, resizeNote } from "../score/editNotes";
 
 /**
  * The converter's preview, 04 / EDIT and 05 / EXPORT panels plus the Toy
@@ -23,8 +23,9 @@ export default function ScoreWorkbench({ title, snapshot, archiveId, publicId, o
   publicId?: string;
   onSaved?: () => void;
 }) {
-  const bpm = snapshot.tempos[0]?.bpm ?? 120;
-  const edits = useScoreEdits(snapshot.notes, bpm);
+  const edits = useScoreEdits(snapshot.notes, snapshot.tempos[0]?.bpm ?? 120);
+  const bpm = edits.bpm;
+  const tempos = edits.editing ? [{ beat: 0, time: 0, bpm }] : snapshot.tempos;
 
   // Same two-stage pipeline the converter uses: hand-made overlaps are collapsed
   // before the fingering runs, so score, preview, macro and cloud stay in sync.
@@ -45,6 +46,7 @@ export default function ScoreWorkbench({ title, snapshot, archiveId, publicId, o
   return (
     <>
       <ScoreWorkspace
+          onAppendMeasure={(beat) => edits.applyEdit((notes, tempo) => insertNoteAt(notes, beat, edits.editStep, tempo))}
         notes={conversion.notes}
         unplayableCount={conversion.unplayable.length}
         timeSignatures={snapshot.timeSignatures}
@@ -72,6 +74,8 @@ export default function ScoreWorkbench({ title, snapshot, archiveId, publicId, o
       />
 
       <EditPanel
+        bpm={bpm}
+        onBpmChange={edits.setBpm}
         notes={edits.notes}
         editing={edits.editing}
         selectedNote={edits.selectedNote}
@@ -107,13 +111,13 @@ export default function ScoreWorkbench({ title, snapshot, archiveId, publicId, o
         timeSignatures={snapshot.timeSignatures}
         measureStarts={snapshot.measureStarts}
         transpose={snapshot.transpose}
-        snapshot={{ ...snapshot, notes: mono.notes }}
+        snapshot={{ ...snapshot, tempos, notes: mono.notes }}
       />
 
       <CloudActions
         key={title}
         title={title}
-        snapshot={{ ...snapshot, notes: mono.notes }}
+        snapshot={{ ...snapshot, tempos, notes: mono.notes }}
         archiveId={archiveId}
         publicId={publicId}
         heading={{ eyebrow: "TOY / CLOUDBASE", title: "保存与发布" }}

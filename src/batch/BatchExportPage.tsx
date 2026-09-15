@@ -10,7 +10,6 @@ import { aboutHref, batchHref, converterHref, libraryHref } from "../navigation"
 import "../library/library.css";
 import "./batch.css";
 
-const DESKTOP_RELEASE_URL = "https://github.com/Dr-hydra/Delta-Force-Harmonica/releases/latest";
 
 async function readWithTimeout<T>(request: Promise<T>): Promise<T> {
   let timer: ReturnType<typeof setTimeout> | undefined;
@@ -186,12 +185,10 @@ export default function BatchExportPage() {
                 <button className="button primary batch-download" disabled={busy || !available || !selected.length} onClick={() => void exportBatch()}>{exporting ? "正在生成脚本…" : `导出 ${selected.length} 首 · 罗技 G HUB .lua`}</button>
                 <a
                   className="button"
-                  href={DESKTOP_RELEASE_URL}
-                  target="_blank"
-                  rel="noreferrer"
+                  href={aboutHref()}
                   style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "inherit", textDecoration: "none" }}
                 >
-                  下载自动演奏软件 · Windows ↗
+                  下载自动演奏/可视化演奏软件 · 关于 →
                 </a>
               </div>
               <div aria-live="polite">{progress && <p className="library-message">{progress}</p>}{message && <p className="library-message">{message}</p>}{error && <p className="error-note" role="alert">{error}</p>}</div>

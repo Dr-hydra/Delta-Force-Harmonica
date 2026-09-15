@@ -4,7 +4,12 @@ import type { ScoreMeasure } from "../score/measures";
 import { durationLabel } from "../score/measures";
 import { snapDragDelta } from "../score/editNotes";
 
-const MEASURES_PER_PAGE = 8;
+function savedRows() {
+  try {
+    const value = Number(localStorage.getItem("dfh-score-rows"));
+    return Number.isInteger(value) && value >= 1 && value <= 16 ? value : 4;
+  } catch { return 4; }
+}
 
 function jianpu(note: ScoreMeasure["notes"][number]["note"]) {
   const octave = displayOctave(note);
@@ -32,6 +37,7 @@ function restSegments(measure: ScoreMeasure) {
 export function MeasureScore({
   measures,
   activeIndex,
+  playing = false,
   selectedIndex,
   selectedIndices,
   insertionBeat,
@@ -43,6 +49,7 @@ export function MeasureScore({
 }: {
   measures: ScoreMeasure[];
   activeIndex: number;
+  playing?: boolean;
   /** Note being edited, highlighted separately from the playback cursor. */
   selectedIndex?: number | null;
   selectedIndices?: number[];
@@ -54,6 +61,7 @@ export function MeasureScore({
   onSelect: (index: number, mode?: "replace" | "toggle" | "range") => void;
 }) {
   const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(savedRows);
   const [dragging, setDragging] = useState<{ index: number; mode: "move" | "resize"; delta: number } | null>(null);
   const dragRef = useRef<{
     index: number;
@@ -64,7 +72,7 @@ export function MeasureScore({
     delta: number;
   } | null>(null);
   const suppressClick = useRef(false);
-  const pageCount = Math.max(1, Math.ceil(measures.length / MEASURES_PER_PAGE));
+  const pageCount = Math.max(1, Math.ceil(measures.length / rowsPerPage));
 
   const activeMeasure = useMemo(
     () => measures.findIndex((measure) => measure.notes.some((item) => item.index === activeIndex)),
@@ -76,12 +84,12 @@ export function MeasureScore({
   );
 
   useEffect(() => {
-    if (activeMeasure >= 0) setPage(Math.floor(activeMeasure / MEASURES_PER_PAGE));
-  }, [activeMeasure]);
+    if (playing && activeMeasure >= 0) setPage(Math.floor(activeMeasure / rowsPerPage));
+  }, [activeMeasure, playing, rowsPerPage]);
 
   useEffect(() => {
-    if (selectedMeasure >= 0) setPage(Math.floor(selectedMeasure / MEASURES_PER_PAGE));
-  }, [selectedMeasure]);
+    if (selectedMeasure >= 0) setPage(Math.floor(selectedMeasure / rowsPerPage));
+  }, [selectedMeasure, rowsPerPage]);
 
   function startDrag(
     event: React.PointerEvent<HTMLElement>,
@@ -124,7 +132,7 @@ export function MeasureScore({
     if (page >= pageCount) setPage(pageCount - 1);
   }, [page, pageCount]);
 
-  const visible = measures.slice(page * MEASURES_PER_PAGE, (page + 1) * MEASURES_PER_PAGE);
+  const visible = measures.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
 
   return (
     <div className="measure-score">
@@ -134,6 +142,16 @@ export function MeasureScore({
           <span>点击空白设置插入点 · 拖动音符移动 · 拖动右侧把手改时值 · 操作按编辑步长吸附</span>
         </div>
         <div className="measure-pagination">
+          <label className="score-row-setting">每页行数
+            <select aria-label="每页音符行数" value={rowsPerPage} onChange={(event) => {
+              const next = Number(event.target.value);
+              setPage(Math.floor(page * rowsPerPage / next));
+              setRowsPerPage(next);
+              try { localStorage.setItem("dfh-score-rows", String(next)); } catch { /* Storage may be unavailable. */ }
+            }}>
+              {Array.from({ length: 16 }, (_, index) => index + 1).map((rows) => <option key={rows} value={rows}>{rows} 行</option>)}
+            </select>
+          </label>
           <button className="button secondary" disabled={page <= 0} onClick={() => setPage((value) => Math.max(0, value - 1))}>← 上一页</button>
           <b>{String(page + 1).padStart(2, "0")} / {String(pageCount).padStart(2, "0")}</b>
           <button className="button secondary" disabled={page >= pageCount - 1} onClick={() => setPage((value) => Math.min(pageCount - 1, value + 1))}>下一页 →</button>
