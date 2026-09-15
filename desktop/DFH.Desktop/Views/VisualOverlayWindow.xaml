@@ -17,13 +17,16 @@
                           ToolTip="显示或隐藏音符上的文字提示和底部键位；颜色保持显示"/>
                 <TextBlock x:Name="Heading" Foreground="White" Text="手动可视化 · 拖动这里移动" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
             </DockPanel>
-            <WrapPanel Grid.Row="1" Margin="0,7,0,7">
+            <WrapPanel Grid.Row="1" Margin="0,7,0,7" ToolTip="到线按下，长条结束松开；绿色原调、蓝色降调、橙色升调、粉边半音。">
                 <TextBlock Text="● 原调  " Foreground="#79DFC4"/>
                 <TextBlock Text="● ↓ 降调  " Foreground="#7CB8FF"/>
                 <TextBlock Text="● ↑ 升调  " Foreground="#FFB969"/>
                 <TextBlock Text="▣ # 半音（粉边）" Foreground="#F58AE2"/>
             </WrapPanel>
-            <TextBlock x:Name="Hint" Grid.Row="2" Margin="0,0,0,8" Foreground="#DEE8F0" FontSize="12" TextWrapping="Wrap"/>
+            <StackPanel Grid.Row="2" Margin="0,0,0,8">
+                <TextBlock x:Name="Hint" Foreground="#DEE8F0" FontSize="12" TextWrapping="Wrap"/>
+                <TextBlock x:Name="PracticeText" Margin="0,4,0,0" Foreground="#C8D93A" FontSize="12" TextWrapping="Wrap" Visibility="Collapsed"/>
+            </StackPanel>
             <local:NoteFallView x:Name="NotesView" Grid.Row="3"/>
             <Thumb x:Name="ResizeThumb" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Bottom"
                    Width="18" Height="18" Cursor="SizeNWSE" DragDelta="ResizeOverlay" ToolTip="拖动调整大小">

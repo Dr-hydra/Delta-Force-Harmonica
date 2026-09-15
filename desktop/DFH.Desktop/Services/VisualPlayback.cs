@@ -25,10 +25,21 @@ public sealed class VisualPlayback
         _now = milliseconds ?? (() => Stopwatch.GetTimestamp() * (1000d / Stopwatch.Frequency));
     private double _countdownMs;
     private double _stoppedMs = -3000;
+    private double _pausedRawMs;
+    private int _stepIndex;
+    public PracticeMode Mode { get; private set; }
+    public PracticeScore Score { get; } = new();
+    private bool _practice;
+    public static double NowMs => Stopwatch.GetTimestamp() * (1000d / Stopwatch.Frequency);
     public IReadOnlyList<GameNote> Notes { get; private set; } = [];
     public double DurationMs { get; private set; }
     public bool IsBusy { get; private set; }
-    public double ElapsedMs => IsBusy ? _now() - _startedAt - _countdownMs : _stoppedMs;
+    public bool IsPaused { get; private set; }
+    private double RawElapsed(double now) => IsPaused ? _pausedRawMs : now - _startedAt - _countdownMs;
+    private double Cap(double raw) => _practice && Mode == PracticeMode.Step && _stepIndex < Notes.Count ? Math.Min(raw, Notes[_stepIndex].Start) : raw;
+    public double ElapsedMs => IsBusy && !IsPaused ? Cap(RawElapsed(_now())) : _stoppedMs;
+    public bool WaitingForNote => IsBusy && !IsPaused && _practice && Mode == PracticeMode.Step && _stepIndex < Notes.Count && RawElapsed(_now()) >= Notes[_stepIndex].Start;
+    public int StepIndex => _stepIndex;
 
     public void Load(IReadOnlyList<GameNote> notes)
     {
@@ -36,27 +47,60 @@ public sealed class VisualPlayback
         Notes = notes.OrderBy(note => note.Start).ToArray();
         DurationMs = Notes.Count == 0 ? 0 : Notes.Max(note => note.Start + note.Duration);
         _stoppedMs = -3000;
+        Score.Clear();
     }
 
-    public void Start(int countdownSeconds)
+    public void Start(int countdownSeconds, PracticeMode? practiceMode = null)
     {
         if (IsBusy || Notes.Count == 0) return;
         _countdownMs = Math.Max(3, countdownSeconds) * 1000d;
         IsBusy = true;
+        IsPaused = false;
         _startedAt = _now();
+        _practice = practiceMode != null;
+        Mode = practiceMode ?? PracticeMode.Rhythm;
+        _stepIndex = 0;
+        if (_practice) Score.Reset(Notes, Mode); else Score.Clear();
     }
 
     public void Stop()
     {
         _stoppedMs = ElapsedMs;
         IsBusy = false;
+        IsPaused = false;
+    }
+
+    public void TogglePause()
+    {
+        if (!IsBusy) return;
+        if (IsPaused) _startedAt = _now() - _countdownMs - _pausedRawMs;
+        else { _pausedRawMs = RawElapsed(_now()); _stoppedMs = Cap(_pausedRawMs); }
+        IsPaused = !IsPaused;
     }
 
     public bool FinishIfDue()
     {
-        if (!IsBusy || ElapsedMs < DurationMs) return false;
+        if (!IsBusy || IsPaused) return false;
+        if (_practice) Score.Advance(ElapsedMs);
+        var tail = _practice && Mode == PracticeMode.Rhythm ? Math.Max(DurationMs, Notes[^1].Start + PracticeScore.HitWindowMs + 1) : DurationMs;
+        if (ElapsedMs < tail || (_practice && Mode == PracticeMode.Step && _stepIndex < Notes.Count)) return false;
         Stop();
         _stoppedMs = DurationMs;
+        return true;
+    }
+
+    public bool Press(PracticeInput input)
+    {
+        if (!_practice || !IsBusy || IsPaused) return false;
+        var raw = RawElapsed(input.TimestampMs);
+        if (raw < 0) return false;
+        if (Mode == PracticeMode.Rhythm) return Score.Press(input, raw);
+        if (_stepIndex >= Notes.Count) return false;
+        var start = Notes[_stepIndex].Start;
+        if (!Score.Press(input, Cap(raw), _stepIndex, raw - start)) return false;
+        // Remove the wait, preserving the original interval before the next note.
+        _startedAt += Math.Max(0, raw - start);
+        _stepIndex++;
         return true;
     }
 

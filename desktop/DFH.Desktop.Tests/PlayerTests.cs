@@ -27,6 +27,134 @@ public class PlayerTests
 
     private static readonly ForegroundInfo Window = new(new IntPtr(42), "game", "game");
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task StopAsyncReleasesOldSongBeforeTheNextStarts(bool pauseFirst)
+    {
+        var sent = new ConcurrentQueue<Sent>();
+        using var ready = new ManualResetEventSlim();
+        using var finished = new ManualResetEventSlim();
+        using var player = new Player((target, down) => sent.Enqueue(new Sent(0, target, down)), () => Window);
+        player.NoteStarted += _ =>
+        {
+            if (pauseFirst) player.TogglePause();
+            else ready.Set();
+        };
+        player.StateChanged += state => { if (state == PlayerState.Paused) ready.Set(); };
+        player.Start(Sequence((0, "z", true), (2000, "z", false)), new PlayerOptions(0, false));
+        Assert.True(ready.Wait(3000));
+        Assert.True(await player.StopAsync());
+        Assert.Equal(PlayerState.Idle, player.State);
+        Assert.All(sent.TakeLast(InputBinding.Game.AllTargets().Count), item => Assert.False(item.Down));
+        var count = sent.Count;
+        pauseFirst = false;
+        player.Finished += finished.Set;
+        player.Start(Sequence((0, "x", true), (100, "x", false)), new PlayerOptions(0, false));
+        Assert.True(finished.Wait(3000));
+        Assert.Single(sent.Skip(count), item => item.Down);
+        Assert.Equal("key:x", sent.Skip(count).Single(item => item.Down).Target.Id);
+    }
+
+    [Fact]
+    public void PauseReleasesInputsFreezesClockAndResumesHeldNoteWithModifiersFirst()
+    {
+        var sent = new ConcurrentQueue<Sent>();
+        var wallClock = Stopwatch.StartNew();
+        using var paused = new ManualResetEventSlim();
+        using var resumed = new ManualResetEventSlim();
+        using var finished = new ManualResetEventSlim();
+        using var player = new Player((target, down) => sent.Enqueue(new Sent(wallClock.Elapsed.TotalMilliseconds, target, down)), () => Window);
+        var sequence = Sequence((0, "z", true), (350, "z", false), (400, "x", true), (450, "x", false));
+        var actions = (List<InputAction>)sequence.Actions;
+        actions.Insert(0, new InputAction(0, InputTarget.Mouse(MouseButton.Right), true, -1));
+        actions.Insert(3, new InputAction(350, InputTarget.Mouse(MouseButton.Right), false, -1));
+        player.NoteStarted += index => { if (index == 0) player.TogglePause(); };
+        player.StateChanged += state =>
+        {
+            if (state == PlayerState.Paused) paused.Set();
+            if (state == PlayerState.Playing && paused.IsSet) resumed.Set();
+        };
+        player.Finished += finished.Set;
+        player.Start(sequence, new PlayerOptions(0, false, 40));
+        Assert.True(paused.Wait(3000));
+        var position = player.ElapsedMs;
+        var count = sent.Count;
+        Assert.All(sent.TakeLast(InputBinding.Game.AllTargets().Count), item => Assert.False(item.Down));
+        Assert.False(finished.Wait(150));
+        Assert.Equal(count, sent.Count);
+        Assert.Equal(position, player.ElapsedMs);
+        Assert.True(player.IsBusy);
+        player.TogglePause();
+        Assert.True(resumed.Wait(3000));
+        Assert.True(finished.Wait(3000));
+        var afterResume = sent.Skip(count).ToArray();
+        Assert.Equal("mouse:right", afterResume[0].Target.Id);
+        Assert.True(afterResume[0].Down);
+        Assert.Equal("key:z", afterResume[1].Target.Id);
+        Assert.True(afterResume[1].Down);
+        Assert.True(afterResume[1].AtMs - afterResume[0].AtMs >= 35);
+        Assert.True(afterResume[2].AtMs - afterResume[1].AtMs >= 300 - position);
+        Assert.Equal(new[] { "mouse:right", "key:z", "key:x" }, afterResume.Where(item => item.Down).Select(item => item.Target.Id));
+        Assert.Equal(PlayerState.Idle, player.State);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void StopOrWrongForegroundWhilePausedDoesNotPressAnyMoreKeys(bool changeForeground)
+    {
+        var sent = new ConcurrentQueue<Sent>();
+        var current = Window;
+        using var paused = new ManualResetEventSlim();
+        using var finished = new ManualResetEventSlim();
+        using var player = new Player((target, down) => sent.Enqueue(new Sent(0, target, down)), () => current);
+        player.NoteStarted += _ => player.TogglePause();
+        player.StateChanged += state => { if (state == PlayerState.Paused) paused.Set(); };
+        player.Finished += finished.Set;
+        player.Start(Sequence((0, "z", true), (2000, "z", false)), new PlayerOptions(0, true));
+        Assert.True(paused.Wait(3000));
+        var count = sent.Count;
+        if (changeForeground)
+        {
+            current = new ForegroundInfo(new IntPtr(7), "other", "other");
+            player.TogglePause();
+        }
+        else player.Stop();
+        Assert.True(finished.Wait(3000));
+        Assert.DoesNotContain(sent.Skip(count), item => item.Down);
+        Assert.Equal(PlayerState.Idle, player.State);
+    }
+
+    [Fact]
+    public void CountdownPauseFreezesLeadInAndCanResumeThenStop()
+    {
+        using var paused = new ManualResetEventSlim();
+        using var resumed = new ManualResetEventSlim();
+        using var finished = new ManualResetEventSlim();
+        var sent = new ConcurrentQueue<Sent>();
+        using var player = new Player((target, down) => sent.Enqueue(new Sent(0, target, down)), () => Window);
+        player.StateChanged += state =>
+        {
+            if (state == PlayerState.Paused) paused.Set();
+            if (state == PlayerState.Countdown && paused.IsSet) resumed.Set();
+        };
+        player.Finished += finished.Set;
+        player.Start(Sequence((0, "z", true), (100, "z", false)), new PlayerOptions(5, false));
+        player.TogglePause();
+        Assert.True(paused.Wait(3000));
+        var position = player.VisualElapsedMs;
+        Assert.True(position < 0);
+        Assert.False(finished.Wait(100));
+        Assert.Equal(position, player.VisualElapsedMs);
+        player.TogglePause();
+        Assert.True(resumed.Wait(3000));
+        Assert.True(SpinWait.SpinUntil(() => player.VisualElapsedMs > position + 30, 1000));
+        player.Stop();
+        Assert.True(finished.Wait(3000));
+        Assert.DoesNotContain(sent, item => item.Down);
+    }
+
     [Fact]
     public void Plays_actions_in_order_and_close_to_schedule()
     {

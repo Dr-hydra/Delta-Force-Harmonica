@@ -7,6 +7,11 @@ namespace DFH.Desktop.Views;
 
 public partial class MainWindow : Window
 {
+    private void OpenAppearance(object sender, RoutedEventArgs e)
+    {
+        _viewModel.SettingsSection = 2;
+        _viewModel.SelectedTab = 2;
+    }
     private readonly MainViewModel _viewModel;
 
     public MainWindow()
@@ -14,6 +19,8 @@ public partial class MainWindow : Window
         InitializeComponent();
         _viewModel = new MainViewModel(Dispatcher);
         DataContext = _viewModel;
+        Activated += (_, _) => _viewModel.UpdateHotkeyEditingState();
+        Deactivated += (_, _) => _viewModel.UpdateHotkeyEditingState();
         SourceInitialized += (_, _) => DropFiles.Enable(this, files => _viewModel.LoadFile(files[0]));
         Closed += (_, _) => _viewModel.Dispose();
 

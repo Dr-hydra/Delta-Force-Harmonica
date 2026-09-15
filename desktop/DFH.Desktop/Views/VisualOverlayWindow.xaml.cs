@@ -13,6 +13,9 @@ namespace DFH.Desktop.Views;
 public partial class VisualOverlayWindow : Window
 {
     private readonly Func<bool> _isBusy;
+    private readonly Func<bool> _isPaused;
+    private readonly Func<string> _practiceSummary;
+    private readonly Func<int> _stepIndex;
     private readonly Func<double> _elapsed;
     private readonly Func<IReadOnlyList<GameNote>> _notes;
     private readonly Func<bool> _manualMode;
@@ -21,6 +24,8 @@ public partial class VisualOverlayWindow : Window
     private readonly Func<string> _hotkeyHint;
     private readonly DispatcherTimer _saveTimer;
     private bool _locked;
+    private bool _keyboardAdjustment;
+    private string _adjustmentHint = "";
     private string _lastHint = "";
     private const int GwlExStyle = -20;
     private const int Transparent = 0x20;
@@ -34,12 +39,17 @@ public partial class VisualOverlayWindow : Window
     [DllImport("user32.dll")] private static extern bool GetMonitorInfoW(IntPtr monitor, ref MonitorInfo info);
     [DllImport("user32.dll")] private static extern bool GetWindowRect(IntPtr hwnd, out NativeRect rect);
     [DllImport("user32.dll")] private static extern bool SetWindowPos(IntPtr hwnd, IntPtr after, int x, int y, int width, int height, uint flags);
+    [DllImport("user32.dll")] private static extern int GetSystemMetrics(int index);
 
     public VisualOverlayWindow(Func<bool> isBusy, Func<double> elapsed, Func<IReadOnlyList<GameNote>> notes,
-        Func<bool> manualMode, OverlaySettings settings, Action save, Func<string> hotkeyHint)
+        Func<bool> manualMode, OverlaySettings settings, Action save, Func<string> hotkeyHint, Func<bool>? isPaused = null,
+        Func<string>? practiceSummary = null, Func<int>? stepIndex = null)
     {
         InitializeComponent();
         _isBusy = isBusy;
+        _isPaused = isPaused ?? (() => false);
+        _practiceSummary = practiceSummary ?? (() => "");
+        _stepIndex = stepIndex ?? (() => -1);
         _elapsed = elapsed;
         _notes = notes;
         _manualMode = manualMode;
@@ -80,6 +90,29 @@ public partial class VisualOverlayWindow : Window
 
     public void Reload() { NotesView.Load(_notes()); UpdateHeading(); }
 
+    public void SetKeyboardAdjustment(bool active, string hint)
+    {
+        _keyboardAdjustment = active;
+        _adjustmentHint = hint;
+        SetInputMode(_isBusy() || active);
+        OverlayBackground.BorderBrush = new SolidColorBrush(active ? Color.FromRgb(200, 217, 58) : Color.FromArgb(130, 149, 169, 182));
+        if (!active) { _saveTimer.Stop(); SaveBounds(); }
+    }
+
+    public void AdjustWithKeyboard(OverlayAdjustment adjustment)
+    {
+        if (!_keyboardAdjustment || !IsVisible) return;
+        var hwnd = new WindowInteropHelper(this).Handle;
+        if (!GetWindowRect(hwnd, out var rect)) return;
+        var bounds = new OverlayBounds(rect.Left, rect.Top, rect.Right - rect.Left, rect.Bottom - rect.Top);
+        var desktop = new OverlayBounds(GetSystemMetrics(76), GetSystemMetrics(77), GetSystemMetrics(78), GetSystemMetrics(79));
+        if (desktop.Width <= 0 || desktop.Height <= 0) return;
+        var dpi = VisualTreeHelper.GetDpi(this);
+        var next = bounds.Adjust(adjustment, desktop, (int)Math.Ceiling(MinWidth * dpi.DpiScaleX), (int)Math.Ceiling(MinHeight * dpi.DpiScaleY));
+        // Keep the game focused and its mouse capture intact.
+        SetWindowPos(hwnd, IntPtr.Zero, next.Left, next.Top, next.Width, next.Height, 0x14);
+    }
+
     public void ApplyAppearance()
     {
         var opacity = 1 - _settings.BackgroundTransparency / 100;
@@ -90,19 +123,22 @@ public partial class VisualOverlayWindow : Window
     }
 
     private void UpdateHeading() => Heading.Text = (_manualMode() ? "手动可视化" : "自动演奏 · 可视化")
-        + (_locked ? " · 已锁定" : " · 拖动这里移动");
+        + (_keyboardAdjustment ? " · 键盘调整中" : _locked ? " · 已锁定" : " · 拖动这里移动");
 
     private void RenderFrame(object? sender, EventArgs e)
     {
         if (!IsVisible) return;
-        if (_locked != _isBusy()) SetInputMode(_isBusy());
+        if (_locked != (_isBusy() || _keyboardAdjustment)) SetInputMode(_isBusy() || _keyboardAdjustment);
         var elapsed = _elapsed();
         NotesView.TimeMs = elapsed;
+        NotesView.OnlyNoteIndex = _stepIndex();
         NotesView.InvalidateVisual();
-        var hint = _isBusy()
-            ? (elapsed < 0 ? $"{Math.Ceiling(-elapsed / 1000):0} 秒后开始 · " : _manualMode() ? "到线按下，长条结束松开 · " : "跟随自动演奏 · ") + _hotkeyHint() + " · 鼠标已穿透"
-            : _hotkeyHint() + " · 可拖动标题、右下角缩放 · 自动记忆";
+        var hint = _keyboardAdjustment ? _adjustmentHint
+            : (_isPaused() ? "已暂停 · " : _isBusy() && elapsed < 0 ? $"{Math.Ceiling(-elapsed / 1000):0} 秒后开始 · " : "") + _hotkeyHint();
         if (_lastHint != hint) Hint.Text = _lastHint = hint;
+        var practice = _practiceSummary();
+        if (PracticeText.Text != practice) PracticeText.Text = practice;
+        PracticeText.Visibility = practice.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private void SetInputMode(bool locked)

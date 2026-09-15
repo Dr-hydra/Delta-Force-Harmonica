@@ -20,6 +20,7 @@ public sealed class NoteFallView : FrameworkElement
     private double[] _prefixEnds = [];
     public double TimeMs { get; set; } = -LookAheadMs;
     public bool ShowKeyLabels { get; set; } = true;
+    public int OnlyNoteIndex { get; set; } = -1;
     public double FlowSpeed { get; set; } = 1;
     public double BackgroundOpacity { get; set; } = 0.75;
 
@@ -60,6 +61,7 @@ public sealed class NoteFallView : FrameworkElement
         dc.PushClip(new RectangleGeometry(new Rect(0, 0, width, line)));
         for (var i = low; i < _notes.Count && _notes[i].Start <= TimeMs + lookAhead; i++)
         {
+            if (OnlyNoteIndex >= 0 && i != OnlyNoteIndex) continue;
             var note = _notes[i];
             if (note.Start + note.Duration <= TimeMs) continue;
             var bottom = line - (note.Start - TimeMs) * scale;

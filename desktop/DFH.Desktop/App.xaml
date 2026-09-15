@@ -10,7 +10,7 @@
         <SolidColorBrush x:Key="DfhAccentTextBrush" Color="#1B1F0A" />
         <SolidColorBrush x:Key="DfhChipBrush" Color="#14808080" />
         <SolidColorBrush x:Key="DfhChipBorderBrush" Color="#33808080" />
-        <SolidColorBrush x:Key="DfhMutedBrush" Color="#99808080" />
+        <SolidColorBrush x:Key="DfhMutedBrush" Color="#FF808080" />
         <SolidColorBrush x:Key="DfhWarnBrush" Color="#E0A030" />
         <SolidColorBrush x:Key="DfhDangerBrush" Color="#D9534F" />
 
@@ -36,6 +36,17 @@
             <Setter Property="FontSize" Value="18" />
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="Margin" Value="0,0,0,8" />
+        </Style>
+        <Style x:Key="PanelCard" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource DfhChipBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource DfhChipBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="10"/>
+        </Style>
+        <Style x:Key="Eyebrow" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="{StaticResource DfhMutedBrush}"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
         </Style>
         <Style x:Key="Muted" TargetType="TextBlock">
             <Setter Property="Foreground" Value="{StaticResource DfhMutedBrush}" />

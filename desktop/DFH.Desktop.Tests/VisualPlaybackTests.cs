@@ -9,6 +9,40 @@ namespace DFH.Desktop.Tests;
 
 public class VisualPlaybackTests
 {
+    [Theory]
+    [InlineData(1000)]
+    [InlineData(3250)]
+    public void PauseFreezesCountdownOrLongNoteAndResumePreservesPosition(double advance)
+    {
+        double now = 0;
+        var playback = new VisualPlayback(() => now);
+        playback.Load([Note(0, 1000)]);
+        playback.Start(3);
+        now += advance;
+        var position = playback.ElapsedMs;
+        var index = playback.CurrentIndex();
+        playback.TogglePause();
+        now += 10000;
+        Assert.True(playback.IsBusy);
+        Assert.True(playback.IsPaused);
+        Assert.Equal(position, playback.ElapsedMs);
+        Assert.Equal(index, playback.CurrentIndex());
+        Assert.False(playback.FinishIfDue());
+        playback.TogglePause();
+        Assert.False(playback.IsPaused);
+        Assert.Equal(position, playback.ElapsedMs);
+        now += 100;
+        Assert.Equal(position + 100, playback.ElapsedMs);
+        playback.TogglePause();
+        playback.Stop();
+        Assert.False(playback.IsBusy);
+        Assert.False(playback.IsPaused);
+        playback.TogglePause();
+        Assert.False(playback.IsPaused);
+        playback.Start(3);
+        Assert.Equal(-3000, playback.ElapsedMs);
+    }
+
     private static GameNote Note(double start, double duration, int pitch = 60) => new()
     {
         Note = new NoteEvent { Start = start, Duration = duration, Pitch = pitch },

@@ -103,8 +103,10 @@ public sealed class LocalLibraryViewModel : ObservableObject, IDisposable
                 catch (UnauthorizedAccessException) { invalid++; }
                 catch (NotSiteExportException) { invalid++; }
             }
+            var selectedPath = Selected?.Path;
             Entries.Clear();
             foreach (var item in items) Entries.Add(item);
+            SelectPath(selectedPath);
             Status = invalid > 0 ? $"已读取 {items.Count} 首，忽略 {invalid} 个不兼容或正被写入的文件" : $"本地共 {items.Count} 首";
         }
         catch (Exception reason)
@@ -116,6 +118,21 @@ public sealed class LocalLibraryViewModel : ObservableObject, IDisposable
     private void OpenSelected()
     {
         if (Selected != null) _open(Selected.Path);
+    }
+
+    public void SelectPath(string? path) => Selected = Entries.FirstOrDefault(entry =>
+        string.Equals(entry.Path, path, StringComparison.OrdinalIgnoreCase));
+
+    /// <summary>Follow the displayed file order; wrap at either end. A score outside
+    /// this folder starts at the first (next) or last (previous) local entry.</summary>
+    public LocalMidiEntry? Adjacent(string? currentPath, int direction)
+    {
+        if (direction is not (-1 or 1)) throw new ArgumentOutOfRangeException(nameof(direction));
+        if (Entries.Count == 0) return null;
+        var current = Entries.ToList().FindIndex(entry => string.Equals(entry.Path, currentPath, StringComparison.OrdinalIgnoreCase));
+        var index = current < 0 ? (direction > 0 ? 0 : Entries.Count - 1)
+            : (current + direction + Entries.Count) % Entries.Count;
+        return Entries[index];
     }
 
     public void Open(LocalMidiEntry? entry)

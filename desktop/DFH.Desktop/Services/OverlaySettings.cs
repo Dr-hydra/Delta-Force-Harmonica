@@ -11,6 +11,9 @@ public sealed class OverlaySettings
     public double Width { get; set; } = 640;
     public double Height { get; set; } = 460;
     public bool ManualMode { get; set; } = true;
+    private int _manualPracticeMode;
+    /// <summary>0: visual only, 1: rhythm score, 2: step practice.</summary>
+    public int ManualPracticeMode { get => _manualPracticeMode; set => _manualPracticeMode = Math.Clamp(value, 0, 2); }
     public bool ShowKeyLabels { get; set; } = true;
     private double _backgroundTransparency = 25;
     private double _flowSpeed = 1;
